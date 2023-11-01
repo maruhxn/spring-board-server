@@ -34,6 +34,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<Object> exception(Exception e) {
+        e.printStackTrace();
         return ResponseEntity
                 .status(ErrorCode.INTERNAL_ERROR.getHttpStatus())
                 .body(ResponseDto.error(ErrorCode.INTERNAL_ERROR.getCode(), e.getMessage()));

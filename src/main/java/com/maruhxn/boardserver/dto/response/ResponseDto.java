@@ -11,8 +11,12 @@ public class ResponseDto<T> {
     private final String message;
     private final T data;
 
+    public static <T> ResponseDto<T> empty(String message) {
+        return new ResponseDto<>(0, message, null);
+    }
+
     public static <T> ResponseDto<T> data(final T data) {
-        return new ResponseDto<>(10000, "OK", data);
+        return new ResponseDto<>(0, "OK", data);
     }
 
     public static <T> ResponseDto<T> error(Integer code, String message) {
