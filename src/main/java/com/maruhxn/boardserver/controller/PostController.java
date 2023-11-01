@@ -58,7 +58,7 @@ public class PostController {
 
     @DeleteMapping("/{postId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void withdraw(@PathVariable Long postId) {
+    public void deletePost(@PathVariable Long postId) {
         log.info("postId={}", postId);
         return;
     }
