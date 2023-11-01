@@ -15,8 +15,8 @@ public class ResponseDto<T> {
         return new ResponseDto<>(0, message, null);
     }
 
-    public static <T> ResponseDto<T> data(final T data) {
-        return new ResponseDto<>(0, "OK", data);
+    public static <T> ResponseDto<T> data(String message, final T data) {
+        return new ResponseDto<>(0, message, data);
     }
 
     public static <T> ResponseDto<T> error(Integer code, String message) {
