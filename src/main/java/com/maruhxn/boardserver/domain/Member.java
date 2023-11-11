@@ -27,7 +27,7 @@ public class Member {
     @Column(length = 10, nullable = false)
     private String username;
 
-    @Column(length = 20, nullable = false)
+    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false, columnDefinition = "TEXT")
