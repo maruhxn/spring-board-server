@@ -1,0 +1,26 @@
+server:
+  error:
+    whitelabel:
+      enabled: false
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/spring-board
+    username: root
+    password: 602057
+  servlet:
+    multipart:
+      max-file-size: 500MB
+  h2:
+    console:
+      enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+logging:
+  level:
+    com.maruhxn.boardserver: debug
+    org.hibernate.SQL: debug
