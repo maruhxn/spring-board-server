@@ -13,16 +13,16 @@ import java.time.LocalDateTime;
 public class PostImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
+    @Column(name = "post_image_id")
     private Long id;
 
     @Column(nullable = false)
-    private String imageName;
+    private String originalName;
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    private String imagePath;
+    private String storedName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
@@ -30,9 +30,14 @@ public class PostImage {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Builder
-    public PostImage(String imageName, String imagePath, Post post) {
-        this.imageName = imageName;
-        this.imagePath = imagePath;
+    public PostImage(String originalName, String storedName, Post post) {
+        this.originalName = originalName;
+        this.storedName = storedName;
+        this.post = post;
+    }
+
+    // 편의 메서드 //
+    public void setPost(Post post) {
         this.post = post;
     }
 }
