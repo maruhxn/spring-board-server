@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 
@@ -48,4 +49,22 @@ public class Member {
         this.password = password;
         this.profileImage = profileImage;
     }
+
+    // Update Logic //
+
+    /**
+     * 회원 정보 수정 (유저명, 프로필 이미지)
+     *
+     * @param username
+     * @param profileImage
+     */
+    public void updateProfile(String username, String profileImage) {
+        if (StringUtils.hasText(username)) this.username = username;
+        if (StringUtils.hasText(profileImage)) this.profileImage = profileImage;
+    }
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
+
 }
