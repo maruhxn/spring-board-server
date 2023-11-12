@@ -1,6 +1,5 @@
 package com.maruhxn.boardserver.controller;
 
-import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.dto.request.auth.ConfirmPasswordRequest;
 import com.maruhxn.boardserver.dto.request.auth.LoginRequest;
 import com.maruhxn.boardserver.dto.request.auth.RegisterRequest;
@@ -24,7 +23,7 @@ public class AuthController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseDto<Object> register(@RequestBody @Valid RegisterRequest registerRequest) {
+    public ResponseDto<String> register(@RequestBody @Valid RegisterRequest registerRequest) {
         authService.register(registerRequest);
         log.info("회원가입 = {}", registerRequest);
         return ResponseDto.empty("회원가입 성공");
@@ -32,15 +31,14 @@ public class AuthController {
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseDto<Object> login(@RequestBody @Valid LoginRequest loginRequest, HttpSession session) {
-        Member loginMember = authService.login(loginRequest);
-        session.setAttribute("member", loginMember);
+    public ResponseDto<String> login(@RequestBody @Valid LoginRequest loginRequest, HttpSession session) {
+        session.setAttribute("member", authService.login(loginRequest));
         return ResponseDto.empty("로그인 성공");
     }
 
     @PostMapping("/{memberId}/password")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseDto<Object> confirmPassword(
+    public ResponseDto<String> confirmPassword(
             @RequestBody @Valid ConfirmPasswordRequest confirmPasswordRequest,
             @PathVariable Long memberId
     ) {
