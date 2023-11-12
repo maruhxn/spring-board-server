@@ -2,7 +2,6 @@ package com.maruhxn.boardserver.repository;
 
 import com.maruhxn.boardserver.domain.Member;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -28,13 +27,10 @@ public class MemberRepository {
     }
 
     public Optional<Member> findByEmail(String email) {
-        try {
-            return Optional.ofNullable(em.createQuery("select m from Member m where m.email = :email", Member.class)
-                    .setParameter("email", email)
-                    .getSingleResult());
-        } catch (NoResultException e) {
-            return Optional.empty();
-        }
+        List<Member> findMember = em.createQuery("select m from Member m where m.email = :email", Member.class)
+                .setParameter("email", email)
+                .getResultList();
+        return findMember.stream().findFirst();
     }
 
     public List<Member> findByEmailOrUsername(String email, String username) {
