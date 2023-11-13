@@ -1,7 +1,6 @@
 package com.maruhxn.boardserver.common.exception;
 
 import com.maruhxn.boardserver.dto.response.ResponseDto;
-import jakarta.validation.ConstraintViolationException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -17,14 +16,7 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler
-    public ResponseEntity<Object> paramValidation(ConstraintViolationException e) {
-        return ResponseEntity
-                .status(ErrorCode.VALIDATION_ERROR.getHttpStatus())
-                .body(ResponseDto.error(ErrorCode.VALIDATION_ERROR, e.getMessage()));
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<Object> bodyValidation(MethodArgumentNotValidException e) {
+    public ResponseEntity<Object> validationFail(MethodArgumentNotValidException e) {
         List<String> errors = e.getBindingResult().getFieldErrors()
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
