@@ -10,9 +10,12 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"email", "username"})
-})
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"email", "username"})},
+        indexes = {
+                @Index(name = "idx__email__username", columnList = "email, username")
+        }) // (email), (email, username) cover
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
