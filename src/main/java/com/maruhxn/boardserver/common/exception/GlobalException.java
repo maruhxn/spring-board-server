@@ -1,6 +1,5 @@
-package com.maruhxn.boardserver.exception;
+package com.maruhxn.boardserver.common.exception;
 
-import com.maruhxn.boardserver.common.ErrorCode;
 import lombok.Getter;
 
 @Getter

@@ -22,10 +22,6 @@ public class MemberRepository {
         return Optional.ofNullable(em.find(Member.class, id));
     }
 
-    public List<Member> findAll() {
-        return em.createQuery("select m from Member m", Member.class).getResultList();
-    }
-
     public Optional<Member> findByEmail(String email) {
         List<Member> findMember = em.createQuery("select m from Member m where m.email = :email", Member.class)
                 .setParameter("email", email)

@@ -1,4 +1,4 @@
-package com.maruhxn.boardserver.dto.response;
+package com.maruhxn.boardserver.dto.response.object;
 
 import com.maruhxn.boardserver.domain.PostImage;
 import lombok.Builder;

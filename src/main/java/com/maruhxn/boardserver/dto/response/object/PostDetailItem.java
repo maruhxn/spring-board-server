@@ -1,4 +1,4 @@
-package com.maruhxn.boardserver.dto.response;
+package com.maruhxn.boardserver.dto.response.object;
 
 import com.maruhxn.boardserver.domain.Post;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class PostDetailItemResponse {
+public class PostDetailItem {
     private final Long postId;
     private final String title;
     private final String content;
@@ -18,8 +18,8 @@ public class PostDetailItemResponse {
     private final Long viewCount;
     private final LocalDateTime createdAt;
 
-    public static PostDetailItemResponse fromEntity(Post post) {
-        return PostDetailItemResponse.builder()
+    public static PostDetailItem fromEntity(Post post) {
+        return PostDetailItem.builder()
                 .postId(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())

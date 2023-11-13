@@ -1,9 +1,9 @@
 package com.maruhxn.boardserver.resolver;
 
-import com.maruhxn.boardserver.common.ErrorCode;
+import com.maruhxn.boardserver.common.exception.ErrorCode;
 import com.maruhxn.boardserver.common.SessionConst;
 import com.maruhxn.boardserver.domain.Member;
-import com.maruhxn.boardserver.exception.GlobalException;
+import com.maruhxn.boardserver.common.exception.GlobalException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;

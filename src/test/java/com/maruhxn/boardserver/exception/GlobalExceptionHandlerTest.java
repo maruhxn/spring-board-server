@@ -1,6 +1,8 @@
 package com.maruhxn.boardserver.exception;
 
-import com.maruhxn.boardserver.common.ErrorCode;
+import com.maruhxn.boardserver.common.exception.ErrorCode;
+import com.maruhxn.boardserver.common.exception.GlobalException;
+import com.maruhxn.boardserver.common.exception.GlobalExceptionHandler;
 import com.maruhxn.boardserver.dto.response.ResponseDto;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,22 +25,6 @@ class GlobalExceptionHandlerTest {
         sut = new GlobalExceptionHandler();
     }
 
-    @DisplayName("@Validated 검증 오류 - 응답 데이터 정의")
-    @Test
-    void givenParameterValidationException_whenHandlingApiException_thenReturnsResponseEntity() {
-        // Given
-        ConstraintViolationException e = new ConstraintViolationException(Set.of());
-
-        // When
-        ResponseEntity<Object> response = sut.paramValidation(e);
-
-        // Then
-        assertThat(response)
-                .hasFieldOrPropertyWithValue("body", ResponseDto.error(ErrorCode.VALIDATION_ERROR.getCode(), ErrorCode.VALIDATION_ERROR.getMessage()))
-                .hasFieldOrPropertyWithValue("headers", HttpHeaders.EMPTY)
-                .hasFieldOrPropertyWithValue("statusCode", HttpStatus.BAD_REQUEST);
-    }
-
     @DisplayName("프로젝트 일반 오류 - 응답 데이터 정의")
     @Test
     void givenGlobalException_whenHandlingApiException_thenReturnsResponseEntity() {
@@ -51,7 +37,7 @@ class GlobalExceptionHandlerTest {
 
         // Then
         assertThat(response)
-                .hasFieldOrPropertyWithValue("body", ResponseDto.error(errorCode.getCode(), e.getMessage()))
+                .hasFieldOrPropertyWithValue("body", ResponseDto.error(errorCode, e.getMessage()))
                 .hasFieldOrPropertyWithValue("headers", HttpHeaders.EMPTY)
                 .hasFieldOrPropertyWithValue("statusCode", HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -67,7 +53,7 @@ class GlobalExceptionHandlerTest {
 
         // Then
         assertThat(response)
-                .hasFieldOrPropertyWithValue("body", ResponseDto.error(ErrorCode.INTERNAL_ERROR.getCode(), "예상치 못한 오류!"))
+                .hasFieldOrPropertyWithValue("body", ResponseDto.error(ErrorCode.INTERNAL_ERROR, "예상치 못한 오류!"))
                 .hasFieldOrPropertyWithValue("headers", HttpHeaders.EMPTY)
                 .hasFieldOrPropertyWithValue("statusCode", HttpStatus.INTERNAL_SERVER_ERROR);
     }

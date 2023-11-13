@@ -1,13 +1,16 @@
-package com.maruhxn.boardserver.exception;
+package com.maruhxn.boardserver.common.exception;
 
-import com.maruhxn.boardserver.common.ErrorCode;
 import com.maruhxn.boardserver.dto.response.ResponseDto;
 import jakarta.validation.ConstraintViolationException;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.List;
 
 @Slf4j
 @ControllerAdvice
@@ -17,21 +20,26 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> paramValidation(ConstraintViolationException e) {
         return ResponseEntity
                 .status(ErrorCode.VALIDATION_ERROR.getHttpStatus())
-                .body(ResponseDto.error(ErrorCode.VALIDATION_ERROR.getCode(), ErrorCode.VALIDATION_ERROR.getMessage()));
+                .body(ResponseDto.error(ErrorCode.VALIDATION_ERROR, e.getMessage()));
     }
 
     @ExceptionHandler
     public ResponseEntity<Object> bodyValidation(MethodArgumentNotValidException e) {
+        List<String> errors = e.getBindingResult().getFieldErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .toList();
+
         return ResponseEntity
                 .status(ErrorCode.VALIDATION_ERROR.getHttpStatus())
-                .body(ResponseDto.error(ErrorCode.VALIDATION_ERROR.getCode(), ErrorCode.VALIDATION_ERROR.getMessage()));
+                .body(new ValidationFailedResponseDto(ErrorCode.VALIDATION_ERROR.name(), errors));
     }
 
     @ExceptionHandler
     public ResponseEntity<Object> globalException(GlobalException e) {
         return ResponseEntity
                 .status(e.getCode().getHttpStatus())
-                .body(ResponseDto.error(e.getCode().getCode(), e.getMessage()));
+                .body(ResponseDto.error(e.getCode(), e.getMessage()));
     }
 
     @ExceptionHandler
@@ -39,6 +47,12 @@ public class GlobalExceptionHandler {
         log.error(e.getMessage(), e);
         return ResponseEntity
                 .status(ErrorCode.INTERNAL_ERROR.getHttpStatus())
-                .body(ResponseDto.error(ErrorCode.INTERNAL_ERROR.getCode(), e.getMessage()));
+                .body(ResponseDto.error(ErrorCode.INTERNAL_ERROR, e.getMessage()));
+    }
+
+    @Data
+    static private class ValidationFailedResponseDto {
+        private final String code;
+        private final List<String> messages;
     }
 }

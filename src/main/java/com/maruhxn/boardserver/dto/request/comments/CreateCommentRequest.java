@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 public class CreateCommentRequest {
-    @NotEmpty
+    @NotEmpty(message = "댓글 내용을 입력해주세요.")
     private String content;
 }

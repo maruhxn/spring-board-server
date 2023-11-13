@@ -1,8 +1,8 @@
 package com.maruhxn.boardserver.service;
 
-import com.maruhxn.boardserver.common.ErrorCode;
+import com.maruhxn.boardserver.common.exception.ErrorCode;
+import com.maruhxn.boardserver.common.exception.GlobalException;
 import com.maruhxn.boardserver.domain.PostImage;
-import com.maruhxn.boardserver.exception.GlobalException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -27,7 +27,7 @@ public class FileService {
      * @return
      */
     public PostImage storeOneFile(MultipartFile file) {
-        if (file.isEmpty()) throw new GlobalException(ErrorCode.BAD_REQUEST, "파일이 존재하지 않습니다.");
+        if (file.isEmpty()) throw new GlobalException(ErrorCode.EMPTY_FILE);
 
         String originalFilename = file.getOriginalFilename(); // 파일 원본 이름
         String storeFileName = createStoreFileName(originalFilename); // 서버에 저장된 파일 이름 (랜덤)
@@ -35,7 +35,7 @@ public class FileService {
         try {
             file.transferTo(new File(savePath)); // 파일 저장
         } catch (IOException e) {
-        throw new GlobalException(ErrorCode.INTERNAL_ERROR, e);
+            throw new GlobalException(ErrorCode.INTERNAL_ERROR, e);
         }
 
         return PostImage.builder()

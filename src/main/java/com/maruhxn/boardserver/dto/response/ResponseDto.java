@@ -1,25 +1,25 @@
 package com.maruhxn.boardserver.dto.response;
 
+import com.maruhxn.boardserver.common.exception.ErrorCode;
 import lombok.*;
 
 @Getter
 @ToString
 @EqualsAndHashCode
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class ResponseDto<T> {
-    private final Integer code;
+public class ResponseDto {
+    private final String code;
     private final String message;
-    private final T data;
 
-    public static <T> ResponseDto<T> empty(String message) {
-        return new ResponseDto<>(0, message, null);
+    public static ResponseDto ok(String message) {
+        return new ResponseDto("OK", message);
     }
 
-    public static <T> ResponseDto<T> data(String message, final T data) {
-        return new ResponseDto<>(0, message, data);
+    public static ResponseDto error(ErrorCode errorCode) {
+        return new ResponseDto(errorCode.name(), errorCode.getMessage());
     }
 
-    public static <T> ResponseDto<T> error(Integer code, String message) {
-        return new ResponseDto<>(code, message, null);
+    public static ResponseDto error(ErrorCode errorCode, String message) {
+        return new ResponseDto(errorCode.name(), message);
     }
 }
