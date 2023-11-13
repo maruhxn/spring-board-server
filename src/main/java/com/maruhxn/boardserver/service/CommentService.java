@@ -25,7 +25,7 @@ public class CommentService {
 
     public void createComment(Member member, Long postId, CreateCommentRequest createCommentRequest) {
 
-        Post findPost = postRepository.findOneWithAuthorAndImages(postId)
+        Post findPost = postRepository.findOne(postId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.NOT_FOUND_POST));
 
         Comment comment = Comment.builder()

@@ -28,7 +28,7 @@ public class CommentRepository {
                                 " join fetch c.member" +
                                 " where c.post.id = :postId", Comment.class
                 ).setParameter("postId", postId)
-                .setFirstResult(page)
+                .setFirstResult(Constants.PAGE_SIZE * page)
                 .setMaxResults(Constants.PAGE_SIZE)
                 .getResultList();
     }
