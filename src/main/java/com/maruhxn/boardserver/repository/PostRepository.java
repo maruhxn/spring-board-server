@@ -20,6 +20,10 @@ public class PostRepository {
         em.persist(post);
     }
 
+    public Optional<Post> findOne(Long postId) {
+        return Optional.ofNullable(em.find(Post.class, postId));
+    }
+
     public Optional<Post> findOneWithAuthorAndImages(Long postId) {
         List<Post> findPost = em.createQuery(
                         "select p from Post p" +
@@ -41,11 +45,11 @@ public class PostRepository {
         return findPost.stream().findFirst();
     }
 
-    public List<Post> findAllWithMember(int page) {
+    public List<Post> findAllWithMember(Integer page) {
         return em.createQuery(
                         "select p from Post p" +
                                 " join fetch p.member", Post.class)
-                .setFirstResult(page)
+                .setFirstResult(Constants.PAGE_SIZE * page)
                 .setMaxResults(Constants.PAGE_SIZE)
                 .getResultList();
     }

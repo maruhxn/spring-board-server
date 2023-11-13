@@ -69,21 +69,11 @@ public class PostService {
      * @return
      */
     public PostDetailItem getPostDetail(Long postId) {
-        Post findPost = getPostFromRepository(postId);
-        findPost.addViewCount();
-        return PostDetailItem.fromEntity(findPost);
-    }
-
-    /**
-     * 게시글 단건 조회 (없으면 에러 반환)
-     *
-     * @param postId
-     * @return
-     */
-    private Post getPostFromRepository(Long postId) {
-        return postRepository.findOneWithAuthorAndImages(postId)
+        Post findPost = postRepository.findOneWithAuthorAndImages(postId)
                 .orElseThrow(() ->
                         new GlobalException(ErrorCode.NOT_FOUND_POST));
+        findPost.addViewCount();
+        return PostDetailItem.fromEntity(findPost);
     }
 
     /**
@@ -94,7 +84,8 @@ public class PostService {
      */
     public void updatePost(Long postId, UpdatePostRequest updatePostRequest) {
         List<PostImage> postImages = new ArrayList<>();
-        Post findPost = getPostFromRepository(postId);
+        Post findPost = postRepository.findOne(postId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.NOT_FOUND_POST));
         if (updatePostRequest.getImages() != null) {
             postImages = fileService.storeFiles(updatePostRequest.getImages());
         }
@@ -107,13 +98,13 @@ public class PostService {
      * @param postId
      */
     public void deletePost(Long postId) {
-        Post findPost = getPostFromRepository(postId);
+        Post findPost = postRepository.findOneWithAuthorAndImages(postId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.NOT_FOUND_POST));
         // 실제 이미지들 삭제
         // TODO: 폴더로 한번에 관리하고, 이미지 하나하나 삭제가 아니라 폴더를 삭제하는 방식으로 변경
-        findPost.getImages()
-                .forEach(postImage -> deleteImage(postImage.getId()));
-
         postRepository.removePost(findPost);
+        findPost.getImages()
+                .forEach(postImage -> fileService.deleteFile(postImage.getStoredName()));
     }
 
     /**
