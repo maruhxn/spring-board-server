@@ -20,9 +20,10 @@ public class PostRepository {
         em.persist(post);
     }
 
-    public Optional<Post> findOne(Long postId) {
+    public Optional<Post> findOneWithAuthorAndImages(Long postId) {
         List<Post> findPost = em.createQuery(
                         "select p from Post p" +
+                                " join fetch p.member" +
                                 " left join fetch p.images" +
                                 " where p.id = :postId", Post.class
                 ).setParameter("postId", postId)
@@ -30,10 +31,20 @@ public class PostRepository {
         return findPost.stream().findFirst();
     }
 
-    public List<Post> findAllWithImages(int page) {
+    public Optional<Post> findOneWithAuthor(Long postId) {
+        List<Post> findPost = em.createQuery(
+                        "select p from Post p" +
+                                " join fetch p.member" +
+                                " where p.id = :postId", Post.class
+                ).setParameter("postId", postId)
+                .getResultList();
+        return findPost.stream().findFirst();
+    }
+
+    public List<Post> findAllWithMember(int page) {
         return em.createQuery(
                         "select p from Post p" +
-                                " left join fetch p.images", Post.class)
+                                " join fetch p.member", Post.class)
                 .setFirstResult(page)
                 .setMaxResults(Constants.PAGE_SIZE)
                 .getResultList();

@@ -25,7 +25,7 @@ public class CommentService {
 
     public void createComment(Member member, Long postId, CreateCommentRequest createCommentRequest) {
 
-        Post findPost = postRepository.findOne(postId)
+        Post findPost = postRepository.findOneWithAuthorAndImages(postId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.NOT_FOUND, "게시글 정보가 없습니다."));
 
         Comment comment = Comment.builder()

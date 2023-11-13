@@ -56,7 +56,7 @@ public class PostService {
      */
     @Transactional(readOnly = true)
     public List<PostItemResponse> getPostList(PostSearchCond postSearchCond) {
-        List<Post> posts = postRepository.findAllWithImages(postSearchCond.getPage());
+        List<Post> posts = postRepository.findAllWithMember(postSearchCond.getPage());
         return posts.stream()
                 .map(PostItemResponse::fromEntity)
                 .toList();
@@ -81,7 +81,7 @@ public class PostService {
      * @return
      */
     private Post getPostFromRepository(Long postId) {
-        return postRepository.findOne(postId)
+        return postRepository.findOneWithAuthorAndImages(postId)
                 .orElseThrow(() ->
                         new GlobalException(ErrorCode.NOT_FOUND, "게시글 정보가 없습니다."));
     }
@@ -92,10 +92,9 @@ public class PostService {
      * @param postId
      * @param updatePostRequest
      */
-    public void updatePost(Long memberId, Long postId, UpdatePostRequest updatePostRequest) {
+    public void updatePost(Long postId, UpdatePostRequest updatePostRequest) {
         List<PostImage> postImages = new ArrayList<>();
         Post findPost = getPostFromRepository(postId);
-        checkIsAuthor(memberId, findPost);
         if (updatePostRequest.getImages() != null) {
             postImages = fileService.storeFiles(updatePostRequest.getImages());
         }
@@ -110,7 +109,6 @@ public class PostService {
      */
     public void deletePost(Long memberId, Long postId) {
         Post findPost = getPostFromRepository(postId);
-        checkIsAuthor(memberId, findPost);
         // 실제 이미지들 삭제
         // TODO: 폴더로 한번에 관리하고, 이미지 하나하나 삭제가 아니라 폴더를 삭제하는 방식으로 변경
         findPost.getImages()
@@ -128,22 +126,7 @@ public class PostService {
     public void deleteImage(Long memberId, Long imageId) {
         PostImage findImage = postRepository.findPostImageById(imageId).orElseThrow(() ->
                 new GlobalException(ErrorCode.NOT_FOUND, "이미지 정보가 없습니다."));
-
-        Post post = findImage.getPost();
-        checkIsAuthor(memberId, post);
-
         postRepository.removeImage(findImage); // DB에서 이미지 정보 삭제
         fileService.deleteFile(findImage.getStoredName()); // 실제 이미지 삭제
-    }
-
-    /**
-     * 작성자 일치 여부 확인
-     *
-     * @param memberId
-     * @param post
-     */
-    private static void checkIsAuthor(Long memberId, Post post) {
-        Long authorId = post.getMember().getId();
-        if (!authorId.equals(memberId)) throw new GlobalException(ErrorCode.FORBIDDEN);
     }
 }

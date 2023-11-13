@@ -120,7 +120,6 @@ public class FileService {
         String savePath = getFullPath(storeFileName); // 서버에 저장된 경로
         try {
             File file = new File(savePath);
-            System.out.println("file = " + file);
             file.delete();
         } catch (Exception e) {
             log.warn(e.getMessage());
