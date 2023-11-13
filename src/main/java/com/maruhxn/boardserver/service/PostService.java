@@ -1,15 +1,15 @@
 package com.maruhxn.boardserver.service;
 
-import com.maruhxn.boardserver.common.ErrorCode;
+import com.maruhxn.boardserver.common.exception.ErrorCode;
+import com.maruhxn.boardserver.common.exception.GlobalException;
 import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.domain.Post;
 import com.maruhxn.boardserver.domain.PostImage;
 import com.maruhxn.boardserver.dto.PostSearchCond;
 import com.maruhxn.boardserver.dto.request.posts.CreatePostRequest;
 import com.maruhxn.boardserver.dto.request.posts.UpdatePostRequest;
-import com.maruhxn.boardserver.dto.response.PostDetailItemResponse;
-import com.maruhxn.boardserver.dto.response.PostItemResponse;
-import com.maruhxn.boardserver.exception.GlobalException;
+import com.maruhxn.boardserver.dto.response.object.PostDetailItem;
+import com.maruhxn.boardserver.dto.response.object.PostItem;
 import com.maruhxn.boardserver.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -55,10 +55,10 @@ public class PostService {
      * @return
      */
     @Transactional(readOnly = true)
-    public List<PostItemResponse> getPostList(PostSearchCond postSearchCond) {
+    public List<PostItem> getPostList(PostSearchCond postSearchCond) {
         List<Post> posts = postRepository.findAllWithMember(postSearchCond.getPage());
         return posts.stream()
-                .map(PostItemResponse::fromEntity)
+                .map(PostItem::fromEntity)
                 .toList();
     }
 
@@ -68,10 +68,10 @@ public class PostService {
      * @param postId
      * @return
      */
-    public PostDetailItemResponse getPostDetail(Long postId) {
+    public PostDetailItem getPostDetail(Long postId) {
         Post findPost = getPostFromRepository(postId);
         findPost.addViewCount();
-        return PostDetailItemResponse.fromEntity(findPost);
+        return PostDetailItem.fromEntity(findPost);
     }
 
     /**
@@ -83,7 +83,7 @@ public class PostService {
     private Post getPostFromRepository(Long postId) {
         return postRepository.findOneWithAuthorAndImages(postId)
                 .orElseThrow(() ->
-                        new GlobalException(ErrorCode.NOT_FOUND, "게시글 정보가 없습니다."));
+                        new GlobalException(ErrorCode.NOT_FOUND_POST));
     }
 
     /**
@@ -105,14 +105,13 @@ public class PostService {
      * 게시글 삭제
      *
      * @param postId
-     * @param memberId
      */
-    public void deletePost(Long memberId, Long postId) {
+    public void deletePost(Long postId) {
         Post findPost = getPostFromRepository(postId);
         // 실제 이미지들 삭제
         // TODO: 폴더로 한번에 관리하고, 이미지 하나하나 삭제가 아니라 폴더를 삭제하는 방식으로 변경
         findPost.getImages()
-                .forEach(postImage -> deleteImage(postImage.getId(), memberId));
+                .forEach(postImage -> deleteImage(postImage.getId()));
 
         postRepository.removePost(findPost);
     }
@@ -121,11 +120,10 @@ public class PostService {
      * 이미지 삭제
      *
      * @param imageId
-     * @param memberId
      */
-    public void deleteImage(Long memberId, Long imageId) {
+    public void deleteImage(Long imageId) {
         PostImage findImage = postRepository.findPostImageById(imageId).orElseThrow(() ->
-                new GlobalException(ErrorCode.NOT_FOUND, "이미지 정보가 없습니다."));
+                new GlobalException(ErrorCode.NOT_FOUND_IMAGE));
         postRepository.removeImage(findImage); // DB에서 이미지 정보 삭제
         fileService.deleteFile(findImage.getStoredName()); // 실제 이미지 삭제
     }

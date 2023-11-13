@@ -1,12 +1,12 @@
 package com.maruhxn.boardserver.service;
 
-import com.maruhxn.boardserver.common.ErrorCode;
 import com.maruhxn.boardserver.common.PasswordEncoder;
+import com.maruhxn.boardserver.common.exception.ErrorCode;
+import com.maruhxn.boardserver.common.exception.GlobalException;
 import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.dto.request.members.UpdateMemberProfileRequest;
 import com.maruhxn.boardserver.dto.request.members.UpdatePasswordRequest;
-import com.maruhxn.boardserver.dto.response.MemberResponse;
-import com.maruhxn.boardserver.exception.GlobalException;
+import com.maruhxn.boardserver.dto.response.object.MemberItem;
 import com.maruhxn.boardserver.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,10 +27,10 @@ public class MemberService {
      * @return MemberResponse
      */
     @Transactional(readOnly = true)
-    public MemberResponse getMemberDetail(Long memberId) {
+    public MemberItem getMemberDetail(Long memberId) {
         Member findMember = memberRepository.findOne(memberId).orElseThrow(
-                () -> new GlobalException(ErrorCode.NOT_FOUND, "회원 정보가 없습니다."));
-        return MemberResponse.builder()
+                () -> new GlobalException(ErrorCode.NOT_FOUND_USER));
+        return MemberItem.builder()
                 .memberId(findMember.getId())
                 .username(findMember.getUsername())
                 .email(findMember.getEmail())
@@ -46,7 +46,7 @@ public class MemberService {
      */
     public void updateProfile(Long memberId, UpdateMemberProfileRequest updateMemberProfileRequest) {
         Member findMember = memberRepository.findOne(memberId).orElseThrow(
-                () -> new GlobalException(ErrorCode.NOT_FOUND, "회원 정보가 없습니다."));
+                () -> new GlobalException(ErrorCode.NOT_FOUND_USER));
 
         findMember.updateProfile(updateMemberProfileRequest.getUsername(), updateMemberProfileRequest.getProfileImage());
     }
@@ -59,23 +59,23 @@ public class MemberService {
      */
     public void updatePassword(Long memberId, UpdatePasswordRequest updatePasswordRequest) {
         Member findMember = memberRepository.findOne(memberId).orElseThrow(
-                () -> new GlobalException(ErrorCode.NOT_FOUND, "회원 정보가 없습니다."));
+                () -> new GlobalException(ErrorCode.NOT_FOUND_USER));
 
         if (!updatePasswordRequest.getNewPassword().equals(updatePasswordRequest.getConfirmNewPassword())) {
-            throw new GlobalException(ErrorCode.BAD_REQUEST, "신규 비밀번호가 일치하지 않습니다.");
+            throw new GlobalException(ErrorCode.PASSWORD_CONFIRM_FAIL);
         }
 
         if (passwordEncoder.isMatch(
                 findMember.getEmail(),
                 updatePasswordRequest.getNewPassword(),
                 findMember.getPassword()))
-            throw new GlobalException(ErrorCode.BAD_REQUEST, "동일한 비밀번호로 변경할 수 없습니다.");
+            throw new GlobalException(ErrorCode.SAME_PASSWORD);
 
         if (!passwordEncoder.isMatch(
                 findMember.getEmail(),
                 updatePasswordRequest.getCurrPassword(),
                 findMember.getPassword()))
-            throw new GlobalException(ErrorCode.BAD_REQUEST, "기존 비밀번호가 일치하지 않습니다.");
+            throw new GlobalException(ErrorCode.INCORRECT_PASSWORD);
 
         findMember.updatePassword(passwordEncoder.encode(findMember.getEmail(), updatePasswordRequest.getNewPassword()));
     }
@@ -87,7 +87,7 @@ public class MemberService {
      */
     public void membershipWithdrawal(Long memberId) {
         Member findMember = memberRepository.findOne(memberId).orElseThrow(
-                () -> new GlobalException(ErrorCode.NOT_FOUND, "회원 정보가 없습니다."));
+                () -> new GlobalException(ErrorCode.NOT_FOUND_USER));
 
         memberRepository.removeOne(findMember);
     }
