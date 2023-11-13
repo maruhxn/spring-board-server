@@ -1,9 +1,9 @@
 package com.maruhxn.boardserver.interceptor;
 
-import com.maruhxn.boardserver.common.ErrorCode;
+import com.maruhxn.boardserver.common.exception.ErrorCode;
+import com.maruhxn.boardserver.common.exception.GlobalException;
 import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.domain.Post;
-import com.maruhxn.boardserver.exception.GlobalException;
 import com.maruhxn.boardserver.repository.PostRepository;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,7 +43,7 @@ public class PostAuthorCheckInterceptor implements HandlerInterceptor {
             Long postId = Long.valueOf(String.valueOf(pathVariables.get("postId")));
             System.out.println("postId = " + postId);
             Post findPost = postRepository.findOneWithAuthor(postId).orElseThrow(
-                    () -> new GlobalException(ErrorCode.NOT_FOUND, "게시글 정보가 없습니다."));
+                    () -> new GlobalException(ErrorCode.NOT_FOUND_POST));
 
             if (!loginMember.getId().equals(findPost.getMember().getId())) {
                 throw new GlobalException(ErrorCode.FORBIDDEN);
@@ -51,6 +51,6 @@ public class PostAuthorCheckInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        throw new GlobalException(ErrorCode.BAD_REQUEST, "올바르지 않은 접근입니다.");
+        throw new GlobalException(ErrorCode.BAD_REQUEST);
     }
 }

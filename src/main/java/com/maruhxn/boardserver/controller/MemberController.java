@@ -2,8 +2,8 @@ package com.maruhxn.boardserver.controller;
 
 import com.maruhxn.boardserver.dto.request.members.UpdateMemberProfileRequest;
 import com.maruhxn.boardserver.dto.request.members.UpdatePasswordRequest;
-import com.maruhxn.boardserver.dto.response.MemberResponse;
-import com.maruhxn.boardserver.dto.response.ResponseDto;
+import com.maruhxn.boardserver.dto.response.DataResponseDto;
+import com.maruhxn.boardserver.dto.response.object.MemberItem;
 import com.maruhxn.boardserver.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +21,8 @@ public class MemberController {
 
     @GetMapping("/{memberId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseDto<MemberResponse> getMemberDetail(@PathVariable Long memberId) {
-        return ResponseDto.data("회원 정보 조회 성공", memberService.getMemberDetail(memberId));
+    public DataResponseDto<MemberItem> getMemberDetail(@PathVariable Long memberId) {
+        return DataResponseDto.ok("회원 정보 조회 성공", memberService.getMemberDetail(memberId));
     }
 
     @PatchMapping("/{memberId}")

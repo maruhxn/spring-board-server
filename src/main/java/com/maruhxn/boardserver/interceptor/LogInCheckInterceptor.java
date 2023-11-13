@@ -1,8 +1,8 @@
 package com.maruhxn.boardserver.interceptor;
 
-import com.maruhxn.boardserver.common.ErrorCode;
+import com.maruhxn.boardserver.common.exception.ErrorCode;
 import com.maruhxn.boardserver.common.SessionConst;
-import com.maruhxn.boardserver.exception.GlobalException;
+import com.maruhxn.boardserver.common.exception.GlobalException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;

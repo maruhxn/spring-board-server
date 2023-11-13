@@ -24,27 +24,27 @@ public class AuthController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseDto<String> register(@RequestBody @Valid RegisterRequest registerRequest) {
+    public ResponseDto register(@RequestBody @Valid RegisterRequest registerRequest) {
         authService.register(registerRequest);
         log.info("회원가입 = {}", registerRequest);
-        return ResponseDto.empty("회원가입 성공");
+        return ResponseDto.ok("회원가입 성공");
     }
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseDto<String> login(@RequestBody @Valid LoginRequest loginRequest, HttpSession session) {
+    public ResponseDto login(@RequestBody @Valid LoginRequest loginRequest, HttpSession session) {
         session.setAttribute(SessionConst.LOGIN_MEMBER, authService.login(loginRequest));
-        return ResponseDto.empty("로그인 성공");
+        return ResponseDto.ok("로그인 성공");
     }
 
     @PostMapping("/{memberId}/password")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseDto<String> confirmPassword(
+    public ResponseDto confirmPassword(
             @RequestBody @Valid ConfirmPasswordRequest confirmPasswordRequest,
             @PathVariable Long memberId
     ) {
         authService.confirmPassword(memberId, confirmPasswordRequest);
-        return ResponseDto.empty("비밀번호 인증 성공");
+        return ResponseDto.ok("비밀번호 인증 성공");
     }
 
     @DeleteMapping("/logout")
