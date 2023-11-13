@@ -3,7 +3,6 @@ package com.maruhxn.boardserver.service;
 import com.maruhxn.boardserver.common.ErrorCode;
 import com.maruhxn.boardserver.domain.PostImage;
 import com.maruhxn.boardserver.exception.GlobalException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@Slf4j
 public class FileService {
     @Value("${file.upload_dir}")
     private String fileDir;
@@ -37,8 +35,7 @@ public class FileService {
         try {
             file.transferTo(new File(savePath)); // 파일 저장
         } catch (IOException e) {
-            log.warn(e.getMessage());
-            throw new GlobalException(ErrorCode.INTERNAL_ERROR, e);
+        throw new GlobalException(ErrorCode.INTERNAL_ERROR, e);
         }
 
         return PostImage.builder()
@@ -72,7 +69,6 @@ public class FileService {
         try {
             resource = new UrlResource("file:" + getFullPath(fileName));
         } catch (Exception e) {
-            log.warn(e.getMessage());
             throw new GlobalException(ErrorCode.INTERNAL_ERROR, e);
         }
         return resource;
@@ -122,7 +118,6 @@ public class FileService {
             File file = new File(savePath);
             file.delete();
         } catch (Exception e) {
-            log.warn(e.getMessage());
             throw new GlobalException(ErrorCode.INTERNAL_ERROR, e);
         }
     }
