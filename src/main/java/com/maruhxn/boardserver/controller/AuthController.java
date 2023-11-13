@@ -1,5 +1,6 @@
 package com.maruhxn.boardserver.controller;
 
+import com.maruhxn.boardserver.common.SessionConst;
 import com.maruhxn.boardserver.dto.request.auth.ConfirmPasswordRequest;
 import com.maruhxn.boardserver.dto.request.auth.LoginRequest;
 import com.maruhxn.boardserver.dto.request.auth.RegisterRequest;
@@ -32,7 +33,7 @@ public class AuthController {
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     public ResponseDto<String> login(@RequestBody @Valid LoginRequest loginRequest, HttpSession session) {
-        session.setAttribute("member", authService.login(loginRequest));
+        session.setAttribute(SessionConst.LOGIN_MEMBER, authService.login(loginRequest));
         return ResponseDto.empty("로그인 성공");
     }
 

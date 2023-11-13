@@ -1,5 +1,6 @@
 package com.maruhxn.boardserver.dto.request.posts;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreatePostRequest {
+    @NotEmpty
     private String title;
+    @NotEmpty
     private String content;
     private List<MultipartFile> images;
 }

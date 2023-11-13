@@ -27,15 +27,24 @@ public class MemberController {
 
     @PatchMapping("/{memberId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateMemberProfile(@PathVariable Long memberId, @RequestBody @Valid UpdateMemberProfileRequest updateMemberProfileRequest) {
-        log.info("회원 정보 수정 | username={}, profileImage={}", updateMemberProfileRequest.getUsername(), updateMemberProfileRequest.getProfileImage());
+    public void updateMemberProfile(
+            @PathVariable Long memberId,
+            @RequestBody @Valid UpdateMemberProfileRequest updateMemberProfileRequest) {
+        log.info("회원 정보 수정 | username={}, profileImage={}",
+                updateMemberProfileRequest.getUsername(),
+                updateMemberProfileRequest.getProfileImage());
         memberService.updateProfile(memberId, updateMemberProfileRequest);
     }
 
     @PatchMapping("/{memberId}/change-password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updatePassword(@PathVariable Long memberId, @RequestBody @Valid UpdatePasswordRequest updatePasswordRequest) {
-        log.info("비밀번호 수정 | currPassword={}, newPassword={}, confirmNewPassword={}", updatePasswordRequest.getCurrPassword(), updatePasswordRequest.getNewPassword(), updatePasswordRequest.getConfirmNewPassword());
+    public void updatePassword(
+            @PathVariable Long memberId,
+            @RequestBody @Valid UpdatePasswordRequest updatePasswordRequest) {
+        log.info("비밀번호 수정 | currPassword={}, newPassword={}, confirmNewPassword={}",
+                updatePasswordRequest.getCurrPassword(),
+                updatePasswordRequest.getNewPassword(),
+                updatePasswordRequest.getConfirmNewPassword());
         memberService.updatePassword(memberId, updatePasswordRequest);
     }
 
