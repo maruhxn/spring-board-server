@@ -5,9 +5,9 @@ import com.maruhxn.boardserver.dto.PostSearchCond;
 import com.maruhxn.boardserver.dto.request.posts.CreatePostRequest;
 import com.maruhxn.boardserver.dto.request.posts.UpdatePostRequest;
 import com.maruhxn.boardserver.dto.response.DataResponseDto;
+import com.maruhxn.boardserver.dto.response.ResponseDto;
 import com.maruhxn.boardserver.dto.response.object.PostDetailItem;
 import com.maruhxn.boardserver.dto.response.object.PostItem;
-import com.maruhxn.boardserver.dto.response.ResponseDto;
 import com.maruhxn.boardserver.resolver.Login;
 import com.maruhxn.boardserver.service.PostService;
 import jakarta.validation.Valid;
@@ -28,7 +28,7 @@ public class PostController {
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public DataResponseDto<List<PostItem>> getMemberDetail(@ModelAttribute PostSearchCond postSearchCond) {
+    public DataResponseDto<List<PostItem>> getMemberDetail(@ModelAttribute @Valid PostSearchCond postSearchCond) {
         log.info("title={}, content={}, author={}, page={}",
                 postSearchCond.getTitle(),
                 postSearchCond.getContent(),
@@ -58,9 +58,7 @@ public class PostController {
 
     @PatchMapping("/{postId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updatePost(@PathVariable Long postId,
-                           @Login Member loginMember,
-                           UpdatePostRequest updatePostRequest) {
+    public void updatePost(@PathVariable Long postId, UpdatePostRequest updatePostRequest) {
         log.info("게시글 수정 | title={}, content={}, images={}",
                 updatePostRequest.getTitle(),
                 updatePostRequest.getContent(),
@@ -70,14 +68,14 @@ public class PostController {
 
     @DeleteMapping("/{postId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePost(@PathVariable Long postId, @Login Member loginMember) {
+    public void deletePost(@PathVariable Long postId) {
         log.info("게시글 삭제 | postId={}", postId);
         postService.deletePost(postId);
     }
 
     @DeleteMapping("/{postId}/images/{imageId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteImage(@Login Member loginMember, @PathVariable Long imageId) {
+    public void deleteImage(@PathVariable Long imageId) {
         log.info("이미지 삭제 | imageId={}", imageId);
         postService.deleteImage(imageId);
     }
