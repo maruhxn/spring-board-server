@@ -3,11 +3,13 @@ package com.maruhxn.boardserver.exception;
 import com.maruhxn.boardserver.common.ErrorCode;
 import com.maruhxn.boardserver.dto.response.ResponseDto;
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -34,7 +36,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<Object> exception(Exception e) {
-        e.printStackTrace();
+        log.error(e.getMessage(), e);
         return ResponseEntity
                 .status(ErrorCode.INTERNAL_ERROR.getHttpStatus())
                 .body(ResponseDto.error(ErrorCode.INTERNAL_ERROR.getCode(), e.getMessage()));
