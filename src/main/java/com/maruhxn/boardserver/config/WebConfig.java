@@ -1,5 +1,6 @@
 package com.maruhxn.boardserver.config;
 
+import com.maruhxn.boardserver.interceptor.IdentificationInterceptor;
 import com.maruhxn.boardserver.interceptor.LogInCheckInterceptor;
 import com.maruhxn.boardserver.interceptor.LogOutCheckInterceptor;
 import com.maruhxn.boardserver.interceptor.PostAuthorCheckInterceptor;
@@ -31,8 +32,11 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LogOutCheckInterceptor())
                 .order(2)
                 .addPathPatterns("/auth/register", "/auth/login");
-        registry.addInterceptor(postAuthorCheckInterceptor())
+        registry.addInterceptor(new IdentificationInterceptor())
                 .order(3)
+                .addPathPatterns("/members/**");
+        registry.addInterceptor(postAuthorCheckInterceptor())
+                .order(4)
                 .addPathPatterns("/posts/{postId}", "/posts/{postId}/images/{imageId}");
     }
 
