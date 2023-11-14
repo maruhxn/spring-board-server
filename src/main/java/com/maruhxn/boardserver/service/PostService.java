@@ -56,7 +56,7 @@ public class PostService {
      */
     @Transactional(readOnly = true)
     public List<PostItem> getPostList(PostSearchCond postSearchCond) {
-        List<Post> posts = postRepository.findAllWithMember(postSearchCond.getPage());
+        List<Post> posts = postRepository.findAll(postSearchCond);
         return posts.stream()
                 .map(PostItem::fromEntity)
                 .toList();

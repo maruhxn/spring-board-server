@@ -3,18 +3,29 @@ package com.maruhxn.boardserver.repository;
 import com.maruhxn.boardserver.common.Constants;
 import com.maruhxn.boardserver.domain.Post;
 import com.maruhxn.boardserver.domain.PostImage;
+import com.maruhxn.boardserver.dto.PostSearchCond;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
 
+import static com.maruhxn.boardserver.domain.QMember.member;
+import static com.maruhxn.boardserver.domain.QPost.post;
+
 @Repository
-@RequiredArgsConstructor
 public class PostRepository {
 
     private final EntityManager em;
+    private final JPAQueryFactory query;
+
+    public PostRepository(EntityManager em) {
+        this.em = em;
+        this.query = new JPAQueryFactory(em);
+    }
 
     public void save(Post post) {
         em.persist(post);
@@ -52,6 +63,41 @@ public class PostRepository {
                 .setFirstResult(Constants.PAGE_SIZE * page)
                 .setMaxResults(Constants.PAGE_SIZE)
                 .getResultList();
+    }
+
+    public List<Post> findAll(PostSearchCond postSearchCond) {
+        return query
+                .select(post)
+                .from(post)
+                .join(post.member, member)
+                .where(
+                        containTitleKeyword(postSearchCond.getTitle()),
+                        containContentKeyword(postSearchCond.getContent()),
+                        authorLike(postSearchCond.getAuthor()))
+                .offset((long) Constants.PAGE_SIZE * postSearchCond.getPage())
+                .limit(Constants.PAGE_SIZE)
+                .fetch();
+    }
+
+    private BooleanExpression containTitleKeyword(String title) {
+        if (!StringUtils.hasText(title)) {
+            return null;
+        }
+        return post.title.contains(title);
+    }
+
+    private BooleanExpression containContentKeyword(String content) {
+        if (!StringUtils.hasText(content)) {
+            return null;
+        }
+        return post.content.contains(content);
+    }
+
+    private static BooleanExpression authorLike(String authorName) {
+        if (!StringUtils.hasText(authorName)) {
+            return null;
+        }
+        return member.username.like(authorName);
     }
 
     public void removePost(Post post) {
