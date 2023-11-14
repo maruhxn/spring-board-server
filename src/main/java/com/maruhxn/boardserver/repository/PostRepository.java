@@ -3,6 +3,7 @@ package com.maruhxn.boardserver.repository;
 import com.maruhxn.boardserver.common.Constants;
 import com.maruhxn.boardserver.domain.Post;
 import com.maruhxn.boardserver.domain.PostImage;
+import com.maruhxn.boardserver.domain.QComment;
 import com.maruhxn.boardserver.dto.PostSearchCond;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -13,6 +14,7 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 import java.util.Optional;
 
+import static com.maruhxn.boardserver.domain.QComment.comment;
 import static com.maruhxn.boardserver.domain.QMember.member;
 import static com.maruhxn.boardserver.domain.QPost.post;
 
@@ -55,21 +57,22 @@ public class PostRepository {
                 .getResultList();
         return findPost.stream().findFirst();
     }
-
-    public List<Post> findAllWithMember(Integer page) {
-        return em.createQuery(
-                        "select p from Post p" +
-                                " join fetch p.member", Post.class)
-                .setFirstResult(Constants.PAGE_SIZE * page)
-                .setMaxResults(Constants.PAGE_SIZE)
-                .getResultList();
-    }
+//    public List<Post> findAllWithMember(Integer page) {
+//        return em.createQuery(
+//                        "select p from Post p" +
+//                                " join fetch p.member", Post.class)
+//                .setFirstResult(Constants.PAGE_SIZE * page)
+//                .setMaxResults(Constants.PAGE_SIZE)
+//                .getResultList();
+//    }
 
     public List<Post> findAll(PostSearchCond postSearchCond) {
         return query
                 .select(post)
                 .from(post)
                 .join(post.member, member)
+                .fetchJoin()
+                .leftJoin(post.comments, comment)
                 .where(
                         containTitleKeyword(postSearchCond.getTitle()),
                         containContentKeyword(postSearchCond.getContent()),

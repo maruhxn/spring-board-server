@@ -25,7 +25,7 @@ public class PostItem {
                 .authorName(p.getMember().getUsername())
                 .createdAt(p.getCreatedAt())
                 .viewCount(p.getViewCount())
-                .commentCount(100L) // TODO: 게시글 댓글 수 조회 기능 추가
+                .commentCount((long) p.getComments().size()) // TODO: 게시글 댓글 수 조회 기능 추가
                 .build();
     }
 }
