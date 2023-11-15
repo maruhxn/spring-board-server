@@ -9,6 +9,7 @@ import com.maruhxn.boardserver.dto.request.members.UpdatePasswordRequest;
 import com.maruhxn.boardserver.dto.response.object.MemberItem;
 import com.maruhxn.boardserver.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,11 +45,14 @@ public class MemberService {
      * @param memberId
      * @param updateMemberProfileRequest
      */
-    public void updateProfile(Long memberId, UpdateMemberProfileRequest updateMemberProfileRequest) {
+    public void updateProfile(
+            Long memberId, UpdateMemberProfileRequest updateMemberProfileRequest
+    ) throws DataIntegrityViolationException {
         Member findMember = memberRepository.findOne(memberId).orElseThrow(
                 () -> new GlobalException(ErrorCode.NOT_FOUND_USER));
 
-        findMember.updateProfile(updateMemberProfileRequest.getUsername(), updateMemberProfileRequest.getProfileImage());
+        findMember.updateProfile(
+                updateMemberProfileRequest.getUsername(), updateMemberProfileRequest.getProfileImage());
     }
 
     /**
@@ -77,7 +81,9 @@ public class MemberService {
                 findMember.getPassword()))
             throw new GlobalException(ErrorCode.INCORRECT_PASSWORD);
 
-        findMember.updatePassword(passwordEncoder.encode(findMember.getEmail(), updatePasswordRequest.getNewPassword()));
+        findMember.updatePassword(
+                passwordEncoder.encode(findMember.getEmail(), updatePasswordRequest.getNewPassword())
+        );
     }
 
     /**

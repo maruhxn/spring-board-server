@@ -27,6 +27,7 @@ public enum ErrorCode {
     NOT_FOUND_IMAGE(HttpStatus.NOT_FOUND, "이미지 정보가 존재하지 않습니다."),
     /* UNPROCESSABLE CONTENT 422 */
     EXISTING_USER(HttpStatus.UNPROCESSABLE_ENTITY, "이미 존재하는 이메일 혹은 유저명입니다."),
+    EXISTING_USERNAME(HttpStatus.UNPROCESSABLE_ENTITY, "이미 존재하는 유저명입니다."),
     LOGOUT_REQUIRED(HttpStatus.UNPROCESSABLE_ENTITY, "이미 로그인 되어있습니다."),
 
     /* INTERNAL SERVER ERROR  500 */
