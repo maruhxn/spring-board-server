@@ -4,6 +4,7 @@ import com.maruhxn.boardserver.dto.response.ResponseDto;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,6 +15,13 @@ import java.util.List;
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler
+    public ResponseEntity<Object> dataIntegrityViolation(DataIntegrityViolationException e) {
+        return ResponseEntity
+                .status(ErrorCode.EXISTING_USERNAME.getHttpStatus())
+                .body(ResponseDto.error(ErrorCode.EXISTING_USERNAME));
+    }
 
     @ExceptionHandler
     public ResponseEntity<Object> validationFail(MethodArgumentNotValidException e) {

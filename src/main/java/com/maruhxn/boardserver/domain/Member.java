@@ -8,8 +8,6 @@ import org.springframework.util.StringUtils;
 
 @Entity
 @Table(
-//        uniqueConstraints = {
-//                @UniqueConstraint(columnNames = {"email", "username"})},
         indexes = {
                 @Index(name = "idx__email__username", columnList = "email, username")
         }) // (email), (email, username) cover
