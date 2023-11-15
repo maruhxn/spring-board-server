@@ -7,6 +7,8 @@ import com.maruhxn.boardserver.interceptor.PostAuthorCheckInterceptor;
 import com.maruhxn.boardserver.resolver.LoginMemberArgumentResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -48,5 +50,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public PostAuthorCheckInterceptor postAuthorCheckInterceptor() {
         return new PostAuthorCheckInterceptor();
+    }
+
+    @Bean
+    public RedisSerializer<Object> springSessionDefaultRedisSerializer() {
+        return new GenericJackson2JsonRedisSerializer();
     }
 }
