@@ -1,38 +1,32 @@
 package com.maruhxn.boardserver.domain;
 
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.StringUtils;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"email", "username"})},
+//        uniqueConstraints = {
+//                @UniqueConstraint(columnNames = {"email", "username"})},
         indexes = {
                 @Index(name = "idx__email__username", columnList = "email, username")
         }) // (email), (email, username) cover
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
-public class Member {
+public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long id;
 
-    @Column(length = 30, nullable = false)
+    @Column(length = 30, nullable = false, unique = true)
     private String email;
 
-    @Column(length = 10, nullable = false)
+    @Column(length = 10, nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false)
@@ -40,18 +34,6 @@ public class Member {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String profileImage;
-
-    @Column(nullable = false)
-    @CreatedDate
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(nullable = false)
-    @LastModifiedDate
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Builder
     public Member(String email, String username, String password, String profileImage) {

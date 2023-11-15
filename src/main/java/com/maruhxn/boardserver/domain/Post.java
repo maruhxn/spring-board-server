@@ -2,11 +2,8 @@ package com.maruhxn.boardserver.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.util.StringUtils;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +11,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(exclude = {"member", "images", "comments"})
-public class Post {
+public class Post extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
@@ -38,12 +35,6 @@ public class Post {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
-
-    @CreatedDate
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Builder
     public Post(String title, String content, Long viewCount, Member member) {
