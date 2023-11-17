@@ -2,18 +2,19 @@ package com.maruhxn.boardserver.controller;
 
 import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.dto.request.comments.CreateCommentRequest;
-import com.maruhxn.boardserver.dto.response.object.CommentItem;
+import com.maruhxn.boardserver.dto.response.CommentPageItem;
 import com.maruhxn.boardserver.dto.response.DataResponseDto;
 import com.maruhxn.boardserver.dto.response.ResponseDto;
+import com.maruhxn.boardserver.dto.response.object.CommentItem;
 import com.maruhxn.boardserver.resolver.Login;
 import com.maruhxn.boardserver.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RequestMapping("/posts/{postId}/comments")
 @RestController
@@ -25,11 +26,11 @@ public class CommentController {
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public DataResponseDto<List<CommentItem>> getCommentList(
+    public DataResponseDto<CommentPageItem> getCommentList(
             @PathVariable Long postId,
-            @RequestParam(value = "page", defaultValue = "0") int page) {
-        List<CommentItem> commentList = commentService.getCommentList(postId, page);
-        return DataResponseDto.ok("댓글 리스트 조회 성공", commentList);
+            Pageable pageable) {
+        Page<CommentItem> commentList = commentService.getCommentList(postId, pageable);
+        return DataResponseDto.ok("댓글 리스트 조회 성공", CommentPageItem.fromPage(commentList));
     }
 
     @PostMapping("")
