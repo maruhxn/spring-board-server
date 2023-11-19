@@ -60,8 +60,7 @@ public class PostService {
      */
     @Transactional(readOnly = true)
     public Page<PostItem> getPostList(PostSearchCond postSearchCond, Pageable pageable) {
-        Page<Post> page = postRepository.findAllByConditions(postSearchCond, pageable);
-        return page.map(PostItem::fromEntity);
+        return postRepository.findAllByConditions(postSearchCond, pageable);
     }
 
     /**

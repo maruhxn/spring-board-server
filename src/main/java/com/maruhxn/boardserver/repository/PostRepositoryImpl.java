@@ -1,7 +1,8 @@
 package com.maruhxn.boardserver.repository;
 
-import com.maruhxn.boardserver.domain.Post;
 import com.maruhxn.boardserver.dto.PostSearchCond;
+import com.maruhxn.boardserver.dto.response.object.PostItem;
+import com.maruhxn.boardserver.dto.response.object.QPostItem;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -23,15 +24,25 @@ import static org.springframework.util.StringUtils.hasText;
 public class PostRepositoryImpl implements PostRepositoryCustom {
     private final JPAQueryFactory query;
 
-    // BUG: where 문에 오류가있는건지.. member에 대한 in 쿼리가 나가고 있다.. -> LAZY 세팅이 안 되어있었네!!
     @Override
-    public Page<Post> findAllByConditions(PostSearchCond postSearchCond, Pageable pageable) {
-        List<Post> posts = query.selectFrom(post)
-                .leftJoin(post.member, member).fetchJoin()
-                .leftJoin(post.comments, comment) // 지연 로딩 + batch_size
+    public Page<PostItem> findAllByConditions(PostSearchCond postSearchCond, Pageable pageable) {
+        List<PostItem> postItems = query
+                .select(new QPostItem(
+                        post.id,
+                        post.title,
+                        post.content,
+                        member.username,
+                        post.createdAt,
+                        post.viewCount,
+                        comment.count()
+                ))
+                .from(post)
+                .leftJoin(post.member, member)
+                .leftJoin(post.comments, comment)
                 .where(containTitleKeyword(postSearchCond.getTitle()),
                         containContentKeyword(postSearchCond.getContent()),
                         authorLike(postSearchCond.getAuthor()))
+                .groupBy(post.id)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -43,7 +54,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         containContentKeyword(postSearchCond.getContent()),
                         authorLike(postSearchCond.getAuthor()));
 
-        return PageableExecutionUtils.getPage(posts, pageable, countQuery::fetchOne);
+        return PageableExecutionUtils.getPage(postItems, pageable, countQuery::fetchOne);
     }
 
     private BooleanExpression containTitleKeyword(String title) {
