@@ -40,7 +40,7 @@ public class PostAuthorCheckInterceptor implements HandlerInterceptor {
             Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(
                     HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
             Long postId = Long.valueOf(String.valueOf(pathVariables.get("postId")));
-            Post findPost = postRepository.findOneWithAuthor(postId).orElseThrow(
+            Post findPost = postRepository.findWithMemberFirstById(postId).orElseThrow(
                     () -> new GlobalException(ErrorCode.NOT_FOUND_POST));
             if (!loginMember.getId().equals(findPost.getMember().getId())) {
                 throw new GlobalException(ErrorCode.FORBIDDEN);

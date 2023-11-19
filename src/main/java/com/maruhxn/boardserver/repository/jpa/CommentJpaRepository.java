@@ -1,4 +1,4 @@
-package com.maruhxn.boardserver.repository;
+package com.maruhxn.boardserver.repository.jpa;
 
 import com.maruhxn.boardserver.common.Constants;
 import com.maruhxn.boardserver.domain.Comment;

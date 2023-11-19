@@ -2,8 +2,8 @@ package com.maruhxn.boardserver.controller;
 
 import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.dto.request.comments.CreateCommentRequest;
-import com.maruhxn.boardserver.dto.response.CommentPageItem;
 import com.maruhxn.boardserver.dto.response.DataResponseDto;
+import com.maruhxn.boardserver.dto.response.PageItem;
 import com.maruhxn.boardserver.dto.response.ResponseDto;
 import com.maruhxn.boardserver.dto.response.object.CommentItem;
 import com.maruhxn.boardserver.resolver.Login;
@@ -26,11 +26,11 @@ public class CommentController {
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public DataResponseDto<CommentPageItem> getCommentList(
+    public DataResponseDto<PageItem<CommentItem>> getCommentList(
             @PathVariable Long postId,
             Pageable pageable) {
         Page<CommentItem> commentList = commentService.getCommentList(postId, pageable);
-        return DataResponseDto.ok("댓글 리스트 조회 성공", CommentPageItem.fromPage(commentList));
+        return DataResponseDto.ok("댓글 리스트 조회 성공", PageItem.fromPage(commentList));
     }
 
     @PostMapping("")

@@ -1,26 +1,25 @@
 package com.maruhxn.boardserver.dto.response;
 
-import com.maruhxn.boardserver.dto.response.object.CommentItem;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.domain.Page;
 
+import java.util.Collections;
 import java.util.List;
 
 @Data
 @Builder
-public class CommentPageItem {
-    private List<CommentItem> comments;
+public class PageItem<T> {
+    private List<T> results;
     private Boolean isFirst;
     private Boolean isLast;
     private Boolean isEmpty;
     private int totalPage;
     private Long totalElements;
 
-    public static CommentPageItem fromPage(Page<CommentItem> page) {
-        System.out.println("page.getContent() = " + page.getContent());
-        return CommentPageItem.builder()
-                .comments(page.getContent())
+    public static <T> PageItem fromPage(Page<T> page) {
+        return PageItem.builder()
+                .results(Collections.singletonList(page.getContent()))
                 .isFirst(page.isFirst())
                 .isLast(page.isLast())
                 .isEmpty(page.isEmpty())
