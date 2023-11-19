@@ -5,6 +5,8 @@ import com.maruhxn.boardserver.interceptor.LogInCheckInterceptor;
 import com.maruhxn.boardserver.interceptor.LogOutCheckInterceptor;
 import com.maruhxn.boardserver.interceptor.PostAuthorCheckInterceptor;
 import com.maruhxn.boardserver.resolver.LoginMemberArgumentResolver;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
@@ -36,7 +38,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/auth/register", "/auth/login");
         registry.addInterceptor(new IdentificationInterceptor())
                 .order(3)
-                .addPathPatterns("/members/**");
+                .addPathPatterns("/auth/{memberId}/password", "/members/**");
+
         registry.addInterceptor(postAuthorCheckInterceptor())
                 .order(4)
                 .addPathPatterns("/posts/{postId}", "/posts/{postId}/images/{imageId}");
@@ -55,5 +58,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public RedisSerializer<Object> springSessionDefaultRedisSerializer() {
         return new GenericJackson2JsonRedisSerializer();
+    }
+
+    @Bean
+    JPAQueryFactory jpaQueryFactory(EntityManager em) {
+        return new JPAQueryFactory((em));
     }
 }

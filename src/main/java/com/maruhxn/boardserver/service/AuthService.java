@@ -55,7 +55,7 @@ public class AuthService {
     }
 
     public void confirmPassword(Long memberId, ConfirmPasswordRequest confirmPasswordRequest) {
-        Member findMember = memberRepository.findOne(memberId)
+        Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.NOT_FOUND_USER));
         Boolean isMatch = passwordEncoder.isMatch(findMember.getEmail(), confirmPasswordRequest.getCurrPassword(), findMember.getPassword());
 

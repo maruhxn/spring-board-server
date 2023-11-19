@@ -29,7 +29,7 @@ public class MemberService {
      */
     @Transactional(readOnly = true)
     public MemberItem getMemberDetail(Long memberId) {
-        Member findMember = memberRepository.findOne(memberId).orElseThrow(
+        Member findMember = memberRepository.findById(memberId).orElseThrow(
                 () -> new GlobalException(ErrorCode.NOT_FOUND_USER));
         return MemberItem.builder()
                 .memberId(findMember.getId())
@@ -48,7 +48,7 @@ public class MemberService {
     public void updateProfile(
             Long memberId, UpdateMemberProfileRequest updateMemberProfileRequest
     ) throws DataIntegrityViolationException {
-        Member findMember = memberRepository.findOne(memberId).orElseThrow(
+        Member findMember = memberRepository.findById(memberId).orElseThrow(
                 () -> new GlobalException(ErrorCode.NOT_FOUND_USER));
 
         findMember.updateProfile(
@@ -62,7 +62,7 @@ public class MemberService {
      * @param updatePasswordRequest
      */
     public void updatePassword(Long memberId, UpdatePasswordRequest updatePasswordRequest) {
-        Member findMember = memberRepository.findOne(memberId).orElseThrow(
+        Member findMember = memberRepository.findById(memberId).orElseThrow(
                 () -> new GlobalException(ErrorCode.NOT_FOUND_USER));
 
         if (!updatePasswordRequest.getNewPassword().equals(updatePasswordRequest.getConfirmNewPassword())) {
@@ -92,10 +92,10 @@ public class MemberService {
      * @param memberId
      */
     public void membershipWithdrawal(Long memberId) {
-        Member findMember = memberRepository.findOne(memberId).orElseThrow(
+        Member findMember = memberRepository.findById(memberId).orElseThrow(
                 () -> new GlobalException(ErrorCode.NOT_FOUND_USER));
 
-        memberRepository.removeOne(findMember);
+        memberRepository.delete(findMember);
     }
 
 }

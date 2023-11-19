@@ -5,6 +5,7 @@ import com.maruhxn.boardserver.dto.PostSearchCond;
 import com.maruhxn.boardserver.dto.request.posts.CreatePostRequest;
 import com.maruhxn.boardserver.dto.request.posts.UpdatePostRequest;
 import com.maruhxn.boardserver.dto.response.DataResponseDto;
+import com.maruhxn.boardserver.dto.response.PageItem;
 import com.maruhxn.boardserver.dto.response.ResponseDto;
 import com.maruhxn.boardserver.dto.response.object.PostDetailItem;
 import com.maruhxn.boardserver.dto.response.object.PostItem;
@@ -13,10 +14,10 @@ import com.maruhxn.boardserver.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RequestMapping("/posts")
 @RestController
@@ -28,14 +29,15 @@ public class PostController {
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public DataResponseDto<List<PostItem>> getMemberDetail(@ModelAttribute @Valid PostSearchCond postSearchCond) {
-        log.info("title={}, content={}, author={}, page={}",
+    public DataResponseDto<PageItem<PostItem>> getPostList(
+            @ModelAttribute @Valid PostSearchCond postSearchCond,
+            Pageable pageable) {
+        log.info("title={}, content={}, author={}",
                 postSearchCond.getTitle(),
                 postSearchCond.getContent(),
-                postSearchCond.getAuthor(),
-                postSearchCond.getPage());
-        List<PostItem> result = postService.getPostList(postSearchCond);
-        return DataResponseDto.ok("게시글 리스트 조회 성공", result);
+                postSearchCond.getAuthor());
+        Page<PostItem> postList = postService.getPostList(postSearchCond, pageable);
+        return DataResponseDto.ok("게시글 리스트 조회 성공", PageItem.fromPage(postList));
     }
 
     @PostMapping("")

@@ -10,10 +10,10 @@ import com.maruhxn.boardserver.dto.response.object.CommentItem;
 import com.maruhxn.boardserver.repository.CommentRepository;
 import com.maruhxn.boardserver.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +25,7 @@ public class CommentService {
 
     public void createComment(Member member, Long postId, CreateCommentRequest createCommentRequest) {
 
-        Post findPost = postRepository.findOne(postId)
+        Post findPost = postRepository.findById(postId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.NOT_FOUND_POST));
 
         Comment comment = Comment.builder()
@@ -38,19 +38,17 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<CommentItem> getCommentList(Long postId, int page) {
-        List<Comment> comments = commentRepository.findAll(postId, page);
-        return comments.stream()
-                .map(CommentItem::fromEntity)
-                .toList();
+    public Page<CommentItem> getCommentList(Long postId, Pageable pageable) {
+        Page<Comment> page = commentRepository.findAllByPostId(postId, pageable);
+        return page.map(CommentItem::fromEntity);
     }
 
     public void deleteComment(Member loginMember, Long commentId) {
-        Comment findComment = commentRepository.findOne(commentId)
+        Comment findComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.NOT_FOUND_COMMENT));
         checkIsAuthor(loginMember.getId(), findComment);
 
-        commentRepository.removeOne(findComment);
+        commentRepository.delete(findComment);
     }
 
     private static void checkIsAuthor(Long memberId, Comment comment) {
