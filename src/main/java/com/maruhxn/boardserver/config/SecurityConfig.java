@@ -2,11 +2,15 @@ package com.maruhxn.boardserver.config;
 
 import com.maruhxn.boardserver.auth.AjaxAuthenticationProvider;
 import com.maruhxn.boardserver.auth.AjaxLoginFilter;
-import com.maruhxn.boardserver.auth.handler.*;
+import com.maruhxn.boardserver.auth.handler.AjaxAccessDeniedHandler;
+import com.maruhxn.boardserver.auth.handler.AjaxAuthenticationEntryPoint;
+import com.maruhxn.boardserver.auth.handler.AjaxAuthenticationFailureHandler;
+import com.maruhxn.boardserver.auth.handler.AjaxAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -34,15 +38,16 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authz ->
-                        authz.anyRequest().permitAll())
+                        authz
+                                .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/posts", "/posts/{postId}").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/posts/{postId}/comments").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/images/{fileName}").permitAll()
+                                .anyRequest().authenticated())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .rememberMe(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-//                .logout(logout ->
-//                        logout
-//                                .logoutUrl("/auth/logout")
-//                                .logoutSuccessHandler(ajaxLogoutSuccessHandler()))
                 .securityContext((securityContext) -> {
                     securityContext.securityContextRepository(securityContextRepository());
                     securityContext.requireExplicitSave(true);
@@ -81,11 +86,6 @@ public class SecurityConfig {
     public AjaxAuthenticationFailureHandler ajaxAuthenticationFailureHandler() {
         return new AjaxAuthenticationFailureHandler();
     }
-
-//    @Bean
-//    public AjaxLogoutSuccessHandler ajaxLogoutSuccessHandler() {
-//        return new AjaxLogoutSuccessHandler();
-//    }
 
     @Bean
     public AjaxLoginFilter ajaxLoginFilter() throws Exception {
