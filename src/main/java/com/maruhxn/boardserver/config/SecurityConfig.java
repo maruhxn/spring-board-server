@@ -2,10 +2,7 @@ package com.maruhxn.boardserver.config;
 
 import com.maruhxn.boardserver.auth.AjaxAuthenticationProvider;
 import com.maruhxn.boardserver.auth.AjaxLoginFilter;
-import com.maruhxn.boardserver.auth.handler.AjaxAccessDeniedHandler;
-import com.maruhxn.boardserver.auth.handler.AjaxAuthenticationEntryPoint;
-import com.maruhxn.boardserver.auth.handler.AjaxAuthenticationFailureHandler;
-import com.maruhxn.boardserver.auth.handler.AjaxAuthenticationSuccessHandler;
+import com.maruhxn.boardserver.auth.handler.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -26,6 +24,7 @@ import org.springframework.security.web.context.SecurityContextRepository;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Autowired
@@ -40,6 +39,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .rememberMe(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
+                .logout(logout ->
+                        logout
+                                .logoutUrl("/auth/logout")
+                                .logoutSuccessHandler(ajaxLogoutSuccessHandler()))
                 .securityContext((securityContext) -> {
                     securityContext.securityContextRepository(securityContextRepository());
                     securityContext.requireExplicitSave(true);
@@ -77,6 +80,11 @@ public class SecurityConfig {
     @Bean
     public AjaxAuthenticationFailureHandler ajaxAuthenticationFailureHandler() {
         return new AjaxAuthenticationFailureHandler();
+    }
+
+    @Bean
+    public AjaxLogoutSuccessHandler ajaxLogoutSuccessHandler() {
+        return new AjaxLogoutSuccessHandler();
     }
 
     @Bean
