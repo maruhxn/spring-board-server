@@ -39,10 +39,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .rememberMe(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .logout(logout ->
-                        logout
-                                .logoutUrl("/auth/logout")
-                                .logoutSuccessHandler(ajaxLogoutSuccessHandler()))
+//                .logout(logout ->
+//                        logout
+//                                .logoutUrl("/auth/logout")
+//                                .logoutSuccessHandler(ajaxLogoutSuccessHandler()))
                 .securityContext((securityContext) -> {
                     securityContext.securityContextRepository(securityContextRepository());
                     securityContext.requireExplicitSave(true);
@@ -82,10 +82,10 @@ public class SecurityConfig {
         return new AjaxAuthenticationFailureHandler();
     }
 
-    @Bean
-    public AjaxLogoutSuccessHandler ajaxLogoutSuccessHandler() {
-        return new AjaxLogoutSuccessHandler();
-    }
+//    @Bean
+//    public AjaxLogoutSuccessHandler ajaxLogoutSuccessHandler() {
+//        return new AjaxLogoutSuccessHandler();
+//    }
 
     @Bean
     public AjaxLoginFilter ajaxLoginFilter() throws Exception {
