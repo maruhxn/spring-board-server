@@ -1,8 +1,6 @@
 package com.maruhxn.boardserver.controller;
 
-import com.maruhxn.boardserver.common.SessionConst;
 import com.maruhxn.boardserver.dto.request.auth.ConfirmPasswordRequest;
-import com.maruhxn.boardserver.dto.request.auth.LoginRequest;
 import com.maruhxn.boardserver.dto.request.auth.RegisterRequest;
 import com.maruhxn.boardserver.dto.response.ResponseDto;
 import com.maruhxn.boardserver.service.AuthService;
@@ -30,12 +28,12 @@ public class AuthController {
         return ResponseDto.ok("회원가입 성공");
     }
 
-    @PostMapping("/login")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseDto login(@RequestBody @Valid LoginRequest loginRequest, HttpSession session) {
-        session.setAttribute(SessionConst.LOGIN_MEMBER, authService.login(loginRequest));
-        return ResponseDto.ok("로그인 성공");
-    }
+//    @PostMapping("/login")
+//    @ResponseStatus(HttpStatus.OK)
+//    public ResponseDto login(@RequestBody @Valid LoginRequest loginRequest, HttpSession session) {
+//        session.setAttribute(SessionConst.LOGIN_MEMBER, authService.login(loginRequest));
+//        return ResponseDto.ok("로그인 성공");
+//    }
 
     @PostMapping("/{memberId}/password")
     @ResponseStatus(HttpStatus.OK)
