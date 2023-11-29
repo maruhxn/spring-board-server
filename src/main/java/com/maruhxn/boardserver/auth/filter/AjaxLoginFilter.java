@@ -1,6 +1,7 @@
-package com.maruhxn.boardserver.auth;
+package com.maruhxn.boardserver.auth.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.maruhxn.boardserver.auth.common.AjaxAuthenticationToken;
 import com.maruhxn.boardserver.common.exception.ErrorCode;
 import com.maruhxn.boardserver.dto.request.auth.LoginRequest;
 import jakarta.servlet.ServletException;

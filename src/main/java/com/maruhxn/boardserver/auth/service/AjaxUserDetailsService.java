@@ -1,5 +1,6 @@
-package com.maruhxn.boardserver.auth;
+package com.maruhxn.boardserver.auth.service;
 
+import com.maruhxn.boardserver.auth.common.AccountContext;
 import com.maruhxn.boardserver.common.exception.ErrorCode;
 import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.repository.MemberRepository;

@@ -1,7 +1,7 @@
 package com.maruhxn.boardserver.config;
 
-import com.maruhxn.boardserver.auth.AjaxAuthenticationProvider;
-import com.maruhxn.boardserver.auth.AjaxLoginFilter;
+import com.maruhxn.boardserver.auth.provider.AjaxAuthenticationProvider;
+import com.maruhxn.boardserver.auth.filter.AjaxLoginFilter;
 import com.maruhxn.boardserver.auth.handler.AjaxAccessDeniedHandler;
 import com.maruhxn.boardserver.auth.handler.AjaxAuthenticationEntryPoint;
 import com.maruhxn.boardserver.auth.handler.AjaxAuthenticationFailureHandler;

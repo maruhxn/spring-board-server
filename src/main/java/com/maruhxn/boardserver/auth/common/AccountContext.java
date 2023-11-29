@@ -1,4 +1,4 @@
-package com.maruhxn.boardserver.auth;
+package com.maruhxn.boardserver.auth.common;
 
 import com.maruhxn.boardserver.domain.Member;
 import lombok.Getter;
