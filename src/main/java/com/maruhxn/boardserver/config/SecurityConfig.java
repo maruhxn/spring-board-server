@@ -62,10 +62,23 @@ public class SecurityConfig {
     public AjaxAuthenticationProvider ajaxAuthenticationProvider() {
         return new AjaxAuthenticationProvider();
     }
+
+    @Bean
+    public AjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandler() {
+        return new AjaxAuthenticationSuccessHandler();
+    }
+
+    @Bean
+    public AjaxAuthenticationFailureHandler ajaxAuthenticationFailureHandler() {
+        return new AjaxAuthenticationFailureHandler();
+    }
+
     @Bean
     public AjaxLoginFilter ajaxLoginFilter() throws Exception {
         AjaxLoginFilter ajaxLoginFilter = new AjaxLoginFilter();
         ajaxLoginFilter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
+        ajaxLoginFilter.setAuthenticationSuccessHandler(ajaxAuthenticationSuccessHandler());
+        ajaxLoginFilter.setAuthenticationFailureHandler(ajaxAuthenticationFailureHandler());
         return ajaxLoginFilter;
     }
 
