@@ -2,6 +2,8 @@ package com.maruhxn.boardserver.config;
 
 import com.maruhxn.boardserver.auth.AjaxAuthenticationProvider;
 import com.maruhxn.boardserver.auth.AjaxLoginFilter;
+import com.maruhxn.boardserver.auth.handler.AjaxAccessDeniedHandler;
+import com.maruhxn.boardserver.auth.handler.AjaxAuthenticationEntryPoint;
 import com.maruhxn.boardserver.auth.handler.AjaxAuthenticationFailureHandler;
 import com.maruhxn.boardserver.auth.handler.AjaxAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +44,11 @@ public class SecurityConfig {
                     securityContext.securityContextRepository(securityContextRepository());
                     securityContext.requireExplicitSave(true);
                 })
-                .addFilterAt(ajaxLoginFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(ajaxLoginFilter(), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling
+                                .authenticationEntryPoint(new AjaxAuthenticationEntryPoint())
+                                .accessDeniedHandler(new AjaxAccessDeniedHandler()));
         return http.build();
     }
 
