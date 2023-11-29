@@ -4,7 +4,6 @@ import com.maruhxn.boardserver.common.exception.ErrorCode;
 import com.maruhxn.boardserver.common.exception.GlobalException;
 import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.dto.request.auth.ConfirmPasswordRequest;
-import com.maruhxn.boardserver.dto.request.auth.LoginRequest;
 import com.maruhxn.boardserver.dto.request.auth.RegisterRequest;
 import com.maruhxn.boardserver.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,17 +41,17 @@ public class AuthService {
         memberRepository.save(member);
     }
 
-    public Member login(LoginRequest loginRequest) {
-        // 유저 조회
-        Member findMember = memberRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new GlobalException(ErrorCode.NOT_FOUND_USER));
-        // 비밀번호 일치 여부 확인
-        Boolean isMatch = passwordEncoder.matches(loginRequest.getPassword(), findMember.getPassword());
-
-        if (!isMatch) throw new GlobalException(ErrorCode.INCORRECT_PASSWORD);
-
-        return findMember;
-    }
+//    public Member login(LoginRequest loginRequest) {
+//        // 유저 조회
+//        Member findMember = memberRepository.findByEmail(loginRequest.getEmail())
+//                .orElseThrow(() -> new GlobalException(ErrorCode.NOT_FOUND_USER));
+//        // 비밀번호 일치 여부 확인
+//        Boolean isMatch = passwordEncoder.matches(loginRequest.getPassword(), findMember.getPassword());
+//
+//        if (!isMatch) throw new GlobalException(ErrorCode.INCORRECT_PASSWORD);
+//
+//        return findMember;
+//    }
 
     public void confirmPassword(Long memberId, ConfirmPasswordRequest confirmPasswordRequest) {
         Member findMember = memberRepository.findById(memberId)
