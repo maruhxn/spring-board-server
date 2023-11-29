@@ -1,6 +1,5 @@
 package com.maruhxn.boardserver.controller;
 
-import com.maruhxn.boardserver.dto.request.auth.ConfirmPasswordRequest;
 import com.maruhxn.boardserver.dto.request.auth.RegisterRequest;
 import com.maruhxn.boardserver.dto.response.ResponseDto;
 import com.maruhxn.boardserver.service.AuthService;
@@ -34,16 +33,6 @@ public class AuthController {
 //        session.setAttribute(SessionConst.LOGIN_MEMBER, authService.login(loginRequest));
 //        return ResponseDto.ok("로그인 성공");
 //    }
-
-    @PostMapping("/{memberId}/password")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseDto confirmPassword(
-            @RequestBody @Valid ConfirmPasswordRequest confirmPasswordRequest,
-            @PathVariable Long memberId
-    ) {
-        authService.confirmPassword(memberId, confirmPasswordRequest);
-        return ResponseDto.ok("비밀번호 인증 성공");
-    }
 
     @DeleteMapping("/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)

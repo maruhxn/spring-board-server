@@ -1,8 +1,10 @@
 package com.maruhxn.boardserver.controller;
 
+import com.maruhxn.boardserver.dto.request.auth.ConfirmPasswordRequest;
 import com.maruhxn.boardserver.dto.request.members.UpdateMemberProfileRequest;
 import com.maruhxn.boardserver.dto.request.members.UpdatePasswordRequest;
 import com.maruhxn.boardserver.dto.response.DataResponseDto;
+import com.maruhxn.boardserver.dto.response.ResponseDto;
 import com.maruhxn.boardserver.dto.response.object.MemberItem;
 import com.maruhxn.boardserver.service.MemberService;
 import jakarta.validation.Valid;
@@ -46,6 +48,16 @@ public class MemberController {
                 updatePasswordRequest.getNewPassword(),
                 updatePasswordRequest.getConfirmNewPassword());
         memberService.updatePassword(memberId, updatePasswordRequest);
+    }
+
+    @PostMapping("/{memberId}/confirm-password")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseDto confirmPassword(
+            @RequestBody @Valid ConfirmPasswordRequest confirmPasswordRequest,
+            @PathVariable Long memberId
+    ) {
+        memberService.confirmPassword(memberId, confirmPasswordRequest);
+        return ResponseDto.ok("비밀번호 인증 성공");
     }
 
     @DeleteMapping("/{memberId}")

@@ -3,7 +3,6 @@ package com.maruhxn.boardserver.service;
 import com.maruhxn.boardserver.common.exception.ErrorCode;
 import com.maruhxn.boardserver.common.exception.GlobalException;
 import com.maruhxn.boardserver.domain.Member;
-import com.maruhxn.boardserver.dto.request.auth.ConfirmPasswordRequest;
 import com.maruhxn.boardserver.dto.request.auth.RegisterRequest;
 import com.maruhxn.boardserver.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -53,11 +52,4 @@ public class AuthService {
 //        return findMember;
 //    }
 
-    public void confirmPassword(Long memberId, ConfirmPasswordRequest confirmPasswordRequest) {
-        Member findMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GlobalException(ErrorCode.NOT_FOUND_USER));
-        Boolean isMatch = passwordEncoder.matches(confirmPasswordRequest.getCurrPassword(), findMember.getPassword());
-
-        if (!isMatch) throw new GlobalException(ErrorCode.INCORRECT_PASSWORD);
-    }
 }
