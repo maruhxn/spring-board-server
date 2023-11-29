@@ -3,6 +3,8 @@ package com.maruhxn.boardserver.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.StringUtils;
 
@@ -15,7 +17,9 @@ import org.springframework.util.StringUtils;
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
+@DynamicInsert
 public class Member extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
@@ -33,12 +37,17 @@ public class Member extends BaseEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String profileImage;
 
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'ROLE_USER'")
+    private Role role;
+
     @Builder
-    public Member(String email, String username, String password, String profileImage) {
+    public Member(String email, String username, String password, String profileImage, Role role) {
         this.email = email;
         this.username = username;
         this.password = password;
         this.profileImage = profileImage;
+        this.role = role;
     }
 
     // Update Logic //
