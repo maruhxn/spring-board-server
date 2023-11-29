@@ -9,12 +9,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.List;
 
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    // 404예외처리 핸들러
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<Object> handle404(NoHandlerFoundException e){
+        return ResponseEntity
+                .status(ErrorCode.NOT_FOUND_RESOURCE.getHttpStatus())
+                .body(ResponseDto.error(ErrorCode.NOT_FOUND_RESOURCE));
+    }
 
     @ExceptionHandler
     public ResponseEntity<Object> dataIntegrityViolation(DataIntegrityViolationException e) {
