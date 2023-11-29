@@ -1,7 +1,5 @@
 package com.maruhxn.boardserver.common;
 
-import org.springframework.stereotype.Component;
-
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.io.UnsupportedEncodingException;
@@ -11,7 +9,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
 
-@Component
+//@Component
 public class PasswordEncoder {
     public String encode(String email, String password) {
         try {

@@ -1,6 +1,5 @@
 package com.maruhxn.boardserver.service;
 
-import com.maruhxn.boardserver.common.PasswordEncoder;
 import com.maruhxn.boardserver.common.exception.ErrorCode;
 import com.maruhxn.boardserver.common.exception.GlobalException;
 import com.maruhxn.boardserver.domain.Member;
@@ -9,6 +8,7 @@ import com.maruhxn.boardserver.dto.request.auth.LoginRequest;
 import com.maruhxn.boardserver.dto.request.auth.RegisterRequest;
 import com.maruhxn.boardserver.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +35,7 @@ public class AuthService {
         Member member = Member.builder()
                 .email(registerRequest.getEmail())
                 .username(registerRequest.getUsername())
-                .password(passwordEncoder.encode(registerRequest.getEmail(), registerRequest.getPassword()))
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .profileImage("/img/defaultProfileImage.jfif")
                 .build();
 
@@ -47,7 +47,7 @@ public class AuthService {
         Member findMember = memberRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new GlobalException(ErrorCode.NOT_FOUND_USER));
         // 비밀번호 일치 여부 확인
-        Boolean isMatch = passwordEncoder.isMatch(loginRequest.getEmail(), loginRequest.getPassword(), findMember.getPassword());
+        Boolean isMatch = passwordEncoder.matches(loginRequest.getPassword(), findMember.getPassword());
 
         if (!isMatch) throw new GlobalException(ErrorCode.INCORRECT_PASSWORD);
 
@@ -57,7 +57,7 @@ public class AuthService {
     public void confirmPassword(Long memberId, ConfirmPasswordRequest confirmPasswordRequest) {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.NOT_FOUND_USER));
-        Boolean isMatch = passwordEncoder.isMatch(findMember.getEmail(), confirmPasswordRequest.getCurrPassword(), findMember.getPassword());
+        Boolean isMatch = passwordEncoder.matches(confirmPasswordRequest.getCurrPassword(), findMember.getPassword());
 
         if (!isMatch) throw new GlobalException(ErrorCode.INCORRECT_PASSWORD);
     }

@@ -1,6 +1,5 @@
 package com.maruhxn.boardserver.service;
 
-import com.maruhxn.boardserver.common.PasswordEncoder;
 import com.maruhxn.boardserver.common.exception.ErrorCode;
 import com.maruhxn.boardserver.common.exception.GlobalException;
 import com.maruhxn.boardserver.domain.Member;
@@ -10,6 +9,7 @@ import com.maruhxn.boardserver.dto.response.object.MemberItem;
 import com.maruhxn.boardserver.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,20 +69,18 @@ public class MemberService {
             throw new GlobalException(ErrorCode.PASSWORD_CONFIRM_FAIL);
         }
 
-        if (passwordEncoder.isMatch(
-                findMember.getEmail(),
+        if (passwordEncoder.matches(
                 updatePasswordRequest.getNewPassword(),
                 findMember.getPassword()))
             throw new GlobalException(ErrorCode.SAME_PASSWORD);
 
-        if (!passwordEncoder.isMatch(
-                findMember.getEmail(),
+        if (!passwordEncoder.matches(
                 updatePasswordRequest.getCurrPassword(),
                 findMember.getPassword()))
             throw new GlobalException(ErrorCode.INCORRECT_PASSWORD);
 
         findMember.updatePassword(
-                passwordEncoder.encode(findMember.getEmail(), updatePasswordRequest.getNewPassword())
+                passwordEncoder.encode(updatePasswordRequest.getNewPassword())
         );
     }
 
