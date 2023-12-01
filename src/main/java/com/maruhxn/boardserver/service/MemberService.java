@@ -1,5 +1,6 @@
 package com.maruhxn.boardserver.service;
 
+import com.maruhxn.boardserver.common.Constants;
 import com.maruhxn.boardserver.common.exception.ErrorCode;
 import com.maruhxn.boardserver.common.exception.GlobalException;
 import com.maruhxn.boardserver.domain.Member;
@@ -13,6 +14,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +25,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FileService fileService;
 
     /**
      * 회원 정보 조회
@@ -63,11 +68,27 @@ public class MemberService {
     public void updateProfile(
             Long memberId, UpdateMemberProfileRequest updateMemberProfileRequest
     ) throws DataIntegrityViolationException {
+        String newProfileImageName = null;
+        MultipartFile newProfileImage = updateMemberProfileRequest.getProfileImage();
         Member findMember = memberRepository.findById(memberId).orElseThrow(
                 () -> new GlobalException(ErrorCode.NOT_FOUND_USER));
 
+        if (newProfileImage != null) {
+            newProfileImageName = fileService.saveAndExtractUpdatedProfileImage(newProfileImage);
+            // 기존 이미지 삭제
+            deleteProfileImageOfFindMember(findMember);
+        }
+
         findMember.updateProfile(
-                updateMemberProfileRequest.getUsername(), updateMemberProfileRequest.getProfileImage());
+                updateMemberProfileRequest.getUsername(),
+                newProfileImageName != null ? newProfileImageName : Constants.BASIC_PROFILE_IMAGE_NAME
+        );
+    }
+
+    private void deleteProfileImageOfFindMember(Member findMember) {
+        if (!Objects.equals(findMember.getProfileImage(), Constants.BASIC_PROFILE_IMAGE_NAME)) {
+            fileService.deleteFile(findMember.getProfileImage());
+        }
     }
 
     /**
@@ -107,7 +128,7 @@ public class MemberService {
     public void membershipWithdrawal(Long memberId) {
         Member findMember = memberRepository.findById(memberId).orElseThrow(
                 () -> new GlobalException(ErrorCode.NOT_FOUND_USER));
-
+        deleteProfileImageOfFindMember(findMember);
         memberRepository.delete(findMember);
     }
 

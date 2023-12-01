@@ -44,6 +44,21 @@ public class FileService {
                 .build();
     }
 
+    public String saveAndExtractUpdatedProfileImage(MultipartFile profileImage) {
+        if (profileImage.isEmpty()) throw new GlobalException(ErrorCode.EMPTY_FILE);
+
+        String originalFilename = profileImage.getOriginalFilename(); // 파일 원본 이름
+        String storeFileName = createStoreFileName(originalFilename); // 서버에 저장된 파일 이름 (랜덤)
+        String savePath = getFullPath(storeFileName); // 서버에 저장된 경로
+        try {
+            profileImage.transferTo(new File(savePath)); // 파일 저장
+        } catch (IOException e) {
+            throw new GlobalException(ErrorCode.INTERNAL_ERROR, e);
+        }
+
+        return storeFileName;
+    }
+
     /**
      * 파일 전체 저장
      *
