@@ -1,23 +1,33 @@
 package com.maruhxn.boardserver.auth.common;
 
 import com.maruhxn.boardserver.domain.Member;
+import com.maruhxn.boardserver.domain.Role;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class AccountContext implements UserDetails {
 
-    private final Member member;
+    private Member member;
+
+    public AccountContext() {
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton((GrantedAuthority) () -> String.valueOf(member.getRole()));
+        Role role = member.getRole();
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(role.name());
+        authorities.add(simpleGrantedAuthority);
+        return authorities;
     }
 
     @Override

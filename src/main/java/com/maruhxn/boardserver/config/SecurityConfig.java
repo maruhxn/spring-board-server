@@ -1,11 +1,11 @@
 package com.maruhxn.boardserver.config;
 
-import com.maruhxn.boardserver.auth.provider.AjaxAuthenticationProvider;
 import com.maruhxn.boardserver.auth.filter.AjaxLoginFilter;
 import com.maruhxn.boardserver.auth.handler.AjaxAccessDeniedHandler;
 import com.maruhxn.boardserver.auth.handler.AjaxAuthenticationEntryPoint;
 import com.maruhxn.boardserver.auth.handler.AjaxAuthenticationFailureHandler;
 import com.maruhxn.boardserver.auth.handler.AjaxAuthenticationSuccessHandler;
+import com.maruhxn.boardserver.auth.provider.AjaxAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -55,8 +55,8 @@ public class SecurityConfig {
                 .addFilterAt(ajaxLoginFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling
-                                .authenticationEntryPoint(new AjaxAuthenticationEntryPoint())
-                                .accessDeniedHandler(new AjaxAccessDeniedHandler()));
+                                .authenticationEntryPoint(ajaxAuthenticationEntryPoint())
+                                .accessDeniedHandler(ajaxAccessDeniedHandler()));
         return http.build();
     }
 
@@ -75,6 +75,16 @@ public class SecurityConfig {
     @Bean
     public AjaxAuthenticationProvider ajaxAuthenticationProvider() {
         return new AjaxAuthenticationProvider();
+    }
+
+    @Bean
+    public AjaxAuthenticationEntryPoint ajaxAuthenticationEntryPoint() {
+        return new AjaxAuthenticationEntryPoint();
+    }
+
+    @Bean
+    public AjaxAccessDeniedHandler ajaxAccessDeniedHandler() {
+        return new AjaxAccessDeniedHandler();
     }
 
     @Bean

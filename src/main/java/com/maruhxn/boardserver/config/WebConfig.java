@@ -46,11 +46,6 @@ public class WebConfig implements WebMvcConfigurer {
         return new PostAuthorCheckInterceptor();
     }
 
-//    @Bean
-//    public RedisSerializer<Object> springSessionDefaultRedisSerializer() {
-//        return new GenericJackson2JsonRedisSerializer();
-//    }
-
     @Bean
     JPAQueryFactory jpaQueryFactory(EntityManager em) {
         return new JPAQueryFactory((em));

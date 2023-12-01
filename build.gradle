@@ -40,10 +40,11 @@ dependencies {
     // Spring Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
     testImplementation 'org.springframework.security:spring-security-test'
-//    // Redis
-//    implementation "org.springframework.boot:spring-boot-starter-data-redis"
-//    // Session Store
-//    implementation 'org.springframework.session:spring-session-data-redis'
+    // Redis
+    implementation "org.springframework.boot:spring-boot-starter-data-redis"
+    // Session Store
+    implementation 'org.springframework.session:spring-session-data-redis'
+
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

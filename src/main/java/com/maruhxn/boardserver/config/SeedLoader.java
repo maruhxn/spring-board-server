@@ -7,6 +7,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
@@ -15,7 +16,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Slf4j
-//@Component
+@Component
 @RequiredArgsConstructor
 public class SeedLoader {
     private final JdbcTemplate jdbcTemplate;

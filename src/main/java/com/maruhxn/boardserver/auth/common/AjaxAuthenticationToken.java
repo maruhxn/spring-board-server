@@ -3,13 +3,17 @@ package com.maruhxn.boardserver.auth.common;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.io.Serializable;
 import java.util.Collection;
 
-public class AjaxAuthenticationToken extends AbstractAuthenticationToken {
+public class AjaxAuthenticationToken extends AbstractAuthenticationToken implements Serializable {
 
-    private final Object principal;
-
+    private Object principal;
     private Object credentials;
+
+    public AjaxAuthenticationToken() {
+        super(null);
+    }
 
     public AjaxAuthenticationToken(Object principal, Object credentials) {
         super(null);

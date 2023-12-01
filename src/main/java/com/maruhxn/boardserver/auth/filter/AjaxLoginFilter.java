@@ -7,6 +7,7 @@ import com.maruhxn.boardserver.dto.request.auth.LoginRequest;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -18,7 +19,8 @@ import java.io.IOException;
 
 public class AjaxLoginFilter extends AbstractAuthenticationProcessingFilter {
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public AjaxLoginFilter() {
         super(new AntPathRequestMatcher("/auth/login")); // 이 URL일 때만 요청 처리
