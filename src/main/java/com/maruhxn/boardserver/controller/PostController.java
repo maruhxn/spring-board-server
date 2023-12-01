@@ -9,7 +9,6 @@ import com.maruhxn.boardserver.dto.response.PageItem;
 import com.maruhxn.boardserver.dto.response.ResponseDto;
 import com.maruhxn.boardserver.dto.response.object.PostDetailItem;
 import com.maruhxn.boardserver.dto.response.object.PostItem;
-import com.maruhxn.boardserver.resolver.Login;
 import com.maruhxn.boardserver.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/posts")
@@ -29,6 +30,7 @@ public class PostController {
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("permitAll()")
     public DataResponseDto<PageItem<PostItem>> getPostList(
             @ModelAttribute @Valid PostSearchCond postSearchCond,
             Pageable pageable) {
@@ -42,7 +44,7 @@ public class PostController {
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseDto createPost(@Login Member loginMember, @Valid CreatePostRequest createPostRequest) {
+    public ResponseDto createPost(@AuthenticationPrincipal Member loginMember, @Valid CreatePostRequest createPostRequest) {
         log.info("title={}, content={}, images={}",
                 createPostRequest.getTitle(),
                 createPostRequest.getContent(),
@@ -53,6 +55,7 @@ public class PostController {
 
     @GetMapping("/{postId}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("permitAll()")
     public DataResponseDto<PostDetailItem> getPostDetail(@PathVariable Long postId) {
         PostDetailItem result = postService.getPostDetail(postId);
         return DataResponseDto.ok("게시글 조회 성공", result);

@@ -1,12 +1,13 @@
 package com.maruhxn.boardserver.config;
 
-import com.maruhxn.boardserver.common.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
@@ -15,7 +16,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Slf4j
-//@Component
+@Component
 @RequiredArgsConstructor
 public class SeedLoader {
     private final JdbcTemplate jdbcTemplate;
@@ -48,7 +49,7 @@ public class SeedLoader {
                 String email = String.format("test%d@test.com", i + 1);
                 ps.setString(1, String.format("tester%d", i + 1));
                 ps.setString(2, email);
-                ps.setString(3, passwordEncoder.encode(email, "test"));
+                ps.setString(3, passwordEncoder.encode("test"));
                 ps.setString(4, "/img/defaultProfileImage.jfif");
                 ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
                 ps.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));

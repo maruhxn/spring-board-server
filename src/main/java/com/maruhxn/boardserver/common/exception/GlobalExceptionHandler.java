@@ -6,15 +6,33 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.List;
 
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    // Access Denied 핸들러
+    @ExceptionHandler
+    public ResponseEntity<Object> accessDenied(AccessDeniedException e) {
+        return ResponseEntity
+                .status(ErrorCode.FORBIDDEN.getHttpStatus())
+                .body(ResponseDto.error(ErrorCode.FORBIDDEN));
+    }
+
+    // 404예외처리 핸들러
+    @ExceptionHandler
+    public ResponseEntity<Object> handle404(NoHandlerFoundException e) {
+        return ResponseEntity
+                .status(ErrorCode.NOT_FOUND_RESOURCE.getHttpStatus())
+                .body(ResponseDto.error(ErrorCode.NOT_FOUND_RESOURCE));
+    }
 
     @ExceptionHandler
     public ResponseEntity<Object> dataIntegrityViolation(DataIntegrityViolationException e) {
