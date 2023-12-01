@@ -1,5 +1,6 @@
 package com.maruhxn.boardserver.service;
 
+import com.maruhxn.boardserver.common.Constants;
 import com.maruhxn.boardserver.common.exception.ErrorCode;
 import com.maruhxn.boardserver.common.exception.GlobalException;
 import com.maruhxn.boardserver.domain.Member;
@@ -34,7 +35,7 @@ public class AuthService {
                 .email(registerRequest.getEmail())
                 .username(registerRequest.getUsername())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .profileImage("/img/defaultProfileImage.jfif")
+                .profileImage(Constants.BASIC_PROFILE_IMAGE_NAME)
                 .build();
 
         memberRepository.save(member);
