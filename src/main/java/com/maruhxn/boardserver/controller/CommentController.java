@@ -45,7 +45,7 @@ public class CommentController {
 
     @DeleteMapping("/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("(principal.id == #member.id) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("(principal.getId() == #member.id) or hasRole('ROLE_ADMIN')")
     public void deleteComment(@AuthenticationPrincipal Member member, @PathVariable Long postId, @PathVariable Long commentId) {
         log.info("postId={}, commentId={}", postId, commentId);
         commentService.deleteComment(member, commentId);

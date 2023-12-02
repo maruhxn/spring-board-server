@@ -46,6 +46,7 @@ public class TestSupport {
 
     protected Member admin;
 
+    protected String MEMBER_API_PATH;
 
     @BeforeEach
     void setUp(
@@ -77,5 +78,6 @@ public class TestSupport {
                         .profileImage(Constants.BASIC_PROFILE_IMAGE_NAME)
                         .build());
 
+        MEMBER_API_PATH = "/members/" + member.getId();
     }
 }
