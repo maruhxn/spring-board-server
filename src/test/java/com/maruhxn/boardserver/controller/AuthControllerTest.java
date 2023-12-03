@@ -6,11 +6,15 @@ import com.maruhxn.boardserver.dto.request.auth.LoginRequest;
 import com.maruhxn.boardserver.dto.request.auth.RegisterRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.JsonFieldType.STRING;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -20,12 +24,22 @@ class AuthControllerTest extends TestSupport {
     @WithAnonymousUser
     void Should_Register_SuccessFully_When_isAnonymous() throws Exception {
         RegisterRequest registerRequest = getRegisterRequest();
-
+        simpleRequestConstraints = new ConstraintDescriptions(RegisterRequest.class);
         mockMvc.perform(
                         post("/auth/register")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(registerRequest)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andDo(
+                        restDocs.document(
+                                requestFields(
+                                        fieldWithPath("email").type(STRING).description("email").attributes(withPath("email")),
+                                        fieldWithPath("username").type(STRING).description("username").attributes(withPath("username")),
+                                        fieldWithPath("password").type(STRING).description("password").attributes(withPath("password")),
+                                        fieldWithPath("confirmPassword").type(STRING).description("confirmPassword").attributes(withPath("confirmPassword"))
+                                )
+                        )
+                );
     }
 
     @Test
@@ -111,12 +125,20 @@ class AuthControllerTest extends TestSupport {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("test@test.com");
         loginRequest.setPassword("test");
-
+        simpleRequestConstraints = new ConstraintDescriptions(LoginRequest.class);
         mockMvc.perform(
                         post("/auth/login")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(loginRequest)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                requestFields(
+                                        fieldWithPath("email").type(STRING).description("email").attributes(withPath("email")),
+                                        fieldWithPath("password").type(STRING).description("password").attributes(withPath("password"))
+                                )
+                        )
+                );
     }
 
     @Test
@@ -150,13 +172,6 @@ class AuthControllerTest extends TestSupport {
     }
 
     @Test
-    @WithAnonymousUser
-    void Should_Logout_Fail_With_401_When_Is_Not_Logged_In() throws Exception {
-        mockMvc.perform(delete("/auth/logout"))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
     @WithUserDetails(
             value = "test@test.com",
             userDetailsServiceBeanName = "ajaxUserDetailsService",
@@ -166,4 +181,12 @@ class AuthControllerTest extends TestSupport {
         mockMvc.perform(delete("/auth/logout"))
                 .andExpect(status().isNoContent());
     }
+
+    @Test
+    @WithAnonymousUser
+    void Should_Logout_Fail_With_401_When_Is_Not_Logged_In() throws Exception {
+        mockMvc.perform(delete("/auth/logout"))
+                .andExpect(status().isUnauthorized());
+    }
+
 }

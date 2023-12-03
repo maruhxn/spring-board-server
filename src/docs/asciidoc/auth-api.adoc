@@ -4,12 +4,12 @@
 [[Auth-회원가입]]
 === 회원가입
 
-operation::auth_controller_test/should_-register_-success-fully_-when_is-anonymous[snippets='curl-request,http-request,http-response']
+operation::auth_controller_test/should_-register_-success-fully_-when_is-anonymous[snippets='curl-request,http-request,request-fields,http-response']
 
 [[Auth-로그인]]
 === 로그인
 
-operation::auth_controller_test/should_-login_-success-fully_-when_is-anonymous[snippets='curl-request,http-request,http-response']
+operation::auth_controller_test/should_-login_-success-fully_-when_is-anonymous[snippets='curl-request,http-request,request-fields,http-response']
 
 [[Auth-로그아웃]]
 === 로그아웃
