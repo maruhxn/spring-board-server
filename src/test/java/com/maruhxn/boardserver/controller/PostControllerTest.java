@@ -46,7 +46,7 @@ class PostControllerTest extends TestSupport {
     }
 
     @Test
-    void shouldGet10PostItemPageWhenNoQueryParameter() throws Exception {
+    void shouldGetFirst10PostItemPageWhenNoQueryParameter() throws Exception {
         mockMvc.perform(
                         get("/posts")
                 )
@@ -135,7 +135,7 @@ class PostControllerTest extends TestSupport {
             userDetailsServiceBeanName = "ajaxUserDetailsService",
             setupBefore = TestExecutionEvent.TEST_EXECUTION
     )
-    void shouldFailToCreatePostWith400WhenIsAnonymous() throws Exception {
+    void shouldFailToCreatePostWith400WhenIsInvalidRequest() throws Exception {
         CreatePostRequest dto = new CreatePostRequest();
         dto.setTitle("");
         dto.setContent("");
@@ -258,7 +258,7 @@ class PostControllerTest extends TestSupport {
 
     @Test
     @WithAnonymousUser
-    void shouldFailToDeleteImageWithWhenIsAnonymous() throws Exception {
+    void shouldFailToDeletePostWithWhenIsAnonymous() throws Exception {
         mockMvc.perform(
                         delete("/posts/" + post1.getId())
                 )

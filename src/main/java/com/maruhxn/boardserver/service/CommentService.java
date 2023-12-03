@@ -5,6 +5,7 @@ import com.maruhxn.boardserver.common.exception.GlobalException;
 import com.maruhxn.boardserver.domain.Comment;
 import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.domain.Post;
+import com.maruhxn.boardserver.domain.Role;
 import com.maruhxn.boardserver.dto.request.comments.CreateCommentRequest;
 import com.maruhxn.boardserver.dto.response.object.CommentItem;
 import com.maruhxn.boardserver.repository.CommentRepository;
@@ -46,13 +47,13 @@ public class CommentService {
     public void deleteComment(Member loginMember, Long commentId) {
         Comment findComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.NOT_FOUND_COMMENT));
-        checkIsAuthor(loginMember.getId(), findComment);
+        checkIsAuthorOrAdmin(loginMember, findComment);
 
         commentRepository.delete(findComment);
     }
 
-    private static void checkIsAuthor(Long memberId, Comment comment) {
+    private static void checkIsAuthorOrAdmin(Member member, Comment comment) {
         Long authorId = comment.getMember().getId();
-        if (!authorId.equals(memberId)) throw new GlobalException(ErrorCode.FORBIDDEN);
+        if (!authorId.equals(member.getId()) && !member.getRole().equals(Role.ROLE_ADMIN)) throw new GlobalException(ErrorCode.FORBIDDEN);
     }
 }
