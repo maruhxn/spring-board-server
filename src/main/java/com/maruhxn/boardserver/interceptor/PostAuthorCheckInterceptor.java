@@ -1,8 +1,8 @@
 package com.maruhxn.boardserver.interceptor;
 
+import com.maruhxn.boardserver.auth.common.AccountContext;
 import com.maruhxn.boardserver.common.exception.ErrorCode;
 import com.maruhxn.boardserver.common.exception.GlobalException;
-import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.domain.Post;
 import com.maruhxn.boardserver.domain.Role;
 import com.maruhxn.boardserver.repository.PostRepository;
@@ -32,7 +32,7 @@ public class PostAuthorCheckInterceptor implements HandlerInterceptor {
 
         if (HttpMethod.PATCH.matches(method) || HttpMethod.DELETE.matches(method)) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Member loginMember = (Member) authentication.getPrincipal();
+            AccountContext accountContext = (AccountContext) authentication.getPrincipal();
 
             Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(
                     HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
@@ -41,8 +41,8 @@ public class PostAuthorCheckInterceptor implements HandlerInterceptor {
             Post findPost = postRepository.findWithMemberFirstById(postId).orElseThrow(
                     () -> new GlobalException(ErrorCode.NOT_FOUND_POST));
 
-            if (!loginMember.getRole().equals(Role.ROLE_ADMIN)
-                    && !loginMember.getId().equals(findPost.getMember().getId())) {
+            if (!accountContext.getAuthorities().contains(Role.ROLE_ADMIN)
+                    && !accountContext.getId().equals(findPost.getMember().getId())) {
                 throw new GlobalException(ErrorCode.FORBIDDEN);
             }
 
