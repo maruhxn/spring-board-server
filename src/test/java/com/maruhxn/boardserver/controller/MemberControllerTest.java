@@ -11,7 +11,7 @@ import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -153,7 +153,7 @@ class MemberControllerTest extends TestSupport {
             userDetailsServiceBeanName = "ajaxUserDetailsService",
             setupBefore = TestExecutionEvent.TEST_EXECUTION
     )
-    void shouldUpdatePPasswordFailWith400WhenNewPasswordIsLongerThan20() throws Exception {
+    void shouldUpdatePasswordFailWith400WhenNewPasswordIsLongerThan20() throws Exception {
         UpdatePasswordRequest dto = new UpdatePasswordRequest();
         dto.setCurrPassword("test");
         dto.setNewPassword(".........................................");
