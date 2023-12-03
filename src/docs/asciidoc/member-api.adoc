@@ -1,0 +1,27 @@
+[[Member-API]]
+== Member API
+
+[[Member-단일-조회]]
+=== 단일 조회
+
+operation::member_controller_test/should-get-member-detail-when-is-owner[snippets='curl-request,http-request,http-response']
+
+[[Member-회원정보-수정]]
+=== 회원정보 수정
+
+operation::member_controller_test/should-update-profile-when-is-owner[snippets='curl-request,http-request,http-response']
+
+[[Member-비밀번호-수정]]
+=== 비밀번호 수정
+
+operation::member_controller_test/should-update-password-when-is-owner[snippets='curl-request,http-request,http-response']
+
+[[Member-비밀번호-확인]]
+=== 비밀번호 확인
+
+operation::member_controller_test/should-confirm-password-when-is-owner-and-correct-password[snippets='curl-request,http-request,http-response']
+
+[[Member-회원-탈퇴]]
+=== 회원 탈퇴
+
+operation::member_controller_test/should-withdraw-when-is-owner[snippets='curl-request,http-request,http-response']
