@@ -13,8 +13,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -22,6 +24,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.List;
+
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -54,6 +59,8 @@ public class TestSupport {
 
     protected String MEMBER_API_PATH;
 
+    protected ConstraintDescriptions simpleRequestConstraints;
+
     @BeforeEach
     void setUp(
             final WebApplicationContext context,
@@ -85,5 +92,11 @@ public class TestSupport {
                         .build());
 
         MEMBER_API_PATH = "/members/" + member.getId();
+    }
+
+    public Attributes.Attribute withPath(String path) {
+        List<String> constraints = simpleRequestConstraints.descriptionsForProperty(path);
+        String costraintDesc = String.join("\n\n", constraints.stream().map(s -> "-" + s).toArray(String[]::new));
+        return key("constraints").value(costraintDesc);
     }
 }
