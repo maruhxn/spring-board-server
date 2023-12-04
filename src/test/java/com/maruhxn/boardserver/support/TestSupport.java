@@ -1,6 +1,7 @@
-package com.maruhxn.boardserver;
+package com.maruhxn.boardserver.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.maruhxn.boardserver.config.RestDocsConfiguration;
 import com.maruhxn.boardserver.common.Constants;
 import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.domain.Role;

@@ -1,6 +1,6 @@
 package com.maruhxn.boardserver.controller;
 
-import com.maruhxn.boardserver.TestSupport;
+import com.maruhxn.boardserver.support.TestSupport;
 import com.maruhxn.boardserver.common.Constants;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
