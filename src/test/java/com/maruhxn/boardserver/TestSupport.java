@@ -92,8 +92,8 @@ public class TestSupport {
 
     public Attributes.Attribute withPath(String path) {
         List<String> constraints = simpleRequestConstraints.descriptionsForProperty(path);
-        String costraintDesc = String.join("\n\n", constraints.stream().map(s -> "-" + s).toArray(String[]::new));
-        return key("constraints").value(costraintDesc);
+        String constraintDesc = String.join("\n\n", constraints.stream().map(s -> "- " + s).toArray(String[]::new));
+        return key("constraints").value(constraintDesc);
     }
 
     public Attributes.Attribute setType(String type) {
