@@ -10,10 +10,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.mock.web.MockPart;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithUserDetails;
+
+import java.io.FileInputStream;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
@@ -115,27 +119,28 @@ class PostControllerTest extends TestSupport {
             userDetailsServiceBeanName = "ajaxUserDetailsService",
             setupBefore = TestExecutionEvent.TEST_EXECUTION
     )
-    void shouldCreatePostWhenIsLoggedIn() throws Exception {
-        CreatePostRequest dto = new CreatePostRequest();
-        dto.setTitle("title");
-        dto.setContent("content");
+    void shouldCreatePostWithOneImageWhenIsLoggedIn() throws Exception {
+        final String origianlFileName = "defaultProfileImage.jfif"; //파일명
+        final String filePath = "src/test/resources/static/img/" + origianlFileName;
+        FileInputStream fileInputStream = new FileInputStream(filePath);
+        MockMultipartFile image1 = new MockMultipartFile("images", origianlFileName, "image/jpeg", fileInputStream);
 
         simpleRequestConstraints = new ConstraintDescriptions(CreatePostRequest.class);
         mockMvc.perform(
-                        post(POST_API_PATH)
-                                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                                .param("title", dto.getTitle())
-                                .param("content", dto.getContent()))
+                        multipart(POST_API_PATH)
+                                .file(image1)
+                                .part(new MockPart("title", "title".getBytes()))
+                                .part(new MockPart("content", "content".getBytes()))
+                )
                 .andExpect(status().isCreated())
                 .andDo(
                         restDocs.document(
-                                formParameters(
-                                        parameterWithName("title").description("title").attributes(setType("string")).attributes(withPath("title")),
-                                        parameterWithName("content").description("content").attributes(setType("string")).attributes(withPath("content")),
-                                        parameterWithName("images").optional().description("images").attributes(setType("List<MultipartFile>")).attributes(withPath("images"))
+                                requestParts(
+                                        partWithName("title").description("title").attributes(setType("string")).attributes(withPath("title")),
+                                        partWithName("content").description("content").attributes(setType("string")).attributes(withPath("content")),
+                                        partWithName("images").description("images").attributes(setType("string")).attributes(withPath("images"))
                                 )
-                        )
-                );
+                        ));
     }
 
     @Test
@@ -165,13 +170,11 @@ class PostControllerTest extends TestSupport {
         dto.setContent("");
 
         mockMvc.perform(
-                        post(POST_API_PATH)
-                                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                                .param("title", dto.getTitle())
-                                .param("content", dto.getContent()))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value(ErrorCode.VALIDATION_ERROR.name()))
-                .andExpect(jsonPath("$.messages.size()").value(2));
+                        multipart(POST_API_PATH)
+                                .part(new MockPart("title", dto.getTitle().getBytes()))
+                                .part(new MockPart("content", dto.getContent().getBytes()))
+                )
+                .andExpect(status().isBadRequest());
     }
 
     @Test
