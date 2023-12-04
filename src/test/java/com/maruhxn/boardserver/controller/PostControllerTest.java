@@ -10,11 +10,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -25,6 +27,7 @@ class PostControllerTest extends TestSupport {
 
     private Post post1;
     private Post post2;
+    String POST_API_PATH = "/posts";
 
     @BeforeEach
     void createDummyPost() {
@@ -48,7 +51,7 @@ class PostControllerTest extends TestSupport {
     @Test
     void shouldGetFirst10PostItemPageWhenNoQueryParameter() throws Exception {
         mockMvc.perform(
-                        get("/posts")
+                        get(POST_API_PATH)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("OK"))
@@ -58,13 +61,24 @@ class PostControllerTest extends TestSupport {
                 .andExpect(jsonPath("$.data.isEmpty").value(false))
                 .andExpect(jsonPath("$.data.totalPage").value(1))
                 .andExpect(jsonPath("$.data.totalElements").value(2))
-                .andExpect(jsonPath("$.data.results.size()").value(2));
+                .andExpect(jsonPath("$.data.results.size()").value(2))
+                .andDo(
+                        restDocs.document(
+                                queryParameters(
+                                        parameterWithName("size").optional().description("조회 결과 크기"),
+                                        parameterWithName("page").optional().description("페이지"),
+                                        parameterWithName("title").optional().description("제목 검색"),
+                                        parameterWithName("content").optional().description("내용 검색"),
+                                        parameterWithName("author").optional().description("작성자 이름 검색")
+                                )
+                        )
+                );
     }
 
     @Test
     void shouldGet1PostItemPageWhenSize1Query() throws Exception {
         mockMvc.perform(
-                        get("/posts")
+                        get(POST_API_PATH)
                                 .queryParam("size", "1")
                 )
                 .andExpect(status().isOk())
@@ -81,7 +95,7 @@ class PostControllerTest extends TestSupport {
     @Test
     void shouldGetPostItemPageOfTesterWhenAuthorTesterQuery() throws Exception {
         mockMvc.perform(
-                        get("/posts")
+                        get(POST_API_PATH)
                                 .queryParam("author", "tester")
                 )
                 .andExpect(status().isOk())
@@ -101,17 +115,27 @@ class PostControllerTest extends TestSupport {
             userDetailsServiceBeanName = "ajaxUserDetailsService",
             setupBefore = TestExecutionEvent.TEST_EXECUTION
     )
-    void shouldCreatePostWhenIsLoggedInWithValidRequest() throws Exception {
+    void shouldCreatePostWhenIsLoggedIn() throws Exception {
         CreatePostRequest dto = new CreatePostRequest();
         dto.setTitle("title");
         dto.setContent("content");
 
+        simpleRequestConstraints = new ConstraintDescriptions(CreatePostRequest.class);
         mockMvc.perform(
-                        post("/posts")
+                        post(POST_API_PATH)
                                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                                 .param("title", dto.getTitle())
                                 .param("content", dto.getContent()))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andDo(
+                        restDocs.document(
+                                formParameters(
+                                        parameterWithName("title").description("title").attributes(setType("string")).attributes(withPath("title")),
+                                        parameterWithName("content").description("content").attributes(setType("string")).attributes(withPath("content")),
+                                        parameterWithName("images").optional().description("images").attributes(setType("List<MultipartFile>")).attributes(withPath("images"))
+                                )
+                        )
+                );
     }
 
     @Test
@@ -122,7 +146,7 @@ class PostControllerTest extends TestSupport {
         dto.setContent("content");
 
         mockMvc.perform(
-                        post("/posts")
+                        post(POST_API_PATH)
                                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                                 .param("title", dto.getTitle())
                                 .param("content", dto.getContent()))
@@ -141,7 +165,7 @@ class PostControllerTest extends TestSupport {
         dto.setContent("");
 
         mockMvc.perform(
-                        post("/posts")
+                        post(POST_API_PATH)
                                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                                 .param("title", dto.getTitle())
                                 .param("content", dto.getContent()))
@@ -153,7 +177,7 @@ class PostControllerTest extends TestSupport {
     @Test
     void shouldGetPostDetailWhenIsExist() throws Exception {
         mockMvc.perform(
-                        get("/posts/" + post1.getId())
+                        get("/posts/{postId}", post1.getId())
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("OK"))
@@ -164,13 +188,20 @@ class PostControllerTest extends TestSupport {
                 .andExpect(jsonPath("$.data.images.size()").value(0))
                 .andExpect(jsonPath("$.data.authorName").value(post1.getMember().getUsername()))
                 .andExpect(jsonPath("$.data.viewCount").value(post1.getViewCount()))
-                .andExpect(jsonPath("$.data.createdAt").exists());
+                .andExpect(jsonPath("$.data.createdAt").exists())
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("postId").description("Post ID")
+                                )
+                        )
+                );
     }
 
     @Test
-    void shouldFailToGetPostDetailWhenIsNotExist() throws Exception {
+    void shouldFailToGetPostDetailWith404WhenIsNotExist() throws Exception {
         mockMvc.perform(
-                        get("/posts/" + post1.getId() + 3)
+                        get("/posts/{postId}", post1.getId() + 3)
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value(ErrorCode.NOT_FOUND_POST.name()))
@@ -183,17 +214,30 @@ class PostControllerTest extends TestSupport {
             userDetailsServiceBeanName = "ajaxUserDetailsService",
             setupBefore = TestExecutionEvent.TEST_EXECUTION
     )
-    void shouldUpdatePostWhenIsOwnerAndValidRequest() throws Exception {
+    void shouldUpdatePostWhenIsOwner() throws Exception {
         UpdatePostRequest dto = new UpdatePostRequest();
         dto.setTitle("title!");
         dto.setContent("content!");
 
+        simpleRequestConstraints = new ConstraintDescriptions(UpdatePostRequest.class);
         mockMvc.perform(
-                        patch("/posts/" + post1.getId())
+                        patch("/posts/{postId}", post1.getId())
                                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                                 .param("title", dto.getTitle())
                                 .param("content", dto.getContent()))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isNoContent())
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("postId").description("Post ID")
+                                ),
+                                formParameters(
+                                        parameterWithName("title").optional().description("title").attributes(setType("string")).attributes(withPath("title")),
+                                        parameterWithName("content").optional().description("content").attributes(setType("string")).attributes(withPath("content")),
+                                        parameterWithName("images").optional().description("images").attributes(setType("List<MultipartFile>")).attributes(withPath("images"))
+                                )
+                        )
+                );
     }
 
     @Test
@@ -204,7 +248,7 @@ class PostControllerTest extends TestSupport {
         dto.setContent("content!");
 
         mockMvc.perform(
-                        patch("/posts/" + post1.getId())
+                        patch("/posts/{postId}", post1.getId())
                                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                                 .param("title", dto.getTitle())
                                 .param("content", dto.getContent()))
@@ -223,7 +267,7 @@ class PostControllerTest extends TestSupport {
         dto.setContent("content!");
 
         mockMvc.perform(
-                        patch("/posts/" + post2.getId())
+                        patch("/posts/{postId}", post2.getId())
                                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                                 .param("title", dto.getTitle())
                                 .param("content", dto.getContent()))
@@ -238,9 +282,16 @@ class PostControllerTest extends TestSupport {
     )
     void shouldDeletePostWhenIsOwner() throws Exception {
         mockMvc.perform(
-                        delete("/posts/" + post1.getId())
+                        delete("/posts/{postId}", post1.getId())
                 )
-                .andExpect(status().isNoContent());
+                .andExpect(status().isNoContent())
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("postId").description("Post ID")
+                                )
+                        )
+                );
     }
 
     @Test
@@ -251,7 +302,7 @@ class PostControllerTest extends TestSupport {
     )
     void shouldFailToDeletePostWith403WhenNoAuthorities() throws Exception {
         mockMvc.perform(
-                        delete("/posts/" + post2.getId())
+                        delete("/posts/{postId}", post2.getId())
                 )
                 .andExpect(status().isForbidden());
     }
@@ -260,7 +311,7 @@ class PostControllerTest extends TestSupport {
     @WithAnonymousUser
     void shouldFailToDeletePostWithWhenIsAnonymous() throws Exception {
         mockMvc.perform(
-                        delete("/posts/" + post1.getId())
+                        delete("/posts/{postId}", post1.getId())
                 )
                 .andExpect(status().isUnauthorized());
     }

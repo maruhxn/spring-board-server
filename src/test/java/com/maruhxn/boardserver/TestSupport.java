@@ -95,4 +95,8 @@ public class TestSupport {
         String costraintDesc = String.join("\n\n", constraints.stream().map(s -> "-" + s).toArray(String[]::new));
         return key("constraints").value(costraintDesc);
     }
+
+    public Attributes.Attribute setType(String type) {
+        return key("type").value(type);
+    }
 }
