@@ -4,14 +4,14 @@
 [[Comment-댓글-리스트-조회]]
 === 댓글 리스트 조회
 
-operation::comment_controller_test/should-get-first10-comment-item-page-when-no-query-parameter[snippets='curl-request,http-request,http-response']
+operation::comment_controller_test/should-get-first10-comment-item-page-when-no-query-parameter[snippets='curl-request,path-parameters,query-parameters,http-request,http-response']
 
 [[Comment-댓글-생성]]
 === 댓글 생성
 
-operation::comment_controller_test/should-create-comment-when-is-logged-in-with-valid-request[snippets='curl-request,http-request,http-response']
+operation::comment_controller_test/should-create-comment-when-is-logged-in[snippets='curl-request,path-parameters,http-request,request-fields,http-response']
 
 [[Comment-댓글-삭제]]
 === 댓글 삭제
 
-operation::comment_controller_test/should-delete-comment-when-is-owner[snippets='curl-request,http-request,http-response']
+operation::comment_controller_test/should-delete-comment-when-is-owner[snippets='curl-request,path-parameters,http-request,http-response']

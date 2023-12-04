@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -18,6 +19,10 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import java.util.List;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.JsonFieldType.STRING;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -31,11 +36,12 @@ class CommentControllerTest extends TestSupport {
 
     private Comment comment1;
     private Comment comment2;
-    String BASE_COMMENT_API_PATH;
+    private Post savePost;
+    String COMMENT_API_PATH;
 
     @BeforeEach
     void createDummyComment() {
-        Post savePost = postRepository.save(Post.builder()
+        savePost = postRepository.save(Post.builder()
                 .member(member)
                 .title("title")
                 .content("content")
@@ -59,13 +65,13 @@ class CommentControllerTest extends TestSupport {
 
         commentRepository.saveAll(comments);
 
-        BASE_COMMENT_API_PATH = "/posts/" + savePost.getId() + "/comments";
+        COMMENT_API_PATH = "/posts/{postId}/comments";
     }
 
     @Test
     void shouldGetFirst10CommentItemPageWhenNoQueryParameter() throws Exception {
         mockMvc.perform(
-                        get(BASE_COMMENT_API_PATH)
+                        get(COMMENT_API_PATH, savePost.getId())
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("OK"))
@@ -75,13 +81,24 @@ class CommentControllerTest extends TestSupport {
                 .andExpect(jsonPath("$.data.isEmpty").value(false))
                 .andExpect(jsonPath("$.data.totalPage").value(1))
                 .andExpect(jsonPath("$.data.totalElements").value(2))
-                .andExpect(jsonPath("$.data.results.size()").value(2));
+                .andExpect(jsonPath("$.data.results.size()").value(2))
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("postId").description("Post ID")
+                                ),
+                                queryParameters(
+                                        parameterWithName("size").optional().description("조회 결과 크기"),
+                                        parameterWithName("page").optional().description("페이지")
+                                )
+                        )
+                );
     }
 
     @Test
     void shouldGet1CommentItemPageWhenSize1Query() throws Exception {
         mockMvc.perform(
-                        get(BASE_COMMENT_API_PATH)
+                        get(COMMENT_API_PATH, savePost.getId())
                                 .queryParam("size", "1")
                 )
                 .andExpect(status().isOk())
@@ -101,15 +118,26 @@ class CommentControllerTest extends TestSupport {
             userDetailsServiceBeanName = "ajaxUserDetailsService",
             setupBefore = TestExecutionEvent.TEST_EXECUTION
     )
-    void shouldCreateCommentWhenIsLoggedInWithValidRequest() throws Exception {
+    void shouldCreateCommentWhenIsLoggedIn() throws Exception {
         CreateCommentRequest dto = new CreateCommentRequest();
         dto.setContent("content");
 
+        simpleRequestConstraints = new ConstraintDescriptions(CreateCommentRequest.class);
         mockMvc.perform(
-                        post(BASE_COMMENT_API_PATH)
+                        post(COMMENT_API_PATH, savePost.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("postId").description("Post ID")
+                                ),
+                                requestFields(
+                                        fieldWithPath("content").type(STRING).description("content").attributes(withPath("content"))
+                                )
+                        )
+                );
     }
 
     @Test
@@ -119,7 +147,7 @@ class CommentControllerTest extends TestSupport {
         dto.setContent("content");
 
         mockMvc.perform(
-                        post(BASE_COMMENT_API_PATH)
+                        post(COMMENT_API_PATH, savePost.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isUnauthorized());
@@ -131,12 +159,12 @@ class CommentControllerTest extends TestSupport {
             userDetailsServiceBeanName = "ajaxUserDetailsService",
             setupBefore = TestExecutionEvent.TEST_EXECUTION
     )
-    void shouldFailToCreateCommentWith400WhenIsInvalidRequest() throws Exception {
+    void shouldFailToCreateCommentWith400WhenInvalidRequest() throws Exception {
         CreateCommentRequest dto = new CreateCommentRequest();
         dto.setContent("");
 
         mockMvc.perform(
-                        post(BASE_COMMENT_API_PATH)
+                        post(COMMENT_API_PATH, savePost.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
@@ -152,9 +180,17 @@ class CommentControllerTest extends TestSupport {
     )
     void shouldDeleteCommentWhenIsOwner() throws Exception {
         mockMvc.perform(
-                        delete(BASE_COMMENT_API_PATH + "/" + comment1.getId())
+                        delete(COMMENT_API_PATH + "/{commentId}", savePost.getId(), comment1.getId())
                 )
-                .andExpect(status().isNoContent());
+                .andExpect(status().isNoContent())
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("postId").description("Post ID"),
+                                        parameterWithName("commentId").description("Comment ID")
+                                )
+                        )
+                );
     }
 
     @Test
@@ -165,7 +201,7 @@ class CommentControllerTest extends TestSupport {
     )
     void shouldFailToDeleteCommentWith403WhenNoAuthorities() throws Exception {
         mockMvc.perform(
-                        delete(BASE_COMMENT_API_PATH + "/" + comment2.getId())
+                        delete(COMMENT_API_PATH + "/{commentId}", savePost.getId(), comment2.getId())
                 )
                 .andExpect(status().isForbidden());
     }
@@ -174,7 +210,7 @@ class CommentControllerTest extends TestSupport {
     @WithAnonymousUser
     void shouldFailToDeleteCommentWithWhenIsAnonymous() throws Exception {
         mockMvc.perform(
-                        delete(BASE_COMMENT_API_PATH + "/" + comment1.getId())
+                        delete(COMMENT_API_PATH + "/{commentId}", savePost.getId(), comment1.getId())
                 )
                 .andExpect(status().isUnauthorized());
     }
