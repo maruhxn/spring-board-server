@@ -1,6 +1,6 @@
 package com.maruhxn.boardserver.controller;
 
-import com.maruhxn.boardserver.domain.Member;
+import com.maruhxn.boardserver.auth.common.AccountContext;
 import com.maruhxn.boardserver.dto.request.comments.CreateCommentRequest;
 import com.maruhxn.boardserver.dto.response.DataResponseDto;
 import com.maruhxn.boardserver.dto.response.PageItem;
@@ -37,18 +37,17 @@ public class CommentController {
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseDto createComment(@AuthenticationPrincipal Member member, @PathVariable Long postId, @RequestBody @Valid CreateCommentRequest createCommentRequest) {
+    public ResponseDto createComment(@AuthenticationPrincipal AccountContext accountContext, @PathVariable Long postId, @RequestBody @Valid CreateCommentRequest createCommentRequest) {
         log.info("content={}", createCommentRequest.getContent());
-        commentService.createComment(member, postId, createCommentRequest);
+        commentService.createComment(accountContext.getMember(), postId, createCommentRequest);
         return ResponseDto.ok("댓글 생성 성공");
     }
 
     @DeleteMapping("/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("(principal.id == #member.id) or hasRole('ROLE_ADMIN')")
-    public void deleteComment(@AuthenticationPrincipal Member member, @PathVariable Long postId, @PathVariable Long commentId) {
+    public void deleteComment(@AuthenticationPrincipal AccountContext accountContext, @PathVariable Long postId, @PathVariable Long commentId) {
         log.info("postId={}, commentId={}", postId, commentId);
-        commentService.deleteComment(member, commentId);
+        commentService.deleteComment(accountContext.getMember(), commentId);
     }
 
 }

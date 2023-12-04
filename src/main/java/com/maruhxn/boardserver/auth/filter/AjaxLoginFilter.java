@@ -7,15 +7,19 @@ import com.maruhxn.boardserver.dto.request.auth.LoginRequest;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.util.Set;
 
 public class AjaxLoginFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -31,10 +35,13 @@ public class AjaxLoginFilter extends AbstractAuthenticationProcessingFilter {
         if (!isAjax(request) && !request.getMethod().equals("POST")) {
             throw new AuthenticationServiceException(ErrorCode.BAD_REQUEST.getMessage());
         }
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
 
         LoginRequest loginRequest = objectMapper.readValue(request.getReader(), LoginRequest.class);
-        if (!StringUtils.hasText(loginRequest.getEmail()) || !StringUtils.hasText(loginRequest.getPassword())) {
-            throw new AuthenticationServiceException("이메일 또는 패스워드는 비어있을 수 없습니다.");
+        Set<ConstraintViolation<LoginRequest>> validate = validator.validate(loginRequest);
+        if (!validate.isEmpty()) {
+            throw new AuthenticationServiceException("유효하지 않은 로그인 요청입니다.");
         }
 
         AjaxAuthenticationToken authRequest = AjaxAuthenticationToken.unauthenticated(loginRequest.getEmail(),

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@PreAuthorize("(principal.id == #memberId) or hasRole('ROLE_ADMIN')")
+@PreAuthorize("(principal.getId() == #memberId) or hasRole('ROLE_ADMIN')")
 public class MemberController {
 
     private final MemberService memberService;
@@ -33,7 +33,7 @@ public class MemberController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateMemberProfile(
             @PathVariable Long memberId,
-            @Valid UpdateMemberProfileRequest updateMemberProfileRequest) {
+            @RequestBody @Valid UpdateMemberProfileRequest updateMemberProfileRequest) {
         log.info("회원 정보 수정 | username={}, profileImage={}",
                 updateMemberProfileRequest.getUsername(),
                 updateMemberProfileRequest.getProfileImage());

@@ -35,6 +35,10 @@ public class AccountContext implements UserDetails {
         return member.getPassword();
     }
 
+    public Long getId() {
+        return member.getId();
+    }
+
     @Override
     public String getUsername() {
         return member.getUsername();

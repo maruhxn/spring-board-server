@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.domain.Page;
 
-import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -19,7 +18,7 @@ public class PageItem<T> {
 
     public static <T> PageItem fromPage(Page<T> page) {
         return PageItem.builder()
-                .results(Collections.singletonList(page.getContent()))
+                .results((List<Object>) page.getContent())
                 .isFirst(page.isFirst())
                 .isLast(page.isLast())
                 .isEmpty(page.isEmpty())
