@@ -57,8 +57,6 @@ public class TestSupport {
 
     protected Member admin;
 
-    protected String MEMBER_API_PATH;
-
     protected ConstraintDescriptions simpleRequestConstraints;
 
     @BeforeEach
@@ -90,8 +88,6 @@ public class TestSupport {
                         .role(Role.ROLE_ADMIN)
                         .profileImage(Constants.BASIC_PROFILE_IMAGE_NAME)
                         .build());
-
-        MEMBER_API_PATH = "/members/" + member.getId();
     }
 
     public Attributes.Attribute withPath(String path) {

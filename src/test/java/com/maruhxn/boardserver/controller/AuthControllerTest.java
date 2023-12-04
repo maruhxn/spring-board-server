@@ -22,7 +22,7 @@ class AuthControllerTest extends TestSupport {
 
     @Test
     @WithAnonymousUser
-    void Should_Register_SuccessFully_When_isAnonymous() throws Exception {
+    void shouldRegisterWhenIsAnonymous() throws Exception {
         RegisterRequest registerRequest = getRegisterRequest();
         simpleRequestConstraints = new ConstraintDescriptions(RegisterRequest.class);
         mockMvc.perform(
@@ -48,7 +48,7 @@ class AuthControllerTest extends TestSupport {
             userDetailsServiceBeanName = "ajaxUserDetailsService",
             setupBefore = TestExecutionEvent.TEST_EXECUTION
     )
-    void Should_Register_Fail_With_403_When_Is_Logged_In() throws Exception {
+    void shouldFailToRegisterWith403WhenIsLoggedIn() throws Exception {
         RegisterRequest registerRequest = getRegisterRequest();
 
         mockMvc.perform(
@@ -60,7 +60,7 @@ class AuthControllerTest extends TestSupport {
 
     @Test
     @WithAnonymousUser
-    void Should_Register_Fail_With_400_When_IllegalRequest() throws Exception {
+    void shouldFailToRegisterWith400WhenIsInvalidRequest() throws Exception {
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setEmail("test1@test.com");
         registerRequest.setUsername("");
@@ -78,7 +78,7 @@ class AuthControllerTest extends TestSupport {
 
     @Test
     @WithAnonymousUser
-    void Should_Register_Fail_With_400_When_Password_Confirm_Fail() throws Exception {
+    void shouldFailToRegisterWith400WhenConfirmFail() throws Exception {
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setEmail("test1@test.com");
         registerRequest.setUsername("tester");
@@ -95,7 +95,7 @@ class AuthControllerTest extends TestSupport {
 
     @Test
     @WithAnonymousUser
-    void Should_Register_Fail_With_422_When_Already_Existing_User() throws Exception {
+    void shouldFailToRegisterWith422WhenIsExistingUser() throws Exception {
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setEmail("test@test.com");
         registerRequest.setUsername("tester");
@@ -121,7 +121,7 @@ class AuthControllerTest extends TestSupport {
 
     @Test
     @WithAnonymousUser
-    void Should_Login_SuccessFully_When_isAnonymous() throws Exception {
+    void shouldLoginWhenIsAnonymous() throws Exception {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("test@test.com");
         loginRequest.setPassword("test");
@@ -143,7 +143,7 @@ class AuthControllerTest extends TestSupport {
 
     @Test
     @WithAnonymousUser
-    void Should_Login_Fail_With_401_When_IllegalMethod() throws Exception {
+    void shouldFailToLoginWith401WhenIsInvalidMethod() throws Exception {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("test@test.com");
         loginRequest.setPassword("test");
@@ -158,7 +158,7 @@ class AuthControllerTest extends TestSupport {
 
     @Test
     @WithAnonymousUser
-    void Should_Login_Fail_With_400_When_IllegalRequest() throws Exception {
+    void shouldFailToLoginWith400WhenIsInvalidRequest() throws Exception {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("testtest.com");
         loginRequest.setPassword("");
@@ -177,14 +177,14 @@ class AuthControllerTest extends TestSupport {
             userDetailsServiceBeanName = "ajaxUserDetailsService",
             setupBefore = TestExecutionEvent.TEST_EXECUTION
     )
-    void Should_Logout_Successfully_When_Is_Not_Logged_In() throws Exception {
+    void shouldLogoutWhenIsLoggedIn() throws Exception {
         mockMvc.perform(delete("/auth/logout"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     @WithAnonymousUser
-    void Should_Logout_Fail_With_401_When_Is_Not_Logged_In() throws Exception {
+    void shouldFailToLogoutWith401WhenIsAnonymous() throws Exception {
         mockMvc.perform(delete("/auth/logout"))
                 .andExpect(status().isUnauthorized());
     }
