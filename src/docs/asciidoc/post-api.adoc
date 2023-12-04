@@ -9,7 +9,7 @@ operation::post_controller_test/should-get-first10-post-item-page-when-no-query-
 [[Post-게시글-생성]]
 === 게시글 생성
 
-operation::post_controller_test/should-create-post-when-is-logged-in[snippets='curl-request,http-request,form-parameters,http-response']
+operation::post_controller_test/should-create-post-with-one-image-when-is-logged-in[snippets='curl-request,http-request,request-parts,http-response']
 
 [[Post-단일-조회]]
 === 단일 조회

@@ -138,7 +138,7 @@ class PostControllerTest extends TestSupport {
                                 requestParts(
                                         partWithName("title").description("title").attributes(setType("string")).attributes(withPath("title")),
                                         partWithName("content").description("content").attributes(setType("string")).attributes(withPath("content")),
-                                        partWithName("images").description("images").attributes(setType("string")).attributes(withPath("images"))
+                                        partWithName("images").description("images").attributes(setType("List<MultiPartFile>")).attributes(withPath("images"))
                                 )
                         ));
     }
