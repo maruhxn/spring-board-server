@@ -4,7 +4,7 @@
 [[Post-게시글-리스트-조회]]
 === 게시글 리스트 조회
 
-operation::post_controller_test/should-get-first10-post-item-page-when-no-query-parameter[snippets='curl-request,query-parameters,http-request,http-response']
+operation::post_controller_test/should-get-first10-post-item-page-when-no-query-parameter[snippets='curl-request,query-parameters,http-request,http-response,response-fields']
 
 [[Post-게시글-생성]]
 === 게시글 생성
@@ -14,7 +14,7 @@ operation::post_controller_test/should-create-post-with-one-image-when-is-logged
 [[Post-단일-조회]]
 === 단일 조회
 
-operation::post_controller_test/should-get-post-detail-when-is-exist[snippets='curl-request,path-parameters,http-request,http-response']
+operation::post_controller_test/should-get-post-detail-when-is-exist[snippets='curl-request,path-parameters,http-request,http-response,response-fields']
 
 [[Post-게시글-수정]]
 === 게시글 수정

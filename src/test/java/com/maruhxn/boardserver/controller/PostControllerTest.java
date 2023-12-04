@@ -1,11 +1,12 @@
 package com.maruhxn.boardserver.controller;
 
-import com.maruhxn.boardserver.support.TestSupport;
 import com.maruhxn.boardserver.common.exception.ErrorCode;
 import com.maruhxn.boardserver.domain.Post;
+import com.maruhxn.boardserver.domain.PostImage;
 import com.maruhxn.boardserver.dto.request.posts.CreatePostRequest;
 import com.maruhxn.boardserver.dto.request.posts.UpdatePostRequest;
 import com.maruhxn.boardserver.repository.PostRepository;
+import com.maruhxn.boardserver.support.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import java.io.FileInputStream;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.JsonFieldType.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -35,6 +39,7 @@ class PostControllerTest extends TestSupport {
 
     @BeforeEach
     void createDummyPost() {
+
         post1 = postRepository.save(Post.builder()
                 .member(member)
                 .title("title1")
@@ -42,6 +47,14 @@ class PostControllerTest extends TestSupport {
                 .viewCount(0L)
                 .build()
         );
+
+        PostImage post1Image = PostImage.builder()
+                .post(post1)
+                .originalName("defaultProfileImage.jfif")
+                .storedName("stored-default-profile-image.jfif")
+                .build();
+
+        post1.addPostImage(post1Image);
 
         post2 = postRepository.save(Post.builder()
                 .member(admin)
@@ -74,6 +87,38 @@ class PostControllerTest extends TestSupport {
                                         parameterWithName("title").optional().description("제목 검색"),
                                         parameterWithName("content").optional().description("내용 검색"),
                                         parameterWithName("author").optional().description("작성자 이름 검색")
+                                ),
+                                responseFields(
+                                        fieldWithPath("code").type(STRING)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data.isFirst").type(BOOLEAN)
+                                                .description("첫번째 페이지 여부"),
+                                        fieldWithPath("data.isLast").type(BOOLEAN)
+                                                .description("마지막 페이지 여부"),
+                                        fieldWithPath("data.isEmpty").type(BOOLEAN)
+                                                .description("isEmpty"),
+                                        fieldWithPath("data.totalPage").type(NUMBER)
+                                                .description("전체 페이지 수"),
+                                        fieldWithPath("data.totalElements").type(NUMBER)
+                                                .description("전체 데이터 수"),
+                                        fieldWithPath("data.results").type(ARRAY)
+                                                .description("PostItem[]"),
+                                        fieldWithPath("data.results[0].postId").type(NUMBER)
+                                                .description("Post ID"),
+                                        fieldWithPath("data.results[0].title").type(STRING)
+                                                .description("게시글 제목"),
+                                        fieldWithPath("data.results[0].content").type(STRING)
+                                                .description("게시글 내용"),
+                                        fieldWithPath("data.results[0].authorName").type(STRING)
+                                                .description("게시글 작성자 이름"),
+                                        fieldWithPath("data.results[0].createdAt").type(STRING)
+                                                .description("게시글 생성 시각"),
+                                        fieldWithPath("data.results[0].viewCount").type(NUMBER)
+                                                .description("게시글 조회 수"),
+                                        fieldWithPath("data.results[0].commentCount").type(NUMBER)
+                                                .description("게시글 댓글 수")
                                 )
                         )
                 );
@@ -188,7 +233,7 @@ class PostControllerTest extends TestSupport {
                 .andExpect(jsonPath("$.data.postId").value(post1.getId()))
                 .andExpect(jsonPath("$.data.title").value(post1.getTitle()))
                 .andExpect(jsonPath("$.data.content").value(post1.getContent()))
-                .andExpect(jsonPath("$.data.images.size()").value(0))
+                .andExpect(jsonPath("$.data.images.size()").value(1))
                 .andExpect(jsonPath("$.data.authorName").value(post1.getMember().getUsername()))
                 .andExpect(jsonPath("$.data.viewCount").value(post1.getViewCount()))
                 .andExpect(jsonPath("$.data.createdAt").exists())
@@ -196,6 +241,32 @@ class PostControllerTest extends TestSupport {
                         restDocs.document(
                                 pathParameters(
                                         parameterWithName("postId").description("Post ID")
+                                ),
+                                responseFields(
+                                        fieldWithPath("code").type(STRING)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data.postId").type(NUMBER)
+                                                .description("Post ID"),
+                                        fieldWithPath("data.title").type(STRING)
+                                                .description("게시글 제목"),
+                                        fieldWithPath("data.content").type(STRING)
+                                                .description("게시글 내용"),
+                                        fieldWithPath("data.images").type(ARRAY)
+                                                .description("PostImageItem[]"),
+                                        fieldWithPath("data.images[0].imageId").type(NUMBER)
+                                                .description("게시글 이미지 아이디"),
+                                        fieldWithPath("data.images[0].originalName").type(STRING)
+                                                .description("게시글 이미지 원본 이름"),
+                                        fieldWithPath("data.images[0].storedName").type(STRING)
+                                                .description("게시글 이미지 저장된 이름"),
+                                        fieldWithPath("data.authorName").type(STRING)
+                                                .description("게시글 작성자 이름"),
+                                        fieldWithPath("data.viewCount").type(NUMBER)
+                                                .description("게시글 조회 수"),
+                                        fieldWithPath("data.createdAt").type(STRING)
+                                                .description("게시글 생성 시각")
                                 )
                         )
                 );
