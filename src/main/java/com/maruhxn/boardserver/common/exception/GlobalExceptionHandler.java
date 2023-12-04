@@ -3,10 +3,10 @@ package com.maruhxn.boardserver.common.exception;
 import com.maruhxn.boardserver.dto.response.ResponseDto;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -43,14 +43,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<Object> validationFail(MethodArgumentNotValidException e) {
-        List<String> errors = e.getBindingResult().getFieldErrors()
-                .stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .toList();
 
         return ResponseEntity
                 .status(ErrorCode.VALIDATION_ERROR.getHttpStatus())
-                .body(new ValidationFailedResponseDto(ErrorCode.VALIDATION_ERROR.name(), errors));
+                .body(ValidationFailedResponse.of(ErrorCode.VALIDATION_ERROR, e.getBindingResult()));
     }
 
     @ExceptionHandler
@@ -69,8 +65,19 @@ public class GlobalExceptionHandler {
     }
 
     @Data
-    static private class ValidationFailedResponseDto {
+    static private class ValidationFailedResponse {
         private final String code;
-        private final List<String> messages;
+        private final String message;
+        private final List<FieldError> errors;
+
+        public ValidationFailedResponse(final ErrorCode code, final List<FieldError> errors) {
+            this.message = code.getMessage();
+            this.errors = errors;
+            this.code = code.name();
+        }
+
+        public static ValidationFailedResponse of(final ErrorCode code, final BindingResult bindingResult) {
+            return new ValidationFailedResponse(code, FieldError.of(bindingResult));
+        }
     }
 }
