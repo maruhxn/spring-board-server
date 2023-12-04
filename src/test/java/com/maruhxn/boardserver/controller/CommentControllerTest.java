@@ -19,9 +19,9 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import java.util.List;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.restdocs.payload.JsonFieldType.STRING;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.JsonFieldType.*;
+import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -90,6 +90,38 @@ class CommentControllerTest extends TestSupport {
                                 queryParameters(
                                         parameterWithName("size").optional().description("조회 결과 크기"),
                                         parameterWithName("page").optional().description("페이지")
+                                ),
+                                responseFields(
+                                        fieldWithPath("code").type(STRING)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data.isFirst").type(BOOLEAN)
+                                                .description("첫번째 페이지 여부"),
+                                        fieldWithPath("data.isLast").type(BOOLEAN)
+                                                .description("마지막 페이지 여부"),
+                                        fieldWithPath("data.isEmpty").type(BOOLEAN)
+                                                .description("isEmpty"),
+                                        fieldWithPath("data.totalPage").type(NUMBER)
+                                                .description("전체 페이지 수"),
+                                        fieldWithPath("data.totalElements").type(NUMBER)
+                                                .description("전체 데이터 수"),
+                                        fieldWithPath("data.results").type(ARRAY)
+                                                .description("CommentItem[]"),
+                                        fieldWithPath("data.results[0].commentId").type(NUMBER)
+                                                .description("Post ID"),
+                                        fieldWithPath("data.results[0].content").type(STRING)
+                                                .description("댓글 내용"),
+                                        fieldWithPath("data.results[0].author").type(OBJECT)
+                                                .description("댓글 작성자(CommentAuthor)"),
+                                        fieldWithPath("data.results[0].author.memberId").type(NUMBER)
+                                                .description("댓글 작성자 ID"),
+                                        fieldWithPath("data.results[0].author.username").type(STRING)
+                                                .description("댓글 작성자 이름"),
+                                        fieldWithPath("data.results[0].author.profileImage").type(STRING)
+                                                .description("댓글 작성자 프로필이미지"),
+                                        fieldWithPath("data.results[0].createdAt").type(STRING)
+                                                .description("댓글 작성 시각")
                                 )
                         )
                 );

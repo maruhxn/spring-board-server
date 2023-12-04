@@ -4,7 +4,7 @@
 [[Comment-댓글-리스트-조회]]
 === 댓글 리스트 조회
 
-operation::comment_controller_test/should-get-first10-comment-item-page-when-no-query-parameter[snippets='curl-request,path-parameters,query-parameters,http-request,http-response']
+operation::comment_controller_test/should-get-first10-comment-item-page-when-no-query-parameter[snippets='curl-request,path-parameters,query-parameters,http-request,http-response,response-fields']
 
 [[Comment-댓글-생성]]
 === 댓글 생성
