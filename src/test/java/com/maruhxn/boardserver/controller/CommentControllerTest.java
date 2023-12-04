@@ -1,12 +1,12 @@
 package com.maruhxn.boardserver.controller;
 
-import com.maruhxn.boardserver.support.TestSupport;
 import com.maruhxn.boardserver.common.exception.ErrorCode;
 import com.maruhxn.boardserver.domain.Comment;
 import com.maruhxn.boardserver.domain.Post;
 import com.maruhxn.boardserver.dto.request.comments.CreateCommentRequest;
 import com.maruhxn.boardserver.repository.CommentRepository;
 import com.maruhxn.boardserver.repository.PostRepository;
+import com.maruhxn.boardserver.support.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,7 +169,8 @@ class CommentControllerTest extends TestSupport {
                                 .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(ErrorCode.VALIDATION_ERROR.name()))
-                .andExpect(jsonPath("$.messages.size()").value(1));
+                .andExpect(jsonPath("$.message").value(ErrorCode.VALIDATION_ERROR.getMessage()))
+                .andExpect(jsonPath("$.errors.size()").value(1));
     }
 
     @Test

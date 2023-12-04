@@ -43,6 +43,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/posts", "/posts/{postId}").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/posts/{postId}/comments").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/images/{fileName}").permitAll()
+                                .requestMatchers("/test/**").permitAll()
                                 .anyRequest().authenticated())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
@@ -57,6 +58,7 @@ public class SecurityConfig {
                         exceptionHandling
                                 .authenticationEntryPoint(ajaxAuthenticationEntryPoint())
                                 .accessDeniedHandler(ajaxAccessDeniedHandler()));
+
         return http.build();
     }
 

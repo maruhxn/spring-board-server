@@ -73,7 +73,8 @@ class AuthControllerTest extends TestSupport {
                                 .content(objectMapper.writeValueAsString(registerRequest)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(ErrorCode.VALIDATION_ERROR.name()))
-                .andExpect(jsonPath("$.messages.size()").value(2));
+                .andExpect(jsonPath("$.message").value(ErrorCode.VALIDATION_ERROR.getMessage()))
+                .andExpect(jsonPath("$.errors.size()").value(2));
     }
 
     @Test
