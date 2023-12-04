@@ -1,8 +1,8 @@
 package com.maruhxn.boardserver.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.maruhxn.boardserver.config.RestDocsConfiguration;
 import com.maruhxn.boardserver.common.Constants;
+import com.maruhxn.boardserver.config.RestDocsConfiguration;
 import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.domain.Role;
 import com.maruhxn.boardserver.repository.MemberRepository;
@@ -17,6 +17,7 @@ import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
@@ -27,6 +28,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 
+import static org.springframework.restdocs.payload.JsonFieldType.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -99,5 +103,38 @@ public class TestSupport {
 
     public Attributes.Attribute setType(String type) {
         return key("type").value(type);
+    }
+
+    public ResponseFieldsSnippet commonResponseFields(String dataName) {
+        if (dataName == null) {
+            return responseFields(
+                    fieldWithPath("code").type(STRING).description("상태 코드"),
+                    fieldWithPath("message").type(STRING).description("상태 메시지")
+            );
+        }
+
+        return responseFields(
+                fieldWithPath("code").type(STRING).description("상태 코드"),
+                fieldWithPath("message").type(STRING).description("상태 메시지"),
+                fieldWithPath("data").optional().description(dataName)
+        );
+    }
+
+
+    public ResponseFieldsSnippet pageResponseFields(String resultDataName) {
+        return commonResponseFields("PageItem").andWithPrefix("data.",
+                fieldWithPath("isFirst").type(BOOLEAN)
+                        .description("첫번째 페이지 여부"),
+                fieldWithPath("isLast").type(BOOLEAN)
+                        .description("마지막 페이지 여부"),
+                fieldWithPath("isEmpty").type(BOOLEAN)
+                        .description("isEmpty"),
+                fieldWithPath("totalPage").type(NUMBER)
+                        .description("전체 페이지 수"),
+                fieldWithPath("totalElements").type(NUMBER)
+                        .description("전체 데이터 수"),
+                fieldWithPath("results").type(ARRAY)
+                        .description(resultDataName)
+        );
     }
 }

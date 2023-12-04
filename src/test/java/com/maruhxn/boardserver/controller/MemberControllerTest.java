@@ -46,20 +46,17 @@ class MemberControllerTest extends TestSupport {
                                 pathParameters(
                                         parameterWithName("memberId").description("Member ID")
                                 ),
-                                responseFields(
-                                        fieldWithPath("code").type(STRING)
-                                                .description("상태 코드"),
-                                        fieldWithPath("message").type(STRING)
-                                                .description("상태 메세지"),
-                                        fieldWithPath("data.memberId").type(NUMBER)
-                                                .description("Member ID"),
-                                        fieldWithPath("data.email").type(STRING)
-                                                .description("email"),
-                                        fieldWithPath("data.username").type(STRING)
-                                                .description("username"),
-                                        fieldWithPath("data.profileImage").type(STRING)
-                                                .description("profileImage")
-                                )
+                                commonResponseFields("MemberDetail")
+                                        .andWithPrefix("data.",
+                                                fieldWithPath("memberId").type(NUMBER)
+                                                        .description("Member ID"),
+                                                fieldWithPath("email").type(STRING)
+                                                        .description("email"),
+                                                fieldWithPath("username").type(STRING)
+                                                        .description("username"),
+                                                fieldWithPath("profileImage").type(STRING)
+                                                        .description("profileImage")
+                                        )
                         )
                 );
     }
@@ -107,8 +104,12 @@ class MemberControllerTest extends TestSupport {
                                         parameterWithName("memberId").description("Member ID")
                                 ),
                                 requestFields(
-                                        fieldWithPath("username").type(STRING).description("username").attributes(withPath("username")),
-                                        fieldWithPath("profileImage").type(MultipartFile.class).optional().description("profileImage")
+                                        fieldWithPath("username").type(STRING)
+                                                .description("username")
+                                                .attributes(withPath("username")),
+                                        fieldWithPath("profileImage").type(MultipartFile.class)
+                                                .optional()
+                                                .description("profileImage")
                                 )
                         )
                 );
@@ -178,9 +179,15 @@ class MemberControllerTest extends TestSupport {
                                         parameterWithName("memberId").description("Member ID")
                                 ),
                                 requestFields(
-                                        fieldWithPath("currPassword").type(STRING).description("currPassword").attributes(withPath("currPassword")),
-                                        fieldWithPath("newPassword").type(STRING).description("newPassword").attributes(withPath("newPassword")),
-                                        fieldWithPath("confirmNewPassword").type(STRING).description("confirmNewPassword").attributes(withPath("confirmNewPassword"))
+                                        fieldWithPath("currPassword").type(STRING)
+                                                .description("currPassword")
+                                                .attributes(withPath("currPassword")),
+                                        fieldWithPath("newPassword").type(STRING)
+                                                .description("newPassword")
+                                                .attributes(withPath("newPassword")),
+                                        fieldWithPath("confirmNewPassword").type(STRING)
+                                                .description("confirmNewPassword")
+                                                .attributes(withPath("confirmNewPassword"))
                                 )
                         )
                 );
@@ -281,12 +288,7 @@ class MemberControllerTest extends TestSupport {
                                                 .description("currPassword")
                                                 .attributes(withPath("currPassword"))
                                 ),
-                                responseFields(
-                                        fieldWithPath("code").type(STRING)
-                                                .description("상태 코드"),
-                                        fieldWithPath("message").type(STRING)
-                                                .description("상태 메시지")
-                                )
+                                commonResponseFields(null)
                         )
                 );
     }

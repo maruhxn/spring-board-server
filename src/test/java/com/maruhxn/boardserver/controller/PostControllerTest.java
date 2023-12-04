@@ -23,7 +23,6 @@ import java.io.FileInputStream;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -88,38 +87,23 @@ class PostControllerTest extends TestSupport {
                                         parameterWithName("content").optional().description("내용 검색"),
                                         parameterWithName("author").optional().description("작성자 이름 검색")
                                 ),
-                                responseFields(
-                                        fieldWithPath("code").type(STRING)
-                                                .description("상태 코드"),
-                                        fieldWithPath("message").type(STRING)
-                                                .description("상태 메세지"),
-                                        fieldWithPath("data.isFirst").type(BOOLEAN)
-                                                .description("첫번째 페이지 여부"),
-                                        fieldWithPath("data.isLast").type(BOOLEAN)
-                                                .description("마지막 페이지 여부"),
-                                        fieldWithPath("data.isEmpty").type(BOOLEAN)
-                                                .description("isEmpty"),
-                                        fieldWithPath("data.totalPage").type(NUMBER)
-                                                .description("전체 페이지 수"),
-                                        fieldWithPath("data.totalElements").type(NUMBER)
-                                                .description("전체 데이터 수"),
-                                        fieldWithPath("data.results").type(ARRAY)
-                                                .description("PostItem[]"),
-                                        fieldWithPath("data.results[0].postId").type(NUMBER)
-                                                .description("Post ID"),
-                                        fieldWithPath("data.results[0].title").type(STRING)
-                                                .description("게시글 제목"),
-                                        fieldWithPath("data.results[0].content").type(STRING)
-                                                .description("게시글 내용"),
-                                        fieldWithPath("data.results[0].authorName").type(STRING)
-                                                .description("게시글 작성자 이름"),
-                                        fieldWithPath("data.results[0].createdAt").type(STRING)
-                                                .description("게시글 생성 시각"),
-                                        fieldWithPath("data.results[0].viewCount").type(NUMBER)
-                                                .description("게시글 조회 수"),
-                                        fieldWithPath("data.results[0].commentCount").type(NUMBER)
-                                                .description("게시글 댓글 수")
-                                )
+                                pageResponseFields("PostItem[]")
+                                        .andWithPrefix("data.results[0].",
+                                                fieldWithPath("postId").type(NUMBER)
+                                                        .description("Post ID"),
+                                                fieldWithPath("title").type(STRING)
+                                                        .description("게시글 제목"),
+                                                fieldWithPath("content").type(STRING)
+                                                        .description("게시글 내용"),
+                                                fieldWithPath("authorName").type(STRING)
+                                                        .description("게시글 작성자 이름"),
+                                                fieldWithPath("createdAt").type(STRING)
+                                                        .description("게시글 생성 시각"),
+                                                fieldWithPath("viewCount").type(NUMBER)
+                                                        .description("게시글 조회 수"),
+                                                fieldWithPath("commentCount").type(NUMBER)
+                                                        .description("게시글 댓글 수")
+                                        )
                         )
                 );
     }
@@ -181,9 +165,18 @@ class PostControllerTest extends TestSupport {
                 .andDo(
                         restDocs.document(
                                 requestParts(
-                                        partWithName("title").description("title").attributes(setType("string")).attributes(withPath("title")),
-                                        partWithName("content").description("content").attributes(setType("string")).attributes(withPath("content")),
-                                        partWithName("images").description("images").attributes(setType("List<MultiPartFile>")).attributes(withPath("images"))
+                                        partWithName("title")
+                                                .description("title")
+                                                .attributes(setType("string"))
+                                                .attributes(withPath("title")),
+                                        partWithName("content")
+                                                .description("content")
+                                                .attributes(setType("string"))
+                                                .attributes(withPath("content")),
+                                        partWithName("images")
+                                                .description("images")
+                                                .attributes(setType("List<MultiPartFile>"))
+                                                .attributes(withPath("images"))
                                 )
                         ));
     }
@@ -242,31 +235,28 @@ class PostControllerTest extends TestSupport {
                                 pathParameters(
                                         parameterWithName("postId").description("Post ID")
                                 ),
-                                responseFields(
-                                        fieldWithPath("code").type(STRING)
-                                                .description("상태 코드"),
-                                        fieldWithPath("message").type(STRING)
-                                                .description("상태 메세지"),
-                                        fieldWithPath("data.postId").type(NUMBER)
+                                commonResponseFields("PostDetailItem").andWithPrefix("data.",
+                                        fieldWithPath("postId").type(NUMBER)
                                                 .description("Post ID"),
-                                        fieldWithPath("data.title").type(STRING)
+                                        fieldWithPath("title").type(STRING)
                                                 .description("게시글 제목"),
-                                        fieldWithPath("data.content").type(STRING)
+                                        fieldWithPath("content").type(STRING)
                                                 .description("게시글 내용"),
-                                        fieldWithPath("data.images").type(ARRAY)
+                                        fieldWithPath("images").type(ARRAY)
                                                 .description("PostImageItem[]"),
-                                        fieldWithPath("data.images[0].imageId").type(NUMBER)
-                                                .description("게시글 이미지 아이디"),
-                                        fieldWithPath("data.images[0].originalName").type(STRING)
-                                                .description("게시글 이미지 원본 이름"),
-                                        fieldWithPath("data.images[0].storedName").type(STRING)
-                                                .description("게시글 이미지 저장된 이름"),
-                                        fieldWithPath("data.authorName").type(STRING)
+                                        fieldWithPath("authorName").type(STRING)
                                                 .description("게시글 작성자 이름"),
-                                        fieldWithPath("data.viewCount").type(NUMBER)
+                                        fieldWithPath("viewCount").type(NUMBER)
                                                 .description("게시글 조회 수"),
-                                        fieldWithPath("data.createdAt").type(STRING)
+                                        fieldWithPath("createdAt").type(STRING)
                                                 .description("게시글 생성 시각")
+                                ).andWithPrefix("data.images[0].",
+                                        fieldWithPath("imageId").type(NUMBER)
+                                                .description("게시글 이미지 아이디"),
+                                        fieldWithPath("originalName").type(STRING)
+                                                .description("게시글 이미지 원본 이름"),
+                                        fieldWithPath("storedName").type(STRING)
+                                                .description("게시글 이미지 저장된 이름")
                                 )
                         )
                 );
@@ -306,9 +296,18 @@ class PostControllerTest extends TestSupport {
                                         parameterWithName("postId").description("Post ID")
                                 ),
                                 formParameters(
-                                        parameterWithName("title").optional().description("title").attributes(setType("string")).attributes(withPath("title")),
-                                        parameterWithName("content").optional().description("content").attributes(setType("string")).attributes(withPath("content")),
-                                        parameterWithName("images").optional().description("images").attributes(setType("List<MultipartFile>")).attributes(withPath("images"))
+                                        parameterWithName("title").optional()
+                                                .description("title")
+                                                .attributes(setType("string"))
+                                                .attributes(withPath("title")),
+                                        parameterWithName("content").optional()
+                                                .description("content")
+                                                .attributes(setType("string"))
+                                                .attributes(withPath("content")),
+                                        parameterWithName("images").optional()
+                                                .description("images")
+                                                .attributes(setType("List<MultipartFile>"))
+                                                .attributes(withPath("images"))
                                 )
                         )
                 );

@@ -7,9 +7,9 @@ Andy Wilkinson;
 :toclevels: 2
 :sectlinks:
 
+include::overview.adoc[]
 include::auth-api.adoc[]
 include::member-api.adoc[]
 include::post-api.adoc[]
 include::comment-api.adoc[]
 include::file-api.adoc[]
-include::error-code.adoc[]
