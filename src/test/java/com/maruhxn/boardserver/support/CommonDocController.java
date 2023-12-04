@@ -5,7 +5,10 @@ import com.maruhxn.boardserver.common.exception.GlobalException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,22 +61,5 @@ public class CommonDocController {
 
         @Email
         private String email;
-    }
-
-    @ToString
-    @Getter
-    @NoArgsConstructor
-    @Builder
-    public static class SampleResponse<T> {
-
-        private T data;
-
-        private SampleResponse(T data) {
-            this.data = data;
-        }
-
-        public static <T> SampleResponse<T> of(T data) {
-            return new SampleResponse<>(data);
-        }
     }
 }

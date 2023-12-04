@@ -1,10 +1,10 @@
 package com.maruhxn.boardserver.controller;
 
-import com.maruhxn.boardserver.support.TestSupport;
 import com.maruhxn.boardserver.common.Constants;
 import com.maruhxn.boardserver.dto.request.auth.ConfirmPasswordRequest;
 import com.maruhxn.boardserver.dto.request.members.UpdateMemberProfileRequest;
 import com.maruhxn.boardserver.dto.request.members.UpdatePasswordRequest;
+import com.maruhxn.boardserver.support.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
@@ -14,9 +14,9 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.web.multipart.MultipartFile;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -45,6 +45,20 @@ class MemberControllerTest extends TestSupport {
                         restDocs.document(
                                 pathParameters(
                                         parameterWithName("memberId").description("Member ID")
+                                ),
+                                responseFields(
+                                        fieldWithPath("code").type(STRING)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data.memberId").type(NUMBER)
+                                                .description("Member ID"),
+                                        fieldWithPath("data.email").type(STRING)
+                                                .description("email"),
+                                        fieldWithPath("data.username").type(STRING)
+                                                .description("username"),
+                                        fieldWithPath("data.profileImage").type(STRING)
+                                                .description("profileImage")
                                 )
                         )
                 );
@@ -259,10 +273,19 @@ class MemberControllerTest extends TestSupport {
                 .andDo(
                         restDocs.document(
                                 pathParameters(
-                                        parameterWithName("memberId").description("Member ID")
+                                        parameterWithName("memberId")
+                                                .description("Member ID")
                                 ),
                                 requestFields(
-                                        fieldWithPath("currPassword").type(STRING).description("currPassword").attributes(withPath("currPassword"))
+                                        fieldWithPath("currPassword").type(STRING)
+                                                .description("currPassword")
+                                                .attributes(withPath("currPassword"))
+                                ),
+                                responseFields(
+                                        fieldWithPath("code").type(STRING)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(STRING)
+                                                .description("상태 메시지")
                                 )
                         )
                 );
