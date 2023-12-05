@@ -13,10 +13,15 @@ server:
 spring:
   config:
     activate:
-      on-profile: test
+      on-profile: dev
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
   servlet:
     multipart:
       max-file-size: 500MB
@@ -24,6 +29,12 @@ spring:
     console:
       enabled: false
   jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
     open-in-view: false
   data:
     web:
