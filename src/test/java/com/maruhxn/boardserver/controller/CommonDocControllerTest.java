@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.test.context.support.TestExecutionEvent;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.ArrayList;
@@ -27,11 +25,6 @@ class CommonDocControllerTest extends TestSupport {
     private static final String ERROR_SNIPPET_FILE = "errorcode-response";
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
     public void validationErrorSample() throws Exception {
         CommonDocController.SampleRequest sampleRequest = new CommonDocController.SampleRequest("", "");
         mockMvc.perform(

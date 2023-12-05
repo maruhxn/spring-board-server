@@ -6,6 +6,7 @@ import com.maruhxn.boardserver.domain.PostImage;
 import com.maruhxn.boardserver.dto.request.posts.CreatePostRequest;
 import com.maruhxn.boardserver.dto.request.posts.UpdatePostRequest;
 import com.maruhxn.boardserver.repository.PostRepository;
+import com.maruhxn.boardserver.support.CustomWithUserDetails;
 import com.maruhxn.boardserver.support.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,9 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
-import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.security.test.context.support.WithUserDetails;
 
 import java.io.FileInputStream;
 
@@ -143,11 +142,7 @@ class PostControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldCreatePostWithOneImageWhenIsLoggedIn() throws Exception {
         final String origianlFileName = "defaultProfileImage.jfif"; //파일명
         final String filePath = "src/test/resources/static/img/" + origianlFileName;
@@ -197,11 +192,7 @@ class PostControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldFailToCreatePostWith400WhenIsInvalidRequest() throws Exception {
         CreatePostRequest dto = new CreatePostRequest();
         dto.setTitle("");
@@ -273,11 +264,7 @@ class PostControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldUpdatePostWhenIsOwner() throws Exception {
         UpdatePostRequest dto = new UpdatePostRequest();
         dto.setTitle("title!");
@@ -329,11 +316,7 @@ class PostControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldFailToUpdatePostWith403WhenIsNotOwner() throws Exception {
         UpdatePostRequest dto = new UpdatePostRequest();
         dto.setTitle("test!");
@@ -348,11 +331,7 @@ class PostControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldDeletePostWhenIsOwner() throws Exception {
         mockMvc.perform(
                         delete("/posts/{postId}", post1.getId())
@@ -368,11 +347,7 @@ class PostControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldFailToDeletePostWith403WhenNoAuthorities() throws Exception {
         mockMvc.perform(
                         delete("/posts/{postId}", post2.getId())
