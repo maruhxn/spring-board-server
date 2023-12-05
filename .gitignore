@@ -44,3 +44,5 @@ logs
 
 ## Qgenerated\
 /src/main/generated/
+
+/data/
