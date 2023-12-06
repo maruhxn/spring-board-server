@@ -16,7 +16,7 @@ spring:
       on-profile: prod
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/spring-board?rewriteBatchedStatements=true
+    url: jdbc:mysql://mysql_db:3306/spring-board?rewriteBatchedStatements=true
     username: root
     password: 602057
   servlet:
@@ -27,7 +27,7 @@ spring:
       enabled: false
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
@@ -35,7 +35,7 @@ spring:
     open-in-view: false
   data:
     redis:
-      host: localhost
+      host: redis_session_store
       port: 6379
       password:
     web:
@@ -56,4 +56,4 @@ logging:
   level:
     root: info
 file:
-  upload_dir: C:/Users/asus/project/spring-board/board-server/upload/
+  upload_dir: /app/upload/

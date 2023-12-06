@@ -4,19 +4,19 @@ import com.maruhxn.boardserver.common.Constants;
 import com.maruhxn.boardserver.dto.request.auth.ConfirmPasswordRequest;
 import com.maruhxn.boardserver.dto.request.members.UpdateMemberProfileRequest;
 import com.maruhxn.boardserver.dto.request.members.UpdatePasswordRequest;
+import com.maruhxn.boardserver.support.CustomWithUserDetails;
 import com.maruhxn.boardserver.support.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
-import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.web.multipart.MultipartFile;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -26,11 +26,7 @@ class MemberControllerTest extends TestSupport {
     String MEMBER_API_PATH = "/members/{memberId}";
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldGetMemberDetailWhenIsOwner() throws Exception {
         mockMvc.perform(
                         get(MEMBER_API_PATH, member.getId()))
@@ -70,11 +66,7 @@ class MemberControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldFailToGetMemberDetailWith403WhenNoAuthorities() throws Exception {
         mockMvc.perform(
                         get(MEMBER_API_PATH, member.getId() + 1))
@@ -82,11 +74,7 @@ class MemberControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldUpdateProfileWhenIsOwner() throws Exception {
         UpdateMemberProfileRequest dto = new UpdateMemberProfileRequest();
         dto.setUsername("tester!");
@@ -116,11 +104,7 @@ class MemberControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldFailToUpdateProfileWith400WhenUsernameIsShorterThan2() throws Exception {
         UpdateMemberProfileRequest dto = new UpdateMemberProfileRequest();
         dto.setUsername("t");
@@ -132,11 +116,7 @@ class MemberControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldFailToUpdateProfileWith400WhenUsernameIsLongerThan10() throws Exception {
         UpdateMemberProfileRequest dto = new UpdateMemberProfileRequest();
         dto.setUsername("tttttttttttttttttttttttttt");
@@ -156,11 +136,7 @@ class MemberControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldUpdatePasswordWhenIsOwner() throws Exception {
         UpdatePasswordRequest dto = new UpdatePasswordRequest();
         dto.setCurrPassword("test");
@@ -194,11 +170,7 @@ class MemberControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldFailToUpdatePasswordWith400WhenNewPasswordIsShorterThan2() throws Exception {
         UpdatePasswordRequest dto = new UpdatePasswordRequest();
         dto.setCurrPassword("test");
@@ -212,11 +184,7 @@ class MemberControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldFailToUpdatePasswordWith400WhenNewPasswordIsLongerThan20() throws Exception {
         UpdatePasswordRequest dto = new UpdatePasswordRequest();
         dto.setCurrPassword("test");
@@ -230,11 +198,7 @@ class MemberControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldFailToUpdatePasswordWith400WhenIncorrectPassword() throws Exception {
         UpdatePasswordRequest dto = new UpdatePasswordRequest();
         dto.setCurrPassword("test");
@@ -262,11 +226,7 @@ class MemberControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldConfirmPasswordWhenIsOwnerAndCorrectPassword() throws Exception {
         ConfirmPasswordRequest dto = new ConfirmPasswordRequest();
         dto.setCurrPassword("test");
@@ -294,11 +254,7 @@ class MemberControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldFailToConfirmPasswordWith400WhenIncorrectPassword() throws Exception {
         ConfirmPasswordRequest dto = new ConfirmPasswordRequest();
         dto.setCurrPassword("test!");
@@ -311,11 +267,7 @@ class MemberControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldFailToConfirmPasswordWith400WhenInvalidRequest() throws Exception {
         ConfirmPasswordRequest dto = new ConfirmPasswordRequest();
         dto.setCurrPassword("t");
@@ -341,11 +293,7 @@ class MemberControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldWithdrawWhenIsOwner() throws Exception {
         mockMvc.perform(
                         delete(MEMBER_API_PATH, member.getId())
@@ -361,11 +309,7 @@ class MemberControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldFailToWithdrawWith403WhenNoAuthorities() throws Exception {
         mockMvc.perform(
                         delete(MEMBER_API_PATH, member.getId() + 1)

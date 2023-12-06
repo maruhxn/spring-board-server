@@ -1,9 +1,10 @@
 package com.maruhxn.boardserver.controller;
 
-import com.maruhxn.boardserver.support.TestSupport;
 import com.maruhxn.boardserver.common.exception.ErrorCode;
 import com.maruhxn.boardserver.dto.request.auth.LoginRequest;
 import com.maruhxn.boardserver.dto.request.auth.RegisterRequest;
+import com.maruhxn.boardserver.support.CustomWithUserDetails;
+import com.maruhxn.boardserver.support.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
@@ -173,11 +174,7 @@ class AuthControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldLogoutWhenIsLoggedIn() throws Exception {
         mockMvc.perform(delete("/auth/logout"))
                 .andExpect(status().isNoContent());

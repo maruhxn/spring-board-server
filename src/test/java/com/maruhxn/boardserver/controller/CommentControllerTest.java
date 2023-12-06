@@ -6,15 +6,14 @@ import com.maruhxn.boardserver.domain.Post;
 import com.maruhxn.boardserver.dto.request.comments.CreateCommentRequest;
 import com.maruhxn.boardserver.repository.CommentRepository;
 import com.maruhxn.boardserver.repository.PostRepository;
+import com.maruhxn.boardserver.support.CustomWithUserDetails;
 import com.maruhxn.boardserver.support.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
-import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.security.test.context.support.WithUserDetails;
 
 import java.util.List;
 
@@ -129,11 +128,7 @@ class CommentControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldCreateCommentWhenIsLoggedIn() throws Exception {
         CreateCommentRequest dto = new CreateCommentRequest();
         dto.setContent("content");
@@ -172,11 +167,7 @@ class CommentControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldFailToCreateCommentWith400WhenInvalidRequest() throws Exception {
         CreateCommentRequest dto = new CreateCommentRequest();
         dto.setContent("");
@@ -192,11 +183,7 @@ class CommentControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldDeleteCommentWhenIsOwner() throws Exception {
         mockMvc.perform(
                         delete(COMMENT_API_PATH + "/{commentId}", savePost.getId(), comment1.getId())
@@ -213,11 +200,7 @@ class CommentControllerTest extends TestSupport {
     }
 
     @Test
-    @WithUserDetails(
-            value = "test@test.com",
-            userDetailsServiceBeanName = "ajaxUserDetailsService",
-            setupBefore = TestExecutionEvent.TEST_EXECUTION
-    )
+    @CustomWithUserDetails
     void shouldFailToDeleteCommentWith403WhenNoAuthorities() throws Exception {
         mockMvc.perform(
                         delete(COMMENT_API_PATH + "/{commentId}", savePost.getId(), comment2.getId())

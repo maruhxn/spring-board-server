@@ -43,6 +43,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/posts", "/posts/{postId}").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/posts/{postId}/comments").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/images/{fileName}").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/docs/index.html").permitAll()
                                 .requestMatchers("/test/**").permitAll()
                                 .anyRequest().authenticated())
                 .formLogin(AbstractHttpConfigurer::disable)

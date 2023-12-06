@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # MySQL service
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 602057
+      MYSQL_DATABASE: spring-board
+      TZ: Asia/Seoul
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3305:3306"
+    volumes:
+      - ./data/mysql/:/var/lib/mysql
+
+  # Redis service
+  redis:
+    container_name: redis_session_store
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  # Spring Boot application service
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+      - ./data/spring-upload/:/app/upload

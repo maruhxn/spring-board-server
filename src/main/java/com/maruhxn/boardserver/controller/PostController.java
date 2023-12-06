@@ -1,6 +1,6 @@
 package com.maruhxn.boardserver.controller;
 
-import com.maruhxn.boardserver.auth.common.AccountContext;
+import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.dto.PostSearchCond;
 import com.maruhxn.boardserver.dto.request.posts.CreatePostRequest;
 import com.maruhxn.boardserver.dto.request.posts.UpdatePostRequest;
@@ -44,12 +44,13 @@ public class PostController {
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseDto createPost(@AuthenticationPrincipal AccountContext accountContext, @Valid CreatePostRequest createPostRequest) {
+    public ResponseDto createPost(@AuthenticationPrincipal Member member, @Valid CreatePostRequest createPostRequest) {
         log.info("title={}, content={}, images={}",
                 createPostRequest.getTitle(),
                 createPostRequest.getContent(),
                 createPostRequest.getImages());
-        postService.createPost(accountContext.getMember(), createPostRequest);
+        log.info("member={}", member);
+        postService.createPost(member, createPostRequest);
         return ResponseDto.ok("게시글 생성 성공");
     }
 
