@@ -1,0 +1,54 @@
+server:
+  servlet:
+    session:
+      tracking-modes: cookie
+      cookie:
+        path: /
+        name: SESSION
+        http-only: true
+        secure: false
+  error:
+    whitelabel:
+      enabled: false
+spring:
+  config:
+    activate:
+      on-profile: dev
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+  servlet:
+    multipart:
+      max-file-size: 500MB
+  h2:
+    console:
+      enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+    open-in-view: false
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        max-page-size: 10
+  web:
+    resources:
+      add-mappings: false
+  mvc:
+    throw-exception-if-no-handler-found: true
+logging:
+  level:
+    com.maruhxn.boardserver: debug
+    org.hibernate.SQL: debug
+file:
+  upload_dir: C:/Users/asus/project/spring-board/board-server/upload/

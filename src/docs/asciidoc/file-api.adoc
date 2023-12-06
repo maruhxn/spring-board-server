@@ -1,0 +1,7 @@
+[[File-API]]
+== File API
+
+[[File-이미지-조회]]
+=== 이미지 조회
+
+operation::file_controller_test/should-get-p-image-when-is-exist[snippets='curl-request,path-parameters,http-request,http-response']

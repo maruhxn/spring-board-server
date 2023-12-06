@@ -1,0 +1,48 @@
+<configuration>
+    <!--
+        Logger: 로그 메시지에 대한 일종의 컨텍스트로, 애플리케이션이 로그 메시지를 생성하기 위해 상호작용하는 클래스
+        Appender: 로그 메시지를 배치하는 역할로, Logger는 둘 이상의 Appender를 가질 수 있다.
+        Layout: 출력될 메시지를 준비하며, 메시지 포매팅을 위한 클래스 생성을 지원한다.
+    -->
+    <property resource="logback-variables.properties"/> <!-- logback-variables.properties 불러오기 -->
+
+    <timestamp key="ToDay" datePattern="yyyy-MM-dd"/> <!-- 로그 이벤트에 대한 timestamp 정의 (key = 추후 작성되는 로그 패턴에서 참조할 수 있는 변수명, datePattern = 날짜 포맷을 지정하는 패턴)-->
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender"><!-- 콘솔에 로그를 출력하기 위한 appender 정의. name을 통해 추후 참조 -->
+        <layout class="ch.qos.logback.classic.PatternLayout"> <!-- 로그 메시지의 레이아웃을 어떻게 설정할 것인지 정의. 여기서는 패턴 레이아웃 사용 -->
+            <Pattern> <!-- 어떤 패턴을 사용할 것인지 정의. logback-variables.properties에서 정의했던 LOG_PATTERN 변수를 import -->
+                ${LOG_PATTERN}
+            </Pattern> <!-- 로그_이벤트_발생_시간 [로그_레벨] [로그_이벤트_발생_스레드] [로그_이벤트_발생시킨_주체_이름]-[로그_이벤트_메시지]-->
+        </layout>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender"> <!-- 파일에 로그를 출력하기 위한 appender 정의. 추후 name을 통해 참조 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter"> <!-- 특정 로그 레벨에서 사용하기 위한 필터 정의 -->
+            <level>error</level> <!-- ERROR 레벨에 대한 필터-->
+            <onMatch>ACCEPT</onMatch> <!-- ERROR라면 진행-->
+            <onMismatch>DENY</onMismatch> <!-- ERROR가 아니라면 거절 -->
+        </filter>
+
+        <file>${LOG_PATH}/${ToDay}/${LOG_FILE_NAME}.log</file> <!-- 로그 파일에 대한 이름 지정 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy"> <!-- 롤링 정책 사용. 로그 파일의 크기나 시간에 따라서 파일을 롤링하는 정책 -->
+            <fileNamePattern> <!-- (rollingPolicy 설정 시 필수) 롤링된 로그 파일의 이름 패턴을 정의. 롤링되면 새로운 파일이 생기기 때문에 _i%를 통해 생성된 파일 이름을 세팅. -->
+                ${LOG_PATH}/%d{yyyy-MM-dd}/${LOG_FILE_NAME}_%i.log
+            </fileNamePattern>
+            <!-- 롤링 정책 적용(size = 하나의 파일에 최대 10MB의 로그 파일 저장, history = 로그 파일의 최대 유지 개수) -->
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder> <!-- RollingFileAppender에서 사용하는 로그 메시지의 출력 형식 지정 -->
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 모든 로그는 root logger의 자손이며, 위 정책들을 사용하기 위해선 root logger를 설정해야 함. -->
+    <root level="INFO"> <!-- 루트 로거의 레벨을 정의. INFO로 설정했기 때문에 INFO 레벨 이상의 로그만 처리(INFO / WARN / ERROR) -->
+        <!-- 앞서 정의한 appender들 참조. name으로 지정한 값 입력 -->
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </root>
+    <!-- 루트 로거의 경우 하나만 지정 가능. 여러개 설정하면 마지막 선언한 것만 처리. -->
+
+</configuration>

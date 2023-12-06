@@ -1,0 +1,15 @@
+= Spring Board API
+Andy Wilkinson;
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+include::overview.adoc[]
+include::auth-api.adoc[]
+include::member-api.adoc[]
+include::post-api.adoc[]
+include::comment-api.adoc[]
+include::file-api.adoc[]

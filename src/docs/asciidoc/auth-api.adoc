@@ -1,0 +1,17 @@
+[[Auth-API]]
+== Auth API
+
+[[Auth-회원가입]]
+=== 회원가입
+
+operation::auth_controller_test/should-register-when-is-anonymous[snippets='curl-request,http-request,request-fields,http-response']
+
+[[Auth-로그인]]
+=== 로그인
+
+operation::auth_controller_test/should-login-when-is-anonymous[snippets='curl-request,http-request,request-fields,http-response']
+
+[[Auth-로그아웃]]
+=== 로그아웃
+
+operation::auth_controller_test/should-logout-when-is-logged-in[snippets='curl-request,http-request,http-response']
