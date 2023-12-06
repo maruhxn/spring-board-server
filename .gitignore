@@ -45,4 +45,8 @@ logs
 ## Qgenerated\
 /src/main/generated/
 
+## Docker volume
 /data/
+
+## Asciidoctor
+/src/main/resources/static/docs/

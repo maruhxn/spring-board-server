@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.maruhxn'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0'
 
 java {
     sourceCompatibility = '17'
@@ -17,6 +17,10 @@ configurations {
         extendsFrom annotationProcessor
     }
     asciidoctorExt
+}
+
+jar {
+    enabled = false
 }
 
 repositories {
@@ -63,12 +67,8 @@ dependencies {
 
     // Spring Rest Docs
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor:'
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
 }
 
 /******* Start QueryDSL *******/
@@ -94,26 +94,27 @@ test {
 }
 
 asciidoctor.doFirst {
-    delete file("src/main/resources/static/docs")
+    delete file('src/main/resources/static/docs')
 }
 
 asciidoctor {
     inputs.dir snippetsDir
+    baseDirFollowsSourceFile()
     configurations 'asciidoctorExt'
-    dependsOn test
-}
-
-bootJar {
-    dependsOn asciidoctor
-    from("${asciidoctor.outputDir}/html5") {
-        into 'static/docs'
-    }
+    dependsOn test // asciidoctor task 를 실행할 때, test task 를 먼저 실행한다
 }
 
 task copyDocument(type: Copy) {
     dependsOn asciidoctor
-    from file("$buildDir/docs/asciidoc")
+    from file("build/docs/asciidoc")
     into file("src/main/resources/static/docs")
+}
+
+bootJar {
+    dependsOn asciidoctor
+    from("${asciidoctor.outputDir}") {
+        into 'static/docs'
+    }
 }
 
 build {
