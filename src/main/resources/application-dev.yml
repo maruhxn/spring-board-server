@@ -51,4 +51,4 @@ logging:
     com.maruhxn.boardserver: debug
     org.hibernate.SQL: debug
 file:
-  upload_dir: C:/Users/asus/project/spring-board/board-server/upload/
+  upload_dir: upload/

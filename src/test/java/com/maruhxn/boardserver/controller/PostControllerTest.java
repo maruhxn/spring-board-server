@@ -6,18 +6,20 @@ import com.maruhxn.boardserver.domain.PostImage;
 import com.maruhxn.boardserver.dto.request.posts.CreatePostRequest;
 import com.maruhxn.boardserver.dto.request.posts.UpdatePostRequest;
 import com.maruhxn.boardserver.repository.PostRepository;
+import com.maruhxn.boardserver.service.FileService;
 import com.maruhxn.boardserver.support.CustomWithUserDetails;
 import com.maruhxn.boardserver.support.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 
-import java.io.FileInputStream;
+import java.io.InputStream;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
@@ -30,6 +32,9 @@ class PostControllerTest extends TestSupport {
 
     @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private FileService fileService;
 
     private Post post1;
     private Post post2;
@@ -144,10 +149,12 @@ class PostControllerTest extends TestSupport {
     @Test
     @CustomWithUserDetails
     void shouldCreatePostWithOneImageWhenIsLoggedIn() throws Exception {
-        final String origianlFileName = "defaultProfileImage.jfif"; //파일명
-        final String filePath = "src/test/resources/static/img/" + origianlFileName;
-        FileInputStream fileInputStream = new FileInputStream(filePath);
-        MockMultipartFile image1 = new MockMultipartFile("images", origianlFileName, "image/jpeg", fileInputStream);
+        final String originalFileName = "defaultProfileImage.jfif"; //파일명
+        String filePath = "src/test/resources/static/img/" + originalFileName;
+        FileSystemResource resource = new FileSystemResource(filePath);
+        InputStream inputStream = resource.getInputStream();
+        MockMultipartFile image1 = new MockMultipartFile("images", originalFileName, "image/jpeg", inputStream);
+
 
         simpleRequestConstraints = new ConstraintDescriptions(CreatePostRequest.class);
         mockMvc.perform(
