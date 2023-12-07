@@ -68,6 +68,9 @@ public class MemberService {
     public void updateProfile(
             Long memberId, UpdateMemberProfileRequest updateMemberProfileRequest
     ) throws DataIntegrityViolationException {
+        if (updateMemberProfileRequest.getUsername() == null && updateMemberProfileRequest.getProfileImage() == null) {
+            throw new GlobalException(ErrorCode.BAD_REQUEST);
+        }
         String newProfileImageName = null;
         MultipartFile newProfileImage = updateMemberProfileRequest.getProfileImage();
         Member findMember = memberRepository.findById(memberId).orElseThrow(
