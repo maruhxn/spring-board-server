@@ -3,7 +3,7 @@ name: Build, Push, and Deploy Docker Image
 # main 브랜치에 코드가 push 되거나 pull_request되었을 때 실행
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "#42-github_actions" ]
   pull_request:
     branches: [ "main" ]
 
