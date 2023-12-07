@@ -63,6 +63,5 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           script: |
-            sudo docker rm -f $(sudo docker ps -qa)
+            sudo docker-compose down --rmi all
             sudo docker-compose up -d
-            sudo docker image prune -f
