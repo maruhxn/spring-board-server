@@ -7,18 +7,28 @@ import com.maruhxn.boardserver.dto.request.members.UpdatePasswordRequest;
 import com.maruhxn.boardserver.support.CustomWithUserDetails;
 import com.maruhxn.boardserver.support.TestSupport;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.mock.web.MockPart;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.InputStream;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -76,28 +86,34 @@ class MemberControllerTest extends TestSupport {
     @Test
     @CustomWithUserDetails
     void shouldUpdateProfileWhenIsOwner() throws Exception {
-        UpdateMemberProfileRequest dto = new UpdateMemberProfileRequest();
-        dto.setUsername("tester!");
-
+        MockMultipartHttpServletRequestBuilder builder = getMockMultipartHttpServletRequestBuilder();
         simpleRequestConstraints = new ConstraintDescriptions(UpdateMemberProfileRequest.class);
+        final String originalFileName = "defaultProfileImage.jfif"; //파일명
+        String filePath = "src/test/resources/static/img/" + originalFileName;
+        FileSystemResource resource = new FileSystemResource(filePath);
+        InputStream inputStream = resource.getInputStream();
+        MockMultipartFile image1 = new MockMultipartFile("profileImage", originalFileName, "image/jpeg", inputStream);
 
         mockMvc.perform(
-                        patch(MEMBER_API_PATH, member.getId())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(dto)))
+                        builder
+                                .part(new MockPart("username", "tester!".getBytes()))
+                                .file(image1)
+                )
                 .andExpect(status().isNoContent())
                 .andDo(
                         restDocs.document(
                                 pathParameters(
                                         parameterWithName("memberId").description("Member ID")
                                 ),
-                                requestFields(
-                                        fieldWithPath("username").type(STRING)
+                                requestParts(
+                                        partWithName("username")
                                                 .description("username")
+                                                .attributes(setType("string"))
                                                 .attributes(withPath("username")),
-                                        fieldWithPath("profileImage").type(MultipartFile.class)
-                                                .optional()
+                                        partWithName("profileImage")
                                                 .description("profileImage")
+                                                .attributes(setType("MultiPartFile"))
+                                                .attributes(withPath("profileImage"))
                                 )
                         )
                 );
@@ -106,25 +122,39 @@ class MemberControllerTest extends TestSupport {
     @Test
     @CustomWithUserDetails
     void shouldFailToUpdateProfileWith400WhenUsernameIsShorterThan2() throws Exception {
-        UpdateMemberProfileRequest dto = new UpdateMemberProfileRequest();
-        dto.setUsername("t");
+        MockMultipartHttpServletRequestBuilder builder = getMockMultipartHttpServletRequestBuilder();
+
         mockMvc.perform(
-                        patch(MEMBER_API_PATH, member.getId())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(dto)))
+                        builder
+                                .part(new MockPart("username", "t".getBytes()))
+                )
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     @CustomWithUserDetails
     void shouldFailToUpdateProfileWith400WhenUsernameIsLongerThan10() throws Exception {
-        UpdateMemberProfileRequest dto = new UpdateMemberProfileRequest();
-        dto.setUsername("tttttttttttttttttttttttttt");
+        MockMultipartHttpServletRequestBuilder builder = getMockMultipartHttpServletRequestBuilder();
+
         mockMvc.perform(
-                        patch(MEMBER_API_PATH, member.getId())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(dto)))
+                        builder
+                                .part(new MockPart("username", "tttttttttttttttttttttttttt".getBytes()))
+                )
                 .andExpect(status().isBadRequest());
+    }
+
+    private MockMultipartHttpServletRequestBuilder getMockMultipartHttpServletRequestBuilder() {
+        MockMultipartHttpServletRequestBuilder builder = RestDocumentationRequestBuilders.
+                multipart(MEMBER_API_PATH, member.getId());
+
+        builder.with(new RequestPostProcessor() {
+            @Override
+            public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                request.setMethod(HttpMethod.PATCH.name());
+                return request;
+            }
+        });
+        return builder;
     }
 
     @Test
