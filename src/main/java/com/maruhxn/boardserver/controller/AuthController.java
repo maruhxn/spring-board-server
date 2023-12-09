@@ -1,7 +1,10 @@
 package com.maruhxn.boardserver.controller;
 
+import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.dto.request.auth.RegisterRequest;
+import com.maruhxn.boardserver.dto.response.DataResponseDto;
 import com.maruhxn.boardserver.dto.response.ResponseDto;
+import com.maruhxn.boardserver.dto.response.object.MemberInfo;
 import com.maruhxn.boardserver.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +26,13 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("isAuthenticated()")
+    public DataResponseDto<MemberInfo> getSessionMemberInfo(@AuthenticationPrincipal Member member) {
+        return DataResponseDto.ok("로그인 회원 정보", authService.generateMemberInfo(member));
+    }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)

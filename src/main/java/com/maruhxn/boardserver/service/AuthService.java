@@ -5,6 +5,7 @@ import com.maruhxn.boardserver.common.exception.ErrorCode;
 import com.maruhxn.boardserver.common.exception.GlobalException;
 import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.dto.request.auth.RegisterRequest;
+import com.maruhxn.boardserver.dto.response.object.MemberInfo;
 import com.maruhxn.boardserver.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +21,16 @@ public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
+
+    public MemberInfo generateMemberInfo(Member member) {
+        return MemberInfo.builder()
+                .memberId(member.getId())
+                .username(member.getUsername())
+                .email(member.getEmail())
+                .profileImage(member.getProfileImage())
+                .role(member.getRole())
+                .build();
+    }
 
     @Transactional
     public void register(RegisterRequest registerRequest) {
