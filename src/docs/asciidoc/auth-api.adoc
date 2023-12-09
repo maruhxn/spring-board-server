@@ -1,6 +1,11 @@
 [[Auth-API]]
 == Auth API
 
+[[Auth-인증정보조회]]
+=== 인증 정보 조회
+
+operation::auth_controller_test/should-get-member-info-when-is-authenticated[snippets='curl-request,http-request,http-response,response-fields']
+
 [[Auth-회원가입]]
 === 회원가입
 
