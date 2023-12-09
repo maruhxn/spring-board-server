@@ -30,7 +30,6 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .select(new QPostItem(
                         post.id,
                         post.title,
-                        post.content,
                         member.username,
                         post.createdAt,
                         post.viewCount,
