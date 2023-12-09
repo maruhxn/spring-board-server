@@ -97,8 +97,6 @@ class PostControllerTest extends TestSupport {
                                                         .description("Post ID"),
                                                 fieldWithPath("title").type(STRING)
                                                         .description("게시글 제목"),
-                                                fieldWithPath("content").type(STRING)
-                                                        .description("게시글 내용"),
                                                 fieldWithPath("authorName").type(STRING)
                                                         .description("게시글 작성자 이름"),
                                                 fieldWithPath("createdAt").type(STRING)
@@ -215,6 +213,7 @@ class PostControllerTest extends TestSupport {
 
     @Test
     void shouldGetPostDetailWhenIsExist() throws Exception {
+
         mockMvc.perform(
                         get("/posts/{postId}", post1.getId())
                 )
@@ -225,7 +224,9 @@ class PostControllerTest extends TestSupport {
                 .andExpect(jsonPath("$.data.title").value(post1.getTitle()))
                 .andExpect(jsonPath("$.data.content").value(post1.getContent()))
                 .andExpect(jsonPath("$.data.images.size()").value(1))
-                .andExpect(jsonPath("$.data.authorName").value(post1.getMember().getUsername()))
+                .andExpect(jsonPath("$.data.author.memberId").value(post1.getMember().getId()))
+                .andExpect(jsonPath("$.data.author.username").value(post1.getMember().getUsername()))
+                .andExpect(jsonPath("$.data.author.profileImage").value(post1.getMember().getProfileImage()))
                 .andExpect(jsonPath("$.data.viewCount").value(post1.getViewCount()))
                 .andExpect(jsonPath("$.data.createdAt").exists())
                 .andDo(
@@ -242,8 +243,8 @@ class PostControllerTest extends TestSupport {
                                                 .description("게시글 내용"),
                                         fieldWithPath("images").type(ARRAY)
                                                 .description("PostImageItem[]"),
-                                        fieldWithPath("authorName").type(STRING)
-                                                .description("게시글 작성자 이름"),
+                                        fieldWithPath("author").type(OBJECT)
+                                                .description("게시글 작성자(CommentAuthor)"),
                                         fieldWithPath("viewCount").type(NUMBER)
                                                 .description("게시글 조회 수"),
                                         fieldWithPath("createdAt").type(STRING)
@@ -255,6 +256,13 @@ class PostControllerTest extends TestSupport {
                                                 .description("게시글 이미지 원본 이름"),
                                         fieldWithPath("storedName").type(STRING)
                                                 .description("게시글 이미지 저장된 이름")
+                                ).andWithPrefix("data.author.",
+                                        fieldWithPath("memberId").type(NUMBER)
+                                                .description("게시글 작성자 ID"),
+                                        fieldWithPath("username").type(STRING)
+                                                .description("게시글 작성자 이름"),
+                                        fieldWithPath("profileImage").type(STRING)
+                                                .description("게시글 작성자 프로필이미지")
                                 )
                         )
                 );

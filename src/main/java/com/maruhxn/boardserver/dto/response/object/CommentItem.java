@@ -11,14 +11,14 @@ import java.time.LocalDateTime;
 public class CommentItem {
     private final Long commentId;
     private final String content;
-    private final CommentAuthor author;
+    private final AuthorItem author;
     private final LocalDateTime createdAt;
 
     public static CommentItem fromEntity(Comment comment) {
         return CommentItem.builder()
                 .commentId(comment.getId())
                 .content(comment.getContent())
-                .author(CommentAuthor.fromEntity(comment.getMember()))
+                .author(AuthorItem.fromEntity(comment.getMember()))
                 .createdAt(comment.getCreatedAt())
                 .build();
     }

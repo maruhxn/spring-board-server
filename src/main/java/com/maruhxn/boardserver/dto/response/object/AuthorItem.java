@@ -6,13 +6,13 @@ import lombok.Data;
 
 @Data
 @Builder
-public class CommentAuthor {
+public class AuthorItem {
     private final Long memberId;
     private final String username;
     private final String profileImage;
 
-    public static CommentAuthor fromEntity(Member member) {
-        return CommentAuthor.builder()
+    public static AuthorItem fromEntity(Member member) {
+        return AuthorItem.builder()
                 .memberId(member.getId())
                 .username(member.getUsername())
                 .profileImage(member.getProfileImage())

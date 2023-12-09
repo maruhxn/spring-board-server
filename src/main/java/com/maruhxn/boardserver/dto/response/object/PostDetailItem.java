@@ -14,7 +14,7 @@ public class PostDetailItem {
     private final String title;
     private final String content;
     private final List<PostImageItem> images;
-    private final String authorName;
+    private final AuthorItem author;
     private final Long viewCount;
     private final LocalDateTime createdAt;
 
@@ -26,7 +26,7 @@ public class PostDetailItem {
                 .images(post.getImages().stream()
                         .map(PostImageItem::fromEntity)
                         .toList())
-                .authorName(post.getMember().getUsername())
+                .author(AuthorItem.fromEntity(post.getMember()))
                 .viewCount(post.getViewCount())
                 .createdAt(post.getCreatedAt())
                 .build();
