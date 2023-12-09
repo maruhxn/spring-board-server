@@ -1,6 +1,8 @@
 package com.maruhxn.boardserver.controller;
 
+import com.maruhxn.boardserver.common.Constants;
 import com.maruhxn.boardserver.common.exception.ErrorCode;
+import com.maruhxn.boardserver.domain.Role;
 import com.maruhxn.boardserver.dto.request.auth.LoginRequest;
 import com.maruhxn.boardserver.dto.request.auth.RegisterRequest;
 import com.maruhxn.boardserver.support.CustomWithUserDetails;
@@ -13,13 +15,56 @@ import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class AuthControllerTest extends TestSupport {
+
+    @Test
+    @CustomWithUserDetails
+    void shouldGetMemberInfoWhenIsAuthenticated() throws Exception {
+        mockMvc.perform(
+                        get("/auth"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("OK"))
+                .andExpect(jsonPath("$.message").value("로그인 회원 정보"))
+                .andExpect(jsonPath("$.data.memberId").value(member.getId()))
+                .andExpect(jsonPath("$.data.email").value("test@test.com"))
+                .andExpect(jsonPath("$.data.username").value("tester"))
+                .andExpect(jsonPath("$.data.profileImage").value(Constants.BASIC_PROFILE_IMAGE_NAME))
+                .andExpect(jsonPath("$.data.role").value(Role.ROLE_USER.name()))
+                .andDo(
+                        restDocs.document(
+                                commonResponseFields("MemberDetail")
+                                        .andWithPrefix("data.",
+                                                fieldWithPath("memberId").type(NUMBER)
+                                                        .description("Member ID"),
+                                                fieldWithPath("email").type(STRING)
+                                                        .description("email"),
+                                                fieldWithPath("username").type(STRING)
+                                                        .description("username"),
+                                                fieldWithPath("profileImage").type(STRING)
+                                                        .description("profileImage"),
+                                                fieldWithPath("role").type(STRING)
+                                                        .description("role")
+                                        )
+                        )
+                );
+    }
+
+    @Test
+    @WithAnonymousUser
+    void shouldFailToGetMemberInfoWith401WhenIsAnonymous() throws Exception {
+        mockMvc.perform(
+                        get("/auth"))
+                .andExpect(status().isUnauthorized());
+    }
 
     @Test
     @WithAnonymousUser
