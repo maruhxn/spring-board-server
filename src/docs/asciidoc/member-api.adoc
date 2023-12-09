@@ -9,7 +9,7 @@ operation::member_controller_test/should-get-member-detail-when-is-owner[snippet
 [[Member-회원정보-수정]]
 === 회원정보 수정
 
-operation::member_controller_test/should-update-profile-when-is-owner[snippets='curl-request,path-parameters,http-request,request-fields,http-response']
+operation::member_controller_test/should-update-profile-when-is-owner[snippets='curl-request,path-parameters,http-request,request-parts,http-response']
 
 [[Member-비밀번호-수정]]
 === 비밀번호 수정
