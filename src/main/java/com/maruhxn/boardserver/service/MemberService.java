@@ -1,5 +1,7 @@
 package com.maruhxn.boardserver.service;
 
+import com.maruhxn.boardserver.auth.common.AccountContext;
+import com.maruhxn.boardserver.auth.common.AjaxAuthenticationToken;
 import com.maruhxn.boardserver.common.Constants;
 import com.maruhxn.boardserver.common.exception.ErrorCode;
 import com.maruhxn.boardserver.common.exception.GlobalException;
@@ -9,9 +11,14 @@ import com.maruhxn.boardserver.dto.request.members.UpdateMemberProfileRequest;
 import com.maruhxn.boardserver.dto.request.members.UpdatePasswordRequest;
 import com.maruhxn.boardserver.dto.response.object.MemberItem;
 import com.maruhxn.boardserver.repository.MemberRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +33,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final FileService fileService;
+    private final SecurityContextRepository securityContextRepository;
 
     /**
      * 회원 정보 조회
@@ -42,6 +50,7 @@ public class MemberService {
                 .username(findMember.getUsername())
                 .email(findMember.getEmail())
                 .profileImage(findMember.getProfileImage())
+                .role(findMember.getRole())
                 .build();
     }
 
@@ -64,9 +73,15 @@ public class MemberService {
      *
      * @param memberId
      * @param updateMemberProfileRequest
+     * @param request
+     * @param response
+     * @return
      */
-    public void updateProfile(
-            Long memberId, UpdateMemberProfileRequest updateMemberProfileRequest
+    public AjaxAuthenticationToken updateProfile(
+            Long memberId,
+            UpdateMemberProfileRequest updateMemberProfileRequest,
+            HttpServletRequest request,
+            HttpServletResponse response
     ) throws DataIntegrityViolationException {
         if (updateMemberProfileRequest.getUsername() == null && updateMemberProfileRequest.getProfileImage() == null) {
             throw new GlobalException(ErrorCode.BAD_REQUEST);
@@ -82,10 +97,18 @@ public class MemberService {
             deleteProfileImageOfFindMember(findMember);
         }
 
-        findMember.updateProfile(
-                updateMemberProfileRequest.getUsername(),
-                newProfileImageName != null ? newProfileImageName : Constants.BASIC_PROFILE_IMAGE_NAME
+        findMember.updateProfile(updateMemberProfileRequest.getUsername(), newProfileImageName);
+        SecurityContextHolder.clearContext();
+        AccountContext accountContext = new AccountContext(findMember);
+        AjaxAuthenticationToken newAuthentication = AjaxAuthenticationToken.authenticated(
+                accountContext.getMember(),
+                null,
+                accountContext.getAuthorities()
         );
+        SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(newAuthentication);
+        securityContextRepository.saveContext(context, request, response);
+        return newAuthentication;
     }
 
     private void deleteProfileImageOfFindMember(Member findMember) {
