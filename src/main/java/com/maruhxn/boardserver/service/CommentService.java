@@ -40,7 +40,7 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public Page<CommentItem> getCommentList(Long postId, Pageable pageable) {
-        Page<Comment> page = commentRepository.findAllByPostId(postId, pageable);
+        Page<Comment> page = commentRepository.findAllByPostIdOrderByCreatedAtDesc(postId, pageable);
         return page.map(CommentItem::fromEntity);
     }
 

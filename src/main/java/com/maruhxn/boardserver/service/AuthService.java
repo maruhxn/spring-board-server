@@ -28,7 +28,6 @@ public class AuthService {
                 .username(member.getUsername())
                 .email(member.getEmail())
                 .profileImage(member.getProfileImage())
-                .role(member.getRole())
                 .build();
     }
 

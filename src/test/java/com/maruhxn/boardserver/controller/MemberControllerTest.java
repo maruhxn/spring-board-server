@@ -1,6 +1,7 @@
 package com.maruhxn.boardserver.controller;
 
 import com.maruhxn.boardserver.common.Constants;
+import com.maruhxn.boardserver.domain.Role;
 import com.maruhxn.boardserver.dto.request.auth.ConfirmPasswordRequest;
 import com.maruhxn.boardserver.dto.request.members.UpdateMemberProfileRequest;
 import com.maruhxn.boardserver.dto.request.members.UpdatePasswordRequest;
@@ -47,6 +48,7 @@ class MemberControllerTest extends TestSupport {
                 .andExpect(jsonPath("$.data.email").value("test@test.com"))
                 .andExpect(jsonPath("$.data.username").value("tester"))
                 .andExpect(jsonPath("$.data.profileImage").value(Constants.BASIC_PROFILE_IMAGE_NAME))
+                .andExpect(jsonPath("$.data.role").value(Role.ROLE_USER.name()))
                 .andDo(
                         restDocs.document(
                                 pathParameters(
@@ -61,7 +63,9 @@ class MemberControllerTest extends TestSupport {
                                                 fieldWithPath("username").type(STRING)
                                                         .description("username"),
                                                 fieldWithPath("profileImage").type(STRING)
-                                                        .description("profileImage")
+                                                        .description("profileImage"),
+                                                fieldWithPath("role").type(STRING)
+                                                        .description("role")
                                         )
                         )
                 );

@@ -2,7 +2,6 @@ package com.maruhxn.boardserver.controller;
 
 import com.maruhxn.boardserver.common.Constants;
 import com.maruhxn.boardserver.common.exception.ErrorCode;
-import com.maruhxn.boardserver.domain.Role;
 import com.maruhxn.boardserver.dto.request.auth.LoginRequest;
 import com.maruhxn.boardserver.dto.request.auth.RegisterRequest;
 import com.maruhxn.boardserver.support.CustomWithUserDetails;
@@ -19,8 +18,6 @@ import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,7 +35,6 @@ class AuthControllerTest extends TestSupport {
                 .andExpect(jsonPath("$.data.email").value("test@test.com"))
                 .andExpect(jsonPath("$.data.username").value("tester"))
                 .andExpect(jsonPath("$.data.profileImage").value(Constants.BASIC_PROFILE_IMAGE_NAME))
-                .andExpect(jsonPath("$.data.role").value(Role.ROLE_USER.name()))
                 .andDo(
                         restDocs.document(
                                 commonResponseFields("MemberDetail")
@@ -50,9 +46,7 @@ class AuthControllerTest extends TestSupport {
                                                 fieldWithPath("username").type(STRING)
                                                         .description("username"),
                                                 fieldWithPath("profileImage").type(STRING)
-                                                        .description("profileImage"),
-                                                fieldWithPath("role").type(STRING)
-                                                        .description("role")
+                                                        .description("profileImage")
                                         )
                         )
                 );
