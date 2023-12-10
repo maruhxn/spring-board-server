@@ -42,6 +42,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         containContentKeyword(postSearchCond.getContent()),
                         authorLike(postSearchCond.getAuthor()))
                 .groupBy(post.id)
+                .orderBy(post.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
