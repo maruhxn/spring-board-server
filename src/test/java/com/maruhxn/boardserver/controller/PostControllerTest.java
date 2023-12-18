@@ -1,6 +1,6 @@
 package com.maruhxn.boardserver.controller;
 
-import com.maruhxn.boardserver.common.exception.ErrorCode;
+import com.maruhxn.boardserver.common.ErrorCode;
 import com.maruhxn.boardserver.domain.Post;
 import com.maruhxn.boardserver.domain.PostImage;
 import com.maruhxn.boardserver.dto.request.posts.CreatePostRequest;

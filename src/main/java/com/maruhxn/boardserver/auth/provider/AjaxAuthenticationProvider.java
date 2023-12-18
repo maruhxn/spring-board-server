@@ -2,7 +2,7 @@ package com.maruhxn.boardserver.auth.provider;
 
 import com.maruhxn.boardserver.auth.common.AccountContext;
 import com.maruhxn.boardserver.auth.common.AjaxAuthenticationToken;
-import com.maruhxn.boardserver.common.exception.ErrorCode;
+import com.maruhxn.boardserver.common.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;

@@ -1,4 +1,4 @@
-package com.maruhxn.boardserver.common.exception;
+package com.maruhxn.boardserver.dto.response.object;
 
 import lombok.Getter;
 import org.springframework.validation.BindingResult;

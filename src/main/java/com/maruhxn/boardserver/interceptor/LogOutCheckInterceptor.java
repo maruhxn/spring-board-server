@@ -1,8 +1,8 @@
 package com.maruhxn.boardserver.interceptor;
 
 import com.maruhxn.boardserver.common.SessionConst;
-import com.maruhxn.boardserver.common.exception.ErrorCode;
-import com.maruhxn.boardserver.common.exception.GlobalException;
+import com.maruhxn.boardserver.common.ErrorCode;
+import com.maruhxn.boardserver.exception.ForbiddenException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -19,6 +19,6 @@ public class LogOutCheckInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        throw new GlobalException(ErrorCode.LOGOUT_REQUIRED);
+        throw new ForbiddenException(ErrorCode.LOGOUT_REQUIRED);
     }
 }

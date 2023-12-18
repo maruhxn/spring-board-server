@@ -1,5 +1,6 @@
-package com.maruhxn.boardserver.common.exception;
+package com.maruhxn.boardserver.common;
 
+import com.maruhxn.boardserver.exception.GlobalException;
 import com.maruhxn.boardserver.dto.response.ErrorResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;

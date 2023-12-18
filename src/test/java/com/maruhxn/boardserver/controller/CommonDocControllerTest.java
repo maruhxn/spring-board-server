@@ -1,6 +1,6 @@
 package com.maruhxn.boardserver.controller;
 
-import com.maruhxn.boardserver.common.exception.ErrorCode;
+import com.maruhxn.boardserver.common.ErrorCode;
 import com.maruhxn.boardserver.support.CommonDocController;
 import com.maruhxn.boardserver.support.CustomResponseFieldsSnippet;
 import com.maruhxn.boardserver.support.TestSupport;

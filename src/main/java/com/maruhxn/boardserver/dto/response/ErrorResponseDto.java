@@ -1,7 +1,7 @@
 package com.maruhxn.boardserver.dto.response;
 
-import com.maruhxn.boardserver.common.exception.ErrorCode;
-import com.maruhxn.boardserver.common.exception.FieldError;
+import com.maruhxn.boardserver.common.ErrorCode;
+import com.maruhxn.boardserver.dto.response.object.FieldError;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;

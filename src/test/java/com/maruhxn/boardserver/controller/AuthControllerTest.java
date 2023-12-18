@@ -1,7 +1,7 @@
 package com.maruhxn.boardserver.controller;
 
 import com.maruhxn.boardserver.common.Constants;
-import com.maruhxn.boardserver.common.exception.ErrorCode;
+import com.maruhxn.boardserver.common.ErrorCode;
 import com.maruhxn.boardserver.dto.request.auth.LoginRequest;
 import com.maruhxn.boardserver.dto.request.auth.RegisterRequest;
 import com.maruhxn.boardserver.support.CustomWithUserDetails;

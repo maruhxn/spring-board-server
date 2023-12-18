@@ -1,7 +1,7 @@
 package com.maruhxn.boardserver.auth.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.maruhxn.boardserver.common.exception.ErrorCode;
+import com.maruhxn.boardserver.common.ErrorCode;
 import com.maruhxn.boardserver.dto.response.ErrorResponseDto;
 import com.maruhxn.boardserver.dto.response.ResponseDto;
 import jakarta.servlet.ServletException;

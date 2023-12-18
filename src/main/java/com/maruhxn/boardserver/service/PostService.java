@@ -1,7 +1,6 @@
 package com.maruhxn.boardserver.service;
 
-import com.maruhxn.boardserver.common.exception.ErrorCode;
-import com.maruhxn.boardserver.common.exception.GlobalException;
+import com.maruhxn.boardserver.common.ErrorCode;
 import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.domain.Post;
 import com.maruhxn.boardserver.domain.PostImage;
@@ -10,6 +9,7 @@ import com.maruhxn.boardserver.dto.request.posts.CreatePostRequest;
 import com.maruhxn.boardserver.dto.request.posts.UpdatePostRequest;
 import com.maruhxn.boardserver.dto.response.object.PostDetailItem;
 import com.maruhxn.boardserver.dto.response.object.PostItem;
+import com.maruhxn.boardserver.exception.EntityNotFoundException;
 import com.maruhxn.boardserver.repository.PostImageRepository;
 import com.maruhxn.boardserver.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -71,7 +71,7 @@ public class PostService {
      */
     public PostDetailItem getPostDetail(Long postId) {
         Post findPost = postRepository.findWithMemberAndImagesFirstById(postId)
-                .orElseThrow(() -> new GlobalException(ErrorCode.NOT_FOUND_POST));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_POST));
         findPost.addViewCount();
         return PostDetailItem.fromEntity(findPost);
     }
@@ -85,7 +85,7 @@ public class PostService {
     public void updatePost(Long postId, UpdatePostRequest updatePostRequest) {
         List<PostImage> postImages = new ArrayList<>();
         Post findPost = postRepository.findById(postId)
-                .orElseThrow(() -> new GlobalException(ErrorCode.NOT_FOUND_POST));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_POST));
         if (updatePostRequest.getImages() != null) {
             postImages = fileService.storeFiles(updatePostRequest.getImages());
         }
@@ -99,7 +99,7 @@ public class PostService {
      */
     public void deletePost(Long postId) {
         Post findPost = postRepository.findWithMemberAndImagesFirstById(postId)
-                .orElseThrow(() -> new GlobalException(ErrorCode.NOT_FOUND_POST));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_POST));
         // 실제 이미지들 삭제
         // TODO: 폴더로 한번에 관리하고, 이미지 하나하나 삭제가 아니라 폴더를 삭제하는 방식으로 변경
         postRepository.delete(findPost);
@@ -114,7 +114,7 @@ public class PostService {
      */
     public void deleteImage(Long imageId) {
         PostImage findImage = postImageRepository.findById(imageId).orElseThrow(() ->
-                new GlobalException(ErrorCode.NOT_FOUND_IMAGE));
+                new EntityNotFoundException(ErrorCode.NOT_FOUND_IMAGE));
         postImageRepository.delete(findImage); // DB에서 이미지 정보 삭제
         fileService.deleteFile(findImage.getStoredName()); // 실제 이미지 삭제
     }

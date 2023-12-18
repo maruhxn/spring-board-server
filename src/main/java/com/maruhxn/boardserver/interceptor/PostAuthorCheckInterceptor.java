@@ -1,7 +1,9 @@
 package com.maruhxn.boardserver.interceptor;
 
-import com.maruhxn.boardserver.common.exception.ErrorCode;
-import com.maruhxn.boardserver.common.exception.GlobalException;
+import com.maruhxn.boardserver.exception.BadRequestException;
+import com.maruhxn.boardserver.exception.EntityNotFoundException;
+import com.maruhxn.boardserver.common.ErrorCode;
+import com.maruhxn.boardserver.exception.ForbiddenException;
 import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.domain.Post;
 import com.maruhxn.boardserver.domain.Role;
@@ -39,16 +41,16 @@ public class PostAuthorCheckInterceptor implements HandlerInterceptor {
 
             Long postId = Long.valueOf(String.valueOf(pathVariables.get("postId")));
             Post findPost = postRepository.findWithMemberFirstById(postId).orElseThrow(
-                    () -> new GlobalException(ErrorCode.NOT_FOUND_POST));
+                    () -> new EntityNotFoundException(ErrorCode.NOT_FOUND_POST));
 
             if (!authentication.getAuthorities().contains(Role.ROLE_ADMIN)
                     && !loginMember.getId().equals(findPost.getMember().getId())) {
-                throw new GlobalException(ErrorCode.FORBIDDEN);
+                throw new ForbiddenException(ErrorCode.FORBIDDEN);
             }
 
             return true;
         }
 
-        throw new GlobalException(ErrorCode.BAD_REQUEST);
+        throw new BadRequestException(ErrorCode.BAD_REQUEST);
     }
 }

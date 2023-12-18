@@ -1,8 +1,7 @@
 package com.maruhxn.boardserver.exception;
 
-import com.maruhxn.boardserver.common.exception.ErrorCode;
-import com.maruhxn.boardserver.common.exception.GlobalException;
-import com.maruhxn.boardserver.common.exception.GlobalExceptionHandler;
+import com.maruhxn.boardserver.common.ErrorCode;
+import com.maruhxn.boardserver.common.GlobalExceptionHandler;
 import com.maruhxn.boardserver.dto.response.ErrorResponseDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +26,7 @@ class GlobalExceptionHandlerTest {
     void givenGlobalException_whenHandlingApiException_thenReturnsResponseEntity() {
         // Given
         ErrorCode errorCode = ErrorCode.INTERNAL_ERROR;
-        GlobalException e = new GlobalException(errorCode);
+        GlobalException e = new InternalServerException(errorCode);
 
         // When
         ResponseEntity<Object> response = sut.globalException(e);

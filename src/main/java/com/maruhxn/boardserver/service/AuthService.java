@@ -1,11 +1,12 @@
 package com.maruhxn.boardserver.service;
 
 import com.maruhxn.boardserver.common.Constants;
-import com.maruhxn.boardserver.common.exception.ErrorCode;
-import com.maruhxn.boardserver.common.exception.GlobalException;
+import com.maruhxn.boardserver.common.ErrorCode;
 import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.dto.request.auth.RegisterRequest;
 import com.maruhxn.boardserver.dto.response.object.MemberInfo;
+import com.maruhxn.boardserver.exception.AlreadyExistsResourceException;
+import com.maruhxn.boardserver.exception.BadRequestException;
 import com.maruhxn.boardserver.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,11 +36,11 @@ public class AuthService {
     public void register(RegisterRequest registerRequest) {
         // 비밀번호 == 비밀번호 확인 체크
         if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
-            throw new GlobalException(ErrorCode.PASSWORD_CONFIRM_FAIL);
+            throw new BadRequestException(ErrorCode.PASSWORD_CONFIRM_FAIL);
         }
         // 이메일 & 유저명 중복 여부 확인
         List<Member> findMembers = memberRepository.findByEmailOrUsername(registerRequest.getEmail(), registerRequest.getUsername());
-        if (!findMembers.isEmpty()) throw new GlobalException(ErrorCode.EXISTING_USER);
+        if (!findMembers.isEmpty()) throw new AlreadyExistsResourceException(ErrorCode.EXISTING_USER);
         // 유저 저장
         Member member = Member.builder()
                 .email(registerRequest.getEmail())
@@ -50,17 +51,4 @@ public class AuthService {
 
         memberRepository.save(member);
     }
-
-//    public Member login(LoginRequest loginRequest) {
-//        // 유저 조회
-//        Member findMember = memberRepository.findByEmail(loginRequest.getEmail())
-//                .orElseThrow(() -> new GlobalException(ErrorCode.NOT_FOUND_USER));
-//        // 비밀번호 일치 여부 확인
-//        Boolean isMatch = passwordEncoder.matches(loginRequest.getPassword(), findMember.getPassword());
-//
-//        if (!isMatch) throw new GlobalException(ErrorCode.INCORRECT_PASSWORD);
-//
-//        return findMember;
-//    }
-
 }
