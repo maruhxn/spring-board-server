@@ -130,8 +130,8 @@ class CommentControllerTest extends TestSupport {
     @Test
     @CustomWithUserDetails
     void shouldCreateCommentWhenIsLoggedIn() throws Exception {
-        CreateCommentRequest dto = new CreateCommentRequest();
-        dto.setContent("content");
+        CreateCommentRequest dto = CreateCommentRequest.builder()
+                .content("content").build();
 
         simpleRequestConstraints = new ConstraintDescriptions(CreateCommentRequest.class);
         mockMvc.perform(
@@ -156,8 +156,7 @@ class CommentControllerTest extends TestSupport {
     @Test
     @WithAnonymousUser
     void shouldFailToCreateCommentWith401WhenIsAnonymous() throws Exception {
-        CreateCommentRequest dto = new CreateCommentRequest();
-        dto.setContent("content");
+        CreateCommentRequest dto = new CreateCommentRequest("content");
 
         mockMvc.perform(
                         post(COMMENT_API_PATH, savePost.getId())
@@ -169,8 +168,7 @@ class CommentControllerTest extends TestSupport {
     @Test
     @CustomWithUserDetails
     void shouldFailToCreateCommentWith400WhenInvalidRequest() throws Exception {
-        CreateCommentRequest dto = new CreateCommentRequest();
-        dto.setContent("");
+        CreateCommentRequest dto = new CreateCommentRequest("");
 
         mockMvc.perform(
                         post(COMMENT_API_PATH, savePost.getId())

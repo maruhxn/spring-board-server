@@ -184,9 +184,10 @@ class PostControllerTest extends TestSupport {
     @Test
     @WithAnonymousUser
     void shouldFailToCreatePostWith401WhenIsAnonymous() throws Exception {
-        CreatePostRequest dto = new CreatePostRequest();
-        dto.setTitle("title");
-        dto.setContent("content");
+        CreatePostRequest dto = CreatePostRequest.builder()
+                .title("title")
+                .content("content")
+                .build();
 
         mockMvc.perform(
                         post(POST_API_PATH)
@@ -199,9 +200,10 @@ class PostControllerTest extends TestSupport {
     @Test
     @CustomWithUserDetails
     void shouldFailToCreatePostWith400WhenIsInvalidRequest() throws Exception {
-        CreatePostRequest dto = new CreatePostRequest();
-        dto.setTitle("");
-        dto.setContent("");
+        CreatePostRequest dto = CreatePostRequest.builder()
+                .title("")
+                .content("")
+                .build();
 
         mockMvc.perform(
                         multipart(POST_API_PATH)
@@ -281,9 +283,10 @@ class PostControllerTest extends TestSupport {
     @Test
     @CustomWithUserDetails
     void shouldUpdatePostWhenIsOwner() throws Exception {
-        UpdatePostRequest dto = new UpdatePostRequest();
-        dto.setTitle("title!");
-        dto.setContent("content!");
+        UpdatePostRequest dto = UpdatePostRequest.builder()
+                .title("title!")
+                .content("content!")
+                .build();
 
         simpleRequestConstraints = new ConstraintDescriptions(UpdatePostRequest.class);
         mockMvc.perform(
@@ -318,9 +321,10 @@ class PostControllerTest extends TestSupport {
     @Test
     @WithAnonymousUser
     void shouldFailToUpdatePostWith401WhenIsAnonymous() throws Exception {
-        UpdatePostRequest dto = new UpdatePostRequest();
-        dto.setTitle("test!");
-        dto.setContent("content!");
+        UpdatePostRequest dto = UpdatePostRequest.builder()
+                .title("title!")
+                .content("content!")
+                .build();
 
         mockMvc.perform(
                         patch("/posts/{postId}", post1.getId())
@@ -333,9 +337,10 @@ class PostControllerTest extends TestSupport {
     @Test
     @CustomWithUserDetails
     void shouldFailToUpdatePostWith403WhenIsNotOwner() throws Exception {
-        UpdatePostRequest dto = new UpdatePostRequest();
-        dto.setTitle("test!");
-        dto.setContent("content!");
+        UpdatePostRequest dto = UpdatePostRequest.builder()
+                .title("title!")
+                .content("content!")
+                .build();
 
         mockMvc.perform(
                         patch("/posts/{postId}", post2.getId())

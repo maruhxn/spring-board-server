@@ -1,22 +1,35 @@
 package com.maruhxn.boardserver.dto.response.object;
 
 import com.maruhxn.boardserver.domain.Post;
+import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
-@Builder
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostDetailItem {
-    private final Long postId;
-    private final String title;
-    private final String content;
-    private final List<PostImageItem> images;
-    private final AuthorItem author;
-    private final Long viewCount;
-    private final LocalDateTime createdAt;
+    private Long postId;
+    private String title;
+    private String content;
+    private List<PostImageItem> images;
+    private AuthorItem author;
+    private Long viewCount;
+    private LocalDateTime createdAt;
+
+    @Builder
+    public PostDetailItem(Long postId, String title, String content, List<PostImageItem> images, AuthorItem author, Long viewCount, LocalDateTime createdAt) {
+        this.postId = postId;
+        this.title = title;
+        this.content = content;
+        this.images = images;
+        this.author = author;
+        this.viewCount = viewCount;
+        this.createdAt = createdAt;
+    }
 
     public static PostDetailItem fromEntity(Post post) {
         return PostDetailItem.builder()

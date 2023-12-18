@@ -1,7 +1,9 @@
 package com.maruhxn.boardserver.common.exception;
 
 import com.maruhxn.boardserver.dto.response.ResponseDto;
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -64,11 +66,12 @@ public class GlobalExceptionHandler {
                 .body(ResponseDto.error(ErrorCode.INTERNAL_ERROR, e.getMessage()));
     }
 
-    @Data
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     static private class ValidationFailedResponse {
-        private final String code;
-        private final String message;
-        private final List<FieldError> errors;
+        private String code;
+        private String message;
+        private List<FieldError> errors;
 
         public ValidationFailedResponse(final ErrorCode code, final List<FieldError> errors) {
             this.message = code.getMessage();

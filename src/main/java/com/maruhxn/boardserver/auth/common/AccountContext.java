@@ -2,7 +2,6 @@ package com.maruhxn.boardserver.auth.common;
 
 import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.domain.Role;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,12 +12,16 @@ import java.util.Collection;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
 public class AccountContext implements UserDetails {
 
     private Member member;
 
     public AccountContext() {
+        super();
+    }
+
+    public AccountContext(Member member) {
+        this.member = member;
     }
 
     @Override
