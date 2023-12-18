@@ -3,7 +3,7 @@ package com.maruhxn.boardserver.controller;
 import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.dto.request.comments.CreateCommentRequest;
 import com.maruhxn.boardserver.dto.response.DataResponseDto;
-import com.maruhxn.boardserver.dto.response.PageItem;
+import com.maruhxn.boardserver.dto.response.object.PageItem;
 import com.maruhxn.boardserver.dto.response.ResponseDto;
 import com.maruhxn.boardserver.dto.response.object.CommentItem;
 import com.maruhxn.boardserver.service.CommentService;
