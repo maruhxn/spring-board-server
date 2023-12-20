@@ -11,7 +11,7 @@
 ![Generic badge](https://img.shields.io/badge/spring_boot-3.1.5-darkgreen.svg)
 ![Generic badge](https://img.shields.io/badge/test-61_passed-blue.svg)
 
-> 스프링을 공부하면서 만들어보는 첫 연습용 게시판 프로젝트
+> 스프링을 공부하면서 만들어보는 첫 연습용 게시판 프로젝트 - 자세한 내용은 [위키](https://github.com/maruhxn/spring-board-server/wiki) 참조
 
 ## Getting Started
 
