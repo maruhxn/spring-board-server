@@ -6,7 +6,6 @@ import com.maruhxn.boardserver.domain.PostImage;
 import com.maruhxn.boardserver.dto.request.posts.CreatePostRequest;
 import com.maruhxn.boardserver.dto.request.posts.UpdatePostRequest;
 import com.maruhxn.boardserver.repository.PostRepository;
-import com.maruhxn.boardserver.service.FileService;
 import com.maruhxn.boardserver.support.CustomWithUserDetails;
 import com.maruhxn.boardserver.support.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,9 +31,6 @@ class PostControllerTest extends TestSupport {
 
     @Autowired
     private PostRepository postRepository;
-
-    @Autowired
-    private FileService fileService;
 
     private Post post1;
     private Post post2;
@@ -213,9 +209,6 @@ class PostControllerTest extends TestSupport {
 
     @Test
     void shouldGetPostDetailWhenIsExist() throws Exception {
-
-        Post post = postRepository.findById(post1.getId()).get();
-        System.out.println("post = " + post);
 
         mockMvc.perform(
                         get("/posts/{postId}", post1.getId())
