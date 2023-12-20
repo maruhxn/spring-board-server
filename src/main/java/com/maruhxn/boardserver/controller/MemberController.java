@@ -7,6 +7,8 @@ import com.maruhxn.boardserver.dto.response.DataResponseDto;
 import com.maruhxn.boardserver.dto.response.ResponseDto;
 import com.maruhxn.boardserver.dto.response.object.MemberItem;
 import com.maruhxn.boardserver.service.MemberService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,11 +35,14 @@ public class MemberController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateMemberProfile(
             @PathVariable Long memberId,
-            @Valid UpdateMemberProfileRequest updateMemberProfileRequest) {
+            @Valid UpdateMemberProfileRequest updateMemberProfileRequest,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
         log.info("회원 정보 수정 | username={}, profileImage={}",
                 updateMemberProfileRequest.getUsername(),
                 updateMemberProfileRequest.getProfileImage());
-        memberService.updateProfile(memberId, updateMemberProfileRequest);
+        memberService.updateProfile(memberId, updateMemberProfileRequest, request, response);
     }
 
     @PatchMapping("/change-password")

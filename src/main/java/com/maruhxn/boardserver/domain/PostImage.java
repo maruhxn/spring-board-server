@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 
@@ -33,10 +34,12 @@ public class PostImage {
     private LocalDateTime createdAt;
 
     @Builder
-    public PostImage(String originalName, String storedName, Post post) {
+    public PostImage(String originalName, String storedName) {
+        Assert.hasText(originalName, "원본 이름은 필수입니다.");
+        Assert.hasText(storedName, "저장된 이름은 필수입니다.");
+
         this.originalName = originalName;
         this.storedName = storedName;
-        this.post = post;
     }
 
     // 편의 메서드 //

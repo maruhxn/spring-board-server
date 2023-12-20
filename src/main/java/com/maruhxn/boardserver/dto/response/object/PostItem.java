@@ -2,27 +2,28 @@ package com.maruhxn.boardserver.dto.response.object;
 
 import com.maruhxn.boardserver.domain.Post;
 import com.querydsl.core.annotations.QueryProjection;
+import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Data
-@Builder
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostItem {
-    private final Long postId;
-    private final String title;
-    private final String content;
-    private final String authorName;
-    private final LocalDateTime createdAt;
-    private final Long viewCount;
-    private final Long commentCount;
+    private Long postId;
+    private String title;
+    private String authorName;
+    private LocalDateTime createdAt;
+    private Long viewCount;
+    private Long commentCount;
 
+    @Builder
     @QueryProjection
-    public PostItem(Long postId, String title, String content, String authorName, LocalDateTime createdAt, Long viewCount, Long commentCount) {
+    public PostItem(Long postId, String title, String authorName, LocalDateTime createdAt, Long viewCount, Long commentCount) {
         this.postId = postId;
         this.title = title;
-        this.content = content;
         this.authorName = authorName;
         this.createdAt = createdAt;
         this.viewCount = viewCount;
@@ -33,7 +34,6 @@ public class PostItem {
         return PostItem.builder()
                 .postId(p.getId())
                 .title(p.getTitle())
-                .content(p.getContent())
                 .authorName(p.getMember().getUsername())
                 .createdAt(p.getCreatedAt())
                 .viewCount(p.getViewCount())

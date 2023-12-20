@@ -1,7 +1,8 @@
 package com.maruhxn.boardserver.auth.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.maruhxn.boardserver.common.exception.ErrorCode;
+import com.maruhxn.boardserver.common.ErrorCode;
+import com.maruhxn.boardserver.dto.response.ErrorResponseDto;
 import com.maruhxn.boardserver.dto.response.ResponseDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +26,7 @@ public class AjaxAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
 
-        ResponseDto responseDto = ResponseDto.error(ErrorCode.FORBIDDEN);
+        ResponseDto responseDto = ErrorResponseDto.error(ErrorCode.FORBIDDEN);
         objectMapper.writeValue(response.getWriter(), responseDto);
     }
 }

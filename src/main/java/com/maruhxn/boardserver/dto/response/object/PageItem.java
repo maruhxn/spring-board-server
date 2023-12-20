@@ -1,13 +1,15 @@
-package com.maruhxn.boardserver.dto.response;
+package com.maruhxn.boardserver.dto.response.object;
 
+import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-@Data
-@Builder
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PageItem<T> {
     private List<T> results;
     private Boolean isFirst;
@@ -15,6 +17,16 @@ public class PageItem<T> {
     private Boolean isEmpty;
     private int totalPage;
     private Long totalElements;
+
+    @Builder
+    public PageItem(List<T> results, Boolean isFirst, Boolean isLast, Boolean isEmpty, int totalPage, Long totalElements) {
+        this.results = results;
+        this.isFirst = isFirst;
+        this.isLast = isLast;
+        this.isEmpty = isEmpty;
+        this.totalPage = totalPage;
+        this.totalElements = totalElements;
+    }
 
     public static <T> PageItem fromPage(Page<T> page) {
         return PageItem.builder()

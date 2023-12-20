@@ -1,14 +1,12 @@
 package com.maruhxn.boardserver.support;
 
-import com.maruhxn.boardserver.common.exception.ErrorCode;
-import com.maruhxn.boardserver.common.exception.GlobalException;
+import com.maruhxn.boardserver.common.ErrorCode;
+import com.maruhxn.boardserver.exception.InternalServerException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +22,7 @@ public class CommonDocController {
 
     @GetMapping("/global-exception")
     public void globalExceptionSample() {
-        throw new GlobalException(ErrorCode.INTERNAL_ERROR);
+        throw new InternalServerException(ErrorCode.INTERNAL_ERROR);
     }
 
     @GetMapping("/error-code")
@@ -51,8 +49,6 @@ public class CommonDocController {
     }
 
     @Getter
-    @Setter
-    @AllArgsConstructor
     @NoArgsConstructor
     public static class SampleRequest {
 
@@ -61,5 +57,10 @@ public class CommonDocController {
 
         @Email
         private String email;
+
+        public SampleRequest(String name, String email) {
+            this.name = name;
+            this.email = email;
+        }
     }
 }

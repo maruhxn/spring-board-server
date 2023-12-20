@@ -1,6 +1,7 @@
 package com.maruhxn.boardserver.domain;
 
 
+import com.mysema.commons.lang.Assert;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -45,6 +46,7 @@ public class Member extends BaseEntity implements Serializable {
 
     @Builder
     public Member(String email, String username, String password, String profileImage, Role role) {
+        Assert.hasText(email, "이메일은 필수입니다.");
         this.email = email;
         this.username = username;
         this.password = password;

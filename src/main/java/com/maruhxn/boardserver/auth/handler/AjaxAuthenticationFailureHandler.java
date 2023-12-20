@@ -1,7 +1,8 @@
 package com.maruhxn.boardserver.auth.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.maruhxn.boardserver.common.exception.ErrorCode;
+import com.maruhxn.boardserver.common.ErrorCode;
+import com.maruhxn.boardserver.dto.response.ErrorResponseDto;
 import com.maruhxn.boardserver.dto.response.ResponseDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,9 +31,9 @@ public class AjaxAuthenticationFailureHandler implements AuthenticationFailureHa
         ResponseDto responseDto = null;
 
         if (exception instanceof BadCredentialsException) {
-            responseDto = ResponseDto.error(ErrorCode.INCORRECT_PASSWORD);
+            responseDto = ErrorResponseDto.error(ErrorCode.INCORRECT_PASSWORD);
         } else if (exception instanceof UsernameNotFoundException) {
-            responseDto = ResponseDto.error(ErrorCode.NOT_FOUND_USER);
+            responseDto = ErrorResponseDto.error(ErrorCode.NOT_FOUND_USER);
         }
 
         objectMapper.writeValue(response.getWriter(), responseDto);

@@ -1,4 +1,4 @@
-package com.maruhxn.boardserver.common.exception;
+package com.maruhxn.boardserver.common;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +19,7 @@ public enum ErrorCode {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "로그인이 필요한 서비스입니다."),
     /* FORBIDDEN 403 */
     FORBIDDEN(HttpStatus.FORBIDDEN, "권한이 없습니다."),
+    LOGOUT_REQUIRED(HttpStatus.FORBIDDEN, "이미 로그인 되어있습니다."),
     /* NOT FOUND 404 */
     NOT_FOUND_RESOURCE(HttpStatus.NOT_FOUND, "요청하신 URL 혹은 자원이 존재하지 않습니다."),
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "유저 정보가 존재하지 않습니다."),
@@ -28,7 +29,6 @@ public enum ErrorCode {
     /* UNPROCESSABLE CONTENT 422 */
     EXISTING_USER(HttpStatus.UNPROCESSABLE_ENTITY, "이미 존재하는 이메일 혹은 유저명입니다."),
     EXISTING_USERNAME(HttpStatus.UNPROCESSABLE_ENTITY, "이미 존재하는 유저명입니다."),
-    LOGOUT_REQUIRED(HttpStatus.UNPROCESSABLE_ENTITY, "이미 로그인 되어있습니다."),
 
     /* INTERNAL SERVER ERROR  500 */
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류입니다."),

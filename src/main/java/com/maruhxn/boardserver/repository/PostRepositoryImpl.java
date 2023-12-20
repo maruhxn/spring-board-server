@@ -30,7 +30,6 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .select(new QPostItem(
                         post.id,
                         post.title,
-                        post.content,
                         member.username,
                         post.createdAt,
                         post.viewCount,
@@ -43,6 +42,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         containContentKeyword(postSearchCond.getContent()),
                         authorLike(postSearchCond.getAuthor()))
                 .groupBy(post.id)
+                .orderBy(post.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

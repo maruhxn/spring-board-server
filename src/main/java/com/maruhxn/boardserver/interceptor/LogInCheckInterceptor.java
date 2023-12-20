@@ -1,8 +1,8 @@
 package com.maruhxn.boardserver.interceptor;
 
-import com.maruhxn.boardserver.common.exception.ErrorCode;
 import com.maruhxn.boardserver.common.SessionConst;
-import com.maruhxn.boardserver.common.exception.GlobalException;
+import com.maruhxn.boardserver.common.ErrorCode;
+import com.maruhxn.boardserver.exception.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -17,7 +17,7 @@ public class LogInCheckInterceptor implements HandlerInterceptor {
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute(SessionConst.LOGIN_MEMBER) == null) {
-            throw new GlobalException(ErrorCode.UNAUTHORIZED);
+            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED);
         }
 
         return true;

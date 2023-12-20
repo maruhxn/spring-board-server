@@ -1,6 +1,7 @@
 package com.maruhxn.boardserver.controller;
 
 import com.maruhxn.boardserver.common.Constants;
+import com.maruhxn.boardserver.domain.Role;
 import com.maruhxn.boardserver.dto.request.auth.ConfirmPasswordRequest;
 import com.maruhxn.boardserver.dto.request.members.UpdateMemberProfileRequest;
 import com.maruhxn.boardserver.dto.request.members.UpdatePasswordRequest;
@@ -18,7 +19,6 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 
@@ -28,7 +28,6 @@ import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -47,6 +46,7 @@ class MemberControllerTest extends TestSupport {
                 .andExpect(jsonPath("$.data.email").value("test@test.com"))
                 .andExpect(jsonPath("$.data.username").value("tester"))
                 .andExpect(jsonPath("$.data.profileImage").value(Constants.BASIC_PROFILE_IMAGE_NAME))
+                .andExpect(jsonPath("$.data.role").value(Role.ROLE_USER.name()))
                 .andDo(
                         restDocs.document(
                                 pathParameters(
@@ -61,7 +61,9 @@ class MemberControllerTest extends TestSupport {
                                                 fieldWithPath("username").type(STRING)
                                                         .description("username"),
                                                 fieldWithPath("profileImage").type(STRING)
-                                                        .description("profileImage")
+                                                        .description("profileImage"),
+                                                fieldWithPath("role").type(STRING)
+                                                        .description("role")
                                         )
                         )
                 );
@@ -168,10 +170,11 @@ class MemberControllerTest extends TestSupport {
     @Test
     @CustomWithUserDetails
     void shouldUpdatePasswordWhenIsOwner() throws Exception {
-        UpdatePasswordRequest dto = new UpdatePasswordRequest();
-        dto.setCurrPassword("test");
-        dto.setNewPassword("updatedTest");
-        dto.setConfirmNewPassword("updatedTest");
+        UpdatePasswordRequest dto = UpdatePasswordRequest.builder()
+                .currPassword("test")
+                .newPassword("updatedTest")
+                .confirmNewPassword("updatedTest")
+                .build();
 
         simpleRequestConstraints = new ConstraintDescriptions(UpdatePasswordRequest.class);
         mockMvc.perform(
@@ -202,10 +205,11 @@ class MemberControllerTest extends TestSupport {
     @Test
     @CustomWithUserDetails
     void shouldFailToUpdatePasswordWith400WhenNewPasswordIsShorterThan2() throws Exception {
-        UpdatePasswordRequest dto = new UpdatePasswordRequest();
-        dto.setCurrPassword("test");
-        dto.setNewPassword(".");
-        dto.setConfirmNewPassword(".");
+        UpdatePasswordRequest dto = UpdatePasswordRequest.builder()
+                .currPassword("test")
+                .newPassword(".")
+                .confirmNewPassword(".")
+                .build();
         mockMvc.perform(
                         patch(MEMBER_API_PATH + "/change-password", member.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -216,10 +220,11 @@ class MemberControllerTest extends TestSupport {
     @Test
     @CustomWithUserDetails
     void shouldFailToUpdatePasswordWith400WhenNewPasswordIsLongerThan20() throws Exception {
-        UpdatePasswordRequest dto = new UpdatePasswordRequest();
-        dto.setCurrPassword("test");
-        dto.setNewPassword(".........................................");
-        dto.setConfirmNewPassword(".........................................");
+        UpdatePasswordRequest dto = UpdatePasswordRequest.builder()
+                .currPassword("test")
+                .newPassword(".........................................")
+                .confirmNewPassword(".........................................")
+                .build();
         mockMvc.perform(
                         patch(MEMBER_API_PATH + "/change-password", member.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -230,10 +235,11 @@ class MemberControllerTest extends TestSupport {
     @Test
     @CustomWithUserDetails
     void shouldFailToUpdatePasswordWith400WhenIncorrectPassword() throws Exception {
-        UpdatePasswordRequest dto = new UpdatePasswordRequest();
-        dto.setCurrPassword("test");
-        dto.setNewPassword("updatedPassword");
-        dto.setConfirmNewPassword("updatedPassword!");
+        UpdatePasswordRequest dto = UpdatePasswordRequest.builder()
+                .currPassword("test")
+                .newPassword("updatedPassword")
+                .confirmNewPassword("updatedPassword!")
+                .build();
         mockMvc.perform(
                         patch(MEMBER_API_PATH + "/change-password", member.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -244,10 +250,11 @@ class MemberControllerTest extends TestSupport {
     @Test
     @WithAnonymousUser
     void shouldFailToUpdatePasswordWith401WhenIsAnonymous() throws Exception {
-        UpdatePasswordRequest dto = new UpdatePasswordRequest();
-        dto.setCurrPassword("test");
-        dto.setNewPassword("updatedPassword");
-        dto.setConfirmNewPassword("updatedPassword");
+        UpdatePasswordRequest dto = UpdatePasswordRequest.builder()
+                .currPassword("test")
+                .newPassword("updatedPassword")
+                .confirmNewPassword("updatedPassword")
+                .build();
         mockMvc.perform(
                         patch(MEMBER_API_PATH + "/change-password", member.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -258,8 +265,7 @@ class MemberControllerTest extends TestSupport {
     @Test
     @CustomWithUserDetails
     void shouldConfirmPasswordWhenIsOwnerAndCorrectPassword() throws Exception {
-        ConfirmPasswordRequest dto = new ConfirmPasswordRequest();
-        dto.setCurrPassword("test");
+        ConfirmPasswordRequest dto = new ConfirmPasswordRequest("test");
         simpleRequestConstraints = new ConstraintDescriptions(ConfirmPasswordRequest.class);
         mockMvc.perform(
                         post(MEMBER_API_PATH + "/confirm-password", member.getId())
@@ -286,8 +292,7 @@ class MemberControllerTest extends TestSupport {
     @Test
     @CustomWithUserDetails
     void shouldFailToConfirmPasswordWith400WhenIncorrectPassword() throws Exception {
-        ConfirmPasswordRequest dto = new ConfirmPasswordRequest();
-        dto.setCurrPassword("test!");
+        ConfirmPasswordRequest dto = new ConfirmPasswordRequest("test!");
         mockMvc.perform(
                         post(MEMBER_API_PATH + "/confirm-password", member.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -299,8 +304,7 @@ class MemberControllerTest extends TestSupport {
     @Test
     @CustomWithUserDetails
     void shouldFailToConfirmPasswordWith400WhenInvalidRequest() throws Exception {
-        ConfirmPasswordRequest dto = new ConfirmPasswordRequest();
-        dto.setCurrPassword("t");
+        ConfirmPasswordRequest dto = new ConfirmPasswordRequest("t");
         mockMvc.perform(
                         post(MEMBER_API_PATH + "/confirm-password", member.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -312,8 +316,7 @@ class MemberControllerTest extends TestSupport {
     @Test
     @WithAnonymousUser
     void shouldFailToConfirmPasswordWith401WhenIsAnonymous() throws Exception {
-        ConfirmPasswordRequest dto = new ConfirmPasswordRequest();
-        dto.setCurrPassword("test");
+        ConfirmPasswordRequest dto = new ConfirmPasswordRequest("test");
         mockMvc.perform(
                         post(MEMBER_API_PATH + "/confirm-password", member.getId())
                                 .contentType(MediaType.APPLICATION_JSON)

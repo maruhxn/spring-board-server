@@ -1,8 +1,9 @@
 package com.maruhxn.boardserver.service;
 
-import com.maruhxn.boardserver.common.exception.ErrorCode;
-import com.maruhxn.boardserver.common.exception.GlobalException;
+import com.maruhxn.boardserver.common.ErrorCode;
 import com.maruhxn.boardserver.domain.PostImage;
+import com.maruhxn.boardserver.exception.BadRequestException;
+import com.maruhxn.boardserver.exception.InternalServerException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -33,7 +34,7 @@ public class FileService {
      * @return
      */
     public PostImage storeOneFile(MultipartFile file) {
-        if (file.isEmpty()) throw new GlobalException(ErrorCode.EMPTY_FILE);
+        if (file.isEmpty()) throw new BadRequestException(ErrorCode.EMPTY_FILE);
 
         String originalFilename = file.getOriginalFilename(); // 파일 원본 이름
         String storeFileName = createStoreFileName(originalFilename); // 서버에 저장된 파일 이름 (랜덤)
@@ -50,7 +51,7 @@ public class FileService {
         try {
             file.transferTo(new File(savePath)); // 파일 저장
         } catch (IOException e) {
-            throw new GlobalException(ErrorCode.INTERNAL_ERROR, e);
+            throw new InternalServerException(ErrorCode.INTERNAL_ERROR, e);
         }
 
         return PostImage.builder()
@@ -60,7 +61,7 @@ public class FileService {
     }
 
     public String saveAndExtractUpdatedProfileImage(MultipartFile profileImage) {
-        if (profileImage.isEmpty()) throw new GlobalException(ErrorCode.EMPTY_FILE);
+        if (profileImage.isEmpty()) throw new BadRequestException(ErrorCode.EMPTY_FILE);
 
         String originalFilename = profileImage.getOriginalFilename(); // 파일 원본 이름
         String storeFileName = createStoreFileName(originalFilename); // 서버에 저장된 파일 이름 (랜덤)
@@ -68,7 +69,7 @@ public class FileService {
         try {
             profileImage.transferTo(new File(savePath)); // 파일 저장
         } catch (IOException e) {
-            throw new GlobalException(ErrorCode.INTERNAL_ERROR, e);
+            throw new InternalServerException(ErrorCode.INTERNAL_ERROR, e);
         }
 
         return storeFileName;
@@ -99,7 +100,7 @@ public class FileService {
         try {
             resource = new UrlResource("file:" + getFullPath(fileName));
         } catch (Exception e) {
-            throw new GlobalException(ErrorCode.INTERNAL_ERROR, e);
+            throw new InternalServerException(ErrorCode.INTERNAL_ERROR, e);
         }
         return resource;
     }
@@ -148,7 +149,7 @@ public class FileService {
             File file = new File(savePath);
             file.delete();
         } catch (Exception e) {
-            throw new GlobalException(ErrorCode.INTERNAL_ERROR, e);
+            throw new InternalServerException(ErrorCode.INTERNAL_ERROR, e);
         }
     }
 }

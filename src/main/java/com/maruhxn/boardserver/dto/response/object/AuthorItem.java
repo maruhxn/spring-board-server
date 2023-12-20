@@ -1,6 +1,6 @@
 package com.maruhxn.boardserver.dto.response.object;
 
-import com.maruhxn.boardserver.domain.Role;
+import com.maruhxn.boardserver.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,19 +8,23 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberItem {
+public class AuthorItem {
     private Long memberId;
-    private String email;
     private String username;
     private String profileImage;
-    private Role role;
 
     @Builder
-    public MemberItem(Long memberId, String email, String username, String profileImage, Role role) {
+    public AuthorItem(Long memberId, String username, String profileImage) {
         this.memberId = memberId;
-        this.email = email;
         this.username = username;
         this.profileImage = profileImage;
-        this.role = role;
+    }
+
+    public static AuthorItem fromEntity(Member member) {
+        return AuthorItem.builder()
+                .memberId(member.getId())
+                .username(member.getUsername())
+                .profileImage(member.getProfileImage())
+                .build();
     }
 }

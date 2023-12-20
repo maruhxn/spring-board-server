@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.QueryHints;
 import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
-    @QueryHints(value = {@QueryHint(name = "org.hibernate.readOnly", value = "true")})
     @EntityGraph(attributePaths = {"member", "images"})
     Optional<Post> findWithMemberAndImagesFirstById(Long postId);
 

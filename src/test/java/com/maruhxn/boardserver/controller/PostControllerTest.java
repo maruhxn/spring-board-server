@@ -1,12 +1,11 @@
 package com.maruhxn.boardserver.controller;
 
-import com.maruhxn.boardserver.common.exception.ErrorCode;
+import com.maruhxn.boardserver.common.ErrorCode;
 import com.maruhxn.boardserver.domain.Post;
 import com.maruhxn.boardserver.domain.PostImage;
 import com.maruhxn.boardserver.dto.request.posts.CreatePostRequest;
 import com.maruhxn.boardserver.dto.request.posts.UpdatePostRequest;
 import com.maruhxn.boardserver.repository.PostRepository;
-import com.maruhxn.boardserver.service.FileService;
 import com.maruhxn.boardserver.support.CustomWithUserDetails;
 import com.maruhxn.boardserver.support.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,9 +32,6 @@ class PostControllerTest extends TestSupport {
     @Autowired
     private PostRepository postRepository;
 
-    @Autowired
-    private FileService fileService;
-
     private Post post1;
     private Post post2;
     String POST_API_PATH = "/posts";
@@ -47,12 +43,11 @@ class PostControllerTest extends TestSupport {
                 .member(member)
                 .title("title1")
                 .content("content1")
-                .viewCount(0L)
                 .build()
         );
 
+
         PostImage post1Image = PostImage.builder()
-                .post(post1)
                 .originalName("defaultProfileImage.jfif")
                 .storedName("stored-default-profile-image.jfif")
                 .build();
@@ -63,7 +58,6 @@ class PostControllerTest extends TestSupport {
                 .member(admin)
                 .title("title2")
                 .content("content2")
-                .viewCount(0L)
                 .build()
         );
     }
@@ -97,8 +91,6 @@ class PostControllerTest extends TestSupport {
                                                         .description("Post ID"),
                                                 fieldWithPath("title").type(STRING)
                                                         .description("게시글 제목"),
-                                                fieldWithPath("content").type(STRING)
-                                                        .description("게시글 내용"),
                                                 fieldWithPath("authorName").type(STRING)
                                                         .description("게시글 작성자 이름"),
                                                 fieldWithPath("createdAt").type(STRING)
@@ -186,9 +178,10 @@ class PostControllerTest extends TestSupport {
     @Test
     @WithAnonymousUser
     void shouldFailToCreatePostWith401WhenIsAnonymous() throws Exception {
-        CreatePostRequest dto = new CreatePostRequest();
-        dto.setTitle("title");
-        dto.setContent("content");
+        CreatePostRequest dto = CreatePostRequest.builder()
+                .title("title")
+                .content("content")
+                .build();
 
         mockMvc.perform(
                         post(POST_API_PATH)
@@ -201,9 +194,10 @@ class PostControllerTest extends TestSupport {
     @Test
     @CustomWithUserDetails
     void shouldFailToCreatePostWith400WhenIsInvalidRequest() throws Exception {
-        CreatePostRequest dto = new CreatePostRequest();
-        dto.setTitle("");
-        dto.setContent("");
+        CreatePostRequest dto = CreatePostRequest.builder()
+                .title("")
+                .content("")
+                .build();
 
         mockMvc.perform(
                         multipart(POST_API_PATH)
@@ -215,6 +209,7 @@ class PostControllerTest extends TestSupport {
 
     @Test
     void shouldGetPostDetailWhenIsExist() throws Exception {
+
         mockMvc.perform(
                         get("/posts/{postId}", post1.getId())
                 )
@@ -225,8 +220,10 @@ class PostControllerTest extends TestSupport {
                 .andExpect(jsonPath("$.data.title").value(post1.getTitle()))
                 .andExpect(jsonPath("$.data.content").value(post1.getContent()))
                 .andExpect(jsonPath("$.data.images.size()").value(1))
-                .andExpect(jsonPath("$.data.authorName").value(post1.getMember().getUsername()))
-                .andExpect(jsonPath("$.data.viewCount").value(post1.getViewCount()))
+                .andExpect(jsonPath("$.data.author.memberId").value(post1.getMember().getId()))
+                .andExpect(jsonPath("$.data.author.username").value(post1.getMember().getUsername()))
+                .andExpect(jsonPath("$.data.author.profileImage").value(post1.getMember().getProfileImage()))
+                .andExpect(jsonPath("$.data.viewCount").value(1))
                 .andExpect(jsonPath("$.data.createdAt").exists())
                 .andDo(
                         restDocs.document(
@@ -242,8 +239,8 @@ class PostControllerTest extends TestSupport {
                                                 .description("게시글 내용"),
                                         fieldWithPath("images").type(ARRAY)
                                                 .description("PostImageItem[]"),
-                                        fieldWithPath("authorName").type(STRING)
-                                                .description("게시글 작성자 이름"),
+                                        fieldWithPath("author").type(OBJECT)
+                                                .description("게시글 작성자(CommentAuthor)"),
                                         fieldWithPath("viewCount").type(NUMBER)
                                                 .description("게시글 조회 수"),
                                         fieldWithPath("createdAt").type(STRING)
@@ -255,6 +252,13 @@ class PostControllerTest extends TestSupport {
                                                 .description("게시글 이미지 원본 이름"),
                                         fieldWithPath("storedName").type(STRING)
                                                 .description("게시글 이미지 저장된 이름")
+                                ).andWithPrefix("data.author.",
+                                        fieldWithPath("memberId").type(NUMBER)
+                                                .description("게시글 작성자 ID"),
+                                        fieldWithPath("username").type(STRING)
+                                                .description("게시글 작성자 이름"),
+                                        fieldWithPath("profileImage").type(STRING)
+                                                .description("게시글 작성자 프로필이미지")
                                 )
                         )
                 );
@@ -273,9 +277,10 @@ class PostControllerTest extends TestSupport {
     @Test
     @CustomWithUserDetails
     void shouldUpdatePostWhenIsOwner() throws Exception {
-        UpdatePostRequest dto = new UpdatePostRequest();
-        dto.setTitle("title!");
-        dto.setContent("content!");
+        UpdatePostRequest dto = UpdatePostRequest.builder()
+                .title("title!")
+                .content("content!")
+                .build();
 
         simpleRequestConstraints = new ConstraintDescriptions(UpdatePostRequest.class);
         mockMvc.perform(
@@ -310,9 +315,10 @@ class PostControllerTest extends TestSupport {
     @Test
     @WithAnonymousUser
     void shouldFailToUpdatePostWith401WhenIsAnonymous() throws Exception {
-        UpdatePostRequest dto = new UpdatePostRequest();
-        dto.setTitle("test!");
-        dto.setContent("content!");
+        UpdatePostRequest dto = UpdatePostRequest.builder()
+                .title("title!")
+                .content("content!")
+                .build();
 
         mockMvc.perform(
                         patch("/posts/{postId}", post1.getId())
@@ -325,9 +331,10 @@ class PostControllerTest extends TestSupport {
     @Test
     @CustomWithUserDetails
     void shouldFailToUpdatePostWith403WhenIsNotOwner() throws Exception {
-        UpdatePostRequest dto = new UpdatePostRequest();
-        dto.setTitle("test!");
-        dto.setContent("content!");
+        UpdatePostRequest dto = UpdatePostRequest.builder()
+                .title("title!")
+                .content("content!")
+                .build();
 
         mockMvc.perform(
                         patch("/posts/{postId}", post2.getId())
