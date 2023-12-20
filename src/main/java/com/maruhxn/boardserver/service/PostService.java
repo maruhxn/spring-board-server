@@ -46,7 +46,6 @@ public class PostService {
                 .title(createPostRequest.getTitle())
                 .content(createPostRequest.getContent())
                 .member(member)
-                .viewCount(0L)
                 .build();
         postImages.forEach(post::addPostImage);
         postRepository.save(post);
@@ -72,6 +71,7 @@ public class PostService {
     public PostDetailItem getPostDetail(Long postId) {
         Post findPost = postRepository.findWithMemberAndImagesFirstById(postId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_POST));
+        System.out.println("findPost = " + findPost);
         findPost.addViewCount();
         return PostDetailItem.fromEntity(findPost);
     }

@@ -44,7 +44,6 @@ class CommentControllerTest extends TestSupport {
                 .member(member)
                 .title("title")
                 .content("content")
-                .viewCount(0L)
                 .build()
         );
 

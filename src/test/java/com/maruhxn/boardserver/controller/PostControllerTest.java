@@ -47,12 +47,11 @@ class PostControllerTest extends TestSupport {
                 .member(member)
                 .title("title1")
                 .content("content1")
-                .viewCount(0L)
                 .build()
         );
 
+
         PostImage post1Image = PostImage.builder()
-                .post(post1)
                 .originalName("defaultProfileImage.jfif")
                 .storedName("stored-default-profile-image.jfif")
                 .build();
@@ -63,7 +62,6 @@ class PostControllerTest extends TestSupport {
                 .member(admin)
                 .title("title2")
                 .content("content2")
-                .viewCount(0L)
                 .build()
         );
     }
@@ -216,6 +214,9 @@ class PostControllerTest extends TestSupport {
     @Test
     void shouldGetPostDetailWhenIsExist() throws Exception {
 
+        Post post = postRepository.findById(post1.getId()).get();
+        System.out.println("post = " + post);
+
         mockMvc.perform(
                         get("/posts/{postId}", post1.getId())
                 )
@@ -229,7 +230,7 @@ class PostControllerTest extends TestSupport {
                 .andExpect(jsonPath("$.data.author.memberId").value(post1.getMember().getId()))
                 .andExpect(jsonPath("$.data.author.username").value(post1.getMember().getUsername()))
                 .andExpect(jsonPath("$.data.author.profileImage").value(post1.getMember().getProfileImage()))
-                .andExpect(jsonPath("$.data.viewCount").value(post1.getViewCount()))
+                .andExpect(jsonPath("$.data.viewCount").value(1))
                 .andExpect(jsonPath("$.data.createdAt").exists())
                 .andDo(
                         restDocs.document(
