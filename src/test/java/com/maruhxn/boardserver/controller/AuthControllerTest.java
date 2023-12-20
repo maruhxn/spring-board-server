@@ -1,7 +1,7 @@
 package com.maruhxn.boardserver.controller;
 
 import com.maruhxn.boardserver.common.Constants;
-import com.maruhxn.boardserver.common.exception.ErrorCode;
+import com.maruhxn.boardserver.common.ErrorCode;
 import com.maruhxn.boardserver.dto.request.auth.LoginRequest;
 import com.maruhxn.boardserver.dto.request.auth.RegisterRequest;
 import com.maruhxn.boardserver.support.CustomWithUserDetails;
@@ -101,11 +101,12 @@ class AuthControllerTest extends TestSupport {
     @Test
     @WithAnonymousUser
     void shouldFailToRegisterWith400WhenIsInvalidRequest() throws Exception {
-        RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setEmail("test1@test.com");
-        registerRequest.setUsername("");
-        registerRequest.setPassword("test");
-        registerRequest.setConfirmPassword("test");
+        RegisterRequest registerRequest = RegisterRequest.builder()
+                .email("test1@test.com")
+                .username("")
+                .password("test")
+                .confirmPassword("test")
+                .build();
 
         mockMvc.perform(
                         post("/auth/register")
@@ -120,12 +121,12 @@ class AuthControllerTest extends TestSupport {
     @Test
     @WithAnonymousUser
     void shouldFailToRegisterWith400WhenConfirmFail() throws Exception {
-        RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setEmail("test1@test.com");
-        registerRequest.setUsername("tester");
-        registerRequest.setPassword("test");
-        registerRequest.setConfirmPassword("testt");
-
+        RegisterRequest registerRequest = RegisterRequest.builder()
+                .email("test1@test.com")
+                .username("tester")
+                .password("test")
+                .confirmPassword("testt")
+                .build();
         mockMvc.perform(
                         post("/auth/register")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -137,11 +138,12 @@ class AuthControllerTest extends TestSupport {
     @Test
     @WithAnonymousUser
     void shouldFailToRegisterWith422WhenIsExistingUser() throws Exception {
-        RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setEmail("test@test.com");
-        registerRequest.setUsername("tester");
-        registerRequest.setPassword("test");
-        registerRequest.setConfirmPassword("test");
+        RegisterRequest registerRequest = RegisterRequest.builder()
+                .email("test@test.com")
+                .username("tester")
+                .password("test")
+                .confirmPassword("test")
+                .build();
 
         mockMvc.perform(
                         post("/auth/register")
@@ -152,20 +154,21 @@ class AuthControllerTest extends TestSupport {
     }
 
     private static RegisterRequest getRegisterRequest() {
-        RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setEmail("test1@test.com");
-        registerRequest.setUsername("tester1");
-        registerRequest.setPassword("test");
-        registerRequest.setConfirmPassword("test");
-        return registerRequest;
+        return RegisterRequest.builder()
+                .email("test1@test.com")
+                .username("tester1")
+                .password("test")
+                .confirmPassword("test")
+                .build();
     }
 
     @Test
     @WithAnonymousUser
     void shouldLoginWhenIsAnonymous() throws Exception {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail("test@test.com");
-        loginRequest.setPassword("test");
+        LoginRequest loginRequest = LoginRequest.builder()
+                .email("test@test.com")
+                .password("test")
+                .build();
         simpleRequestConstraints = new ConstraintDescriptions(LoginRequest.class);
         mockMvc.perform(
                         post("/auth/login")
@@ -185,9 +188,10 @@ class AuthControllerTest extends TestSupport {
     @Test
     @WithAnonymousUser
     void shouldFailToLoginWith401WhenIsInvalidMethod() throws Exception {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail("test@test.com");
-        loginRequest.setPassword("test");
+        LoginRequest loginRequest = LoginRequest.builder()
+                .email("test@test.com")
+                .password("test")
+                .build();
 
         mockMvc.perform(
                         get("/auth/login")
@@ -200,9 +204,10 @@ class AuthControllerTest extends TestSupport {
     @Test
     @WithAnonymousUser
     void shouldFailToLoginWith400WhenIsInvalidRequest() throws Exception {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail("testtest.com");
-        loginRequest.setPassword("");
+        LoginRequest loginRequest = LoginRequest.builder()
+                .email("testtest@test.com")
+                .password("")
+                .build();
 
         mockMvc.perform(
                         post("/auth/login")

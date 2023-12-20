@@ -3,13 +3,14 @@ package com.maruhxn.boardserver.service;
 import com.maruhxn.boardserver.auth.common.AccountContext;
 import com.maruhxn.boardserver.auth.common.AjaxAuthenticationToken;
 import com.maruhxn.boardserver.common.Constants;
-import com.maruhxn.boardserver.common.exception.ErrorCode;
-import com.maruhxn.boardserver.common.exception.GlobalException;
+import com.maruhxn.boardserver.common.ErrorCode;
 import com.maruhxn.boardserver.domain.Member;
 import com.maruhxn.boardserver.dto.request.auth.ConfirmPasswordRequest;
 import com.maruhxn.boardserver.dto.request.members.UpdateMemberProfileRequest;
 import com.maruhxn.boardserver.dto.request.members.UpdatePasswordRequest;
 import com.maruhxn.boardserver.dto.response.object.MemberItem;
+import com.maruhxn.boardserver.exception.BadRequestException;
+import com.maruhxn.boardserver.exception.EntityNotFoundException;
 import com.maruhxn.boardserver.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -44,7 +45,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public MemberItem getMemberDetail(Long memberId) {
         Member findMember = memberRepository.findById(memberId).orElseThrow(
-                () -> new GlobalException(ErrorCode.NOT_FOUND_USER));
+                () -> new EntityNotFoundException(ErrorCode.NOT_FOUND_USER));
         return MemberItem.builder()
                 .memberId(findMember.getId())
                 .username(findMember.getUsername())
@@ -62,10 +63,10 @@ public class MemberService {
      */
     public void confirmPassword(Long memberId, ConfirmPasswordRequest confirmPasswordRequest) {
         Member findMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GlobalException(ErrorCode.NOT_FOUND_USER));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_USER));
         Boolean isMatch = passwordEncoder.matches(confirmPasswordRequest.getCurrPassword(), findMember.getPassword());
 
-        if (!isMatch) throw new GlobalException(ErrorCode.INCORRECT_PASSWORD);
+        if (!isMatch) throw new BadRequestException(ErrorCode.INCORRECT_PASSWORD);
     }
 
     /**
@@ -84,12 +85,12 @@ public class MemberService {
             HttpServletResponse response
     ) throws DataIntegrityViolationException {
         if (updateMemberProfileRequest.getUsername() == null && updateMemberProfileRequest.getProfileImage() == null) {
-            throw new GlobalException(ErrorCode.BAD_REQUEST);
+            throw new BadRequestException(ErrorCode.BAD_REQUEST);
         }
         String newProfileImageName = null;
         MultipartFile newProfileImage = updateMemberProfileRequest.getProfileImage();
         Member findMember = memberRepository.findById(memberId).orElseThrow(
-                () -> new GlobalException(ErrorCode.NOT_FOUND_USER));
+                () -> new EntityNotFoundException(ErrorCode.NOT_FOUND_USER));
 
         if (newProfileImage != null) {
             newProfileImageName = fileService.saveAndExtractUpdatedProfileImage(newProfileImage);
@@ -125,21 +126,21 @@ public class MemberService {
      */
     public void updatePassword(Long memberId, UpdatePasswordRequest updatePasswordRequest) {
         Member findMember = memberRepository.findById(memberId).orElseThrow(
-                () -> new GlobalException(ErrorCode.NOT_FOUND_USER));
+                () -> new EntityNotFoundException(ErrorCode.NOT_FOUND_USER));
 
         if (!updatePasswordRequest.getNewPassword().equals(updatePasswordRequest.getConfirmNewPassword())) {
-            throw new GlobalException(ErrorCode.PASSWORD_CONFIRM_FAIL);
+            throw new BadRequestException(ErrorCode.PASSWORD_CONFIRM_FAIL);
         }
 
         if (passwordEncoder.matches(
                 updatePasswordRequest.getNewPassword(),
                 findMember.getPassword()))
-            throw new GlobalException(ErrorCode.SAME_PASSWORD);
+            throw new BadRequestException(ErrorCode.SAME_PASSWORD);
 
         if (!passwordEncoder.matches(
                 updatePasswordRequest.getCurrPassword(),
                 findMember.getPassword()))
-            throw new GlobalException(ErrorCode.INCORRECT_PASSWORD);
+            throw new BadRequestException(ErrorCode.INCORRECT_PASSWORD);
 
         findMember.updatePassword(
                 passwordEncoder.encode(updatePasswordRequest.getNewPassword())
@@ -153,7 +154,7 @@ public class MemberService {
      */
     public void membershipWithdrawal(Long memberId) {
         Member findMember = memberRepository.findById(memberId).orElseThrow(
-                () -> new GlobalException(ErrorCode.NOT_FOUND_USER));
+                () -> new EntityNotFoundException(ErrorCode.NOT_FOUND_USER));
         deleteProfileImageOfFindMember(findMember);
         memberRepository.delete(findMember);
     }

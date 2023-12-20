@@ -1,7 +1,8 @@
 package com.maruhxn.boardserver.auth.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.maruhxn.boardserver.common.exception.ErrorCode;
+import com.maruhxn.boardserver.common.ErrorCode;
+import com.maruhxn.boardserver.dto.response.ErrorResponseDto;
 import com.maruhxn.boardserver.dto.response.ResponseDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,7 +27,7 @@ public class AjaxAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
 
-        ResponseDto responseDto = ResponseDto.error(ErrorCode.UNAUTHORIZED);
+        ResponseDto responseDto = ErrorResponseDto.error(ErrorCode.UNAUTHORIZED);
 
         objectMapper.writeValue(response.getWriter(), responseDto);
     }

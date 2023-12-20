@@ -1,5 +1,6 @@
 package com.maruhxn.boardserver.domain;
 
+import com.mysema.commons.lang.Assert;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -35,6 +36,10 @@ public class Comment {
 
     @Builder
     public Comment(String content, Member member, Post post) {
+        Assert.hasText(content, "내용은 필수입니다.");
+        Assert.notNull(member, "유저 정보는 필수입니다.");
+        Assert.notNull(post, "게시글 정보는 필수입니다.");
+
         this.content = content;
         this.member = member;
         this.post = post;

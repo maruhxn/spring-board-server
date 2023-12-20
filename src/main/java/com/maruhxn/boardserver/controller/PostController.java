@@ -5,7 +5,7 @@ import com.maruhxn.boardserver.dto.PostSearchCond;
 import com.maruhxn.boardserver.dto.request.posts.CreatePostRequest;
 import com.maruhxn.boardserver.dto.request.posts.UpdatePostRequest;
 import com.maruhxn.boardserver.dto.response.DataResponseDto;
-import com.maruhxn.boardserver.dto.response.PageItem;
+import com.maruhxn.boardserver.dto.response.object.PageItem;
 import com.maruhxn.boardserver.dto.response.ResponseDto;
 import com.maruhxn.boardserver.dto.response.object.PostDetailItem;
 import com.maruhxn.boardserver.dto.response.object.PostItem;

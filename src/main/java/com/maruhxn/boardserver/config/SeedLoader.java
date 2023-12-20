@@ -67,17 +67,16 @@ public class SeedLoader {
 
     private void batchInsertPost() {
         String sql = "INSERT INTO post" +
-                " (member_id, title, content, view_count, created_at, updated_at)" +
-                " VALUES (?, ?, ?, ?, ?, ?)";
+                " (member_id, title, content, created_at, updated_at)" +
+                " VALUES (?, ?, ?, ?, ?)";
         jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 ps.setLong(1, i + 1);
                 ps.setString(2, "title");
                 ps.setString(3, "content");
-                ps.setLong(4, 0);
+                ps.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
                 ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
-                ps.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
             }
 
             @Override

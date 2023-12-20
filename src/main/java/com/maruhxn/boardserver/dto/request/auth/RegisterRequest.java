@@ -3,9 +3,13 @@ package com.maruhxn.boardserver.dto.request.auth;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RegisterRequest {
     @Email(message = "이메일 형식에 맞추어 입력해주세요.")
     @NotEmpty(message = "이메일을 입력해주세요.")
@@ -22,4 +26,12 @@ public class RegisterRequest {
     @NotEmpty(message = "비밀번호 확인값을 입력해주세요.")
     @Size(min = 2, max = 20, message = "비밀번호 확인값은 2 ~ 20 글자입니다.")
     private String confirmPassword;
+
+    @Builder
+    public RegisterRequest(String email, String username, String password, String confirmPassword) {
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.confirmPassword = confirmPassword;
+    }
 }

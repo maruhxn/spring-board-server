@@ -1,9 +1,9 @@
 package com.maruhxn.boardserver.resolver;
 
-import com.maruhxn.boardserver.common.exception.ErrorCode;
 import com.maruhxn.boardserver.common.SessionConst;
+import com.maruhxn.boardserver.common.ErrorCode;
+import com.maruhxn.boardserver.exception.UnauthorizedException;
 import com.maruhxn.boardserver.domain.Member;
-import com.maruhxn.boardserver.common.exception.GlobalException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute(SessionConst.LOGIN_MEMBER) == null) {
-            throw new GlobalException(ErrorCode.UNAUTHORIZED);
+            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED);
         }
 
         return session.getAttribute(SessionConst.LOGIN_MEMBER);

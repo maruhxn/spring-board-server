@@ -1,6 +1,6 @@
 package com.maruhxn.boardserver.controller;
 
-import com.maruhxn.boardserver.common.exception.ErrorCode;
+import com.maruhxn.boardserver.common.ErrorCode;
 import com.maruhxn.boardserver.domain.Comment;
 import com.maruhxn.boardserver.domain.Post;
 import com.maruhxn.boardserver.dto.request.comments.CreateCommentRequest;
@@ -44,7 +44,6 @@ class CommentControllerTest extends TestSupport {
                 .member(member)
                 .title("title")
                 .content("content")
-                .viewCount(0L)
                 .build()
         );
 
@@ -130,8 +129,8 @@ class CommentControllerTest extends TestSupport {
     @Test
     @CustomWithUserDetails
     void shouldCreateCommentWhenIsLoggedIn() throws Exception {
-        CreateCommentRequest dto = new CreateCommentRequest();
-        dto.setContent("content");
+        CreateCommentRequest dto = CreateCommentRequest.builder()
+                .content("content").build();
 
         simpleRequestConstraints = new ConstraintDescriptions(CreateCommentRequest.class);
         mockMvc.perform(
@@ -156,8 +155,7 @@ class CommentControllerTest extends TestSupport {
     @Test
     @WithAnonymousUser
     void shouldFailToCreateCommentWith401WhenIsAnonymous() throws Exception {
-        CreateCommentRequest dto = new CreateCommentRequest();
-        dto.setContent("content");
+        CreateCommentRequest dto = new CreateCommentRequest("content");
 
         mockMvc.perform(
                         post(COMMENT_API_PATH, savePost.getId())
@@ -169,8 +167,7 @@ class CommentControllerTest extends TestSupport {
     @Test
     @CustomWithUserDetails
     void shouldFailToCreateCommentWith400WhenInvalidRequest() throws Exception {
-        CreateCommentRequest dto = new CreateCommentRequest();
-        dto.setContent("");
+        CreateCommentRequest dto = new CreateCommentRequest("");
 
         mockMvc.perform(
                         post(COMMENT_API_PATH, savePost.getId())

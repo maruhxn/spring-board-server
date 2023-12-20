@@ -1,7 +1,7 @@
 package com.maruhxn.boardserver.interceptor;
 
-import com.maruhxn.boardserver.common.exception.ErrorCode;
-import com.maruhxn.boardserver.common.exception.GlobalException;
+import com.maruhxn.boardserver.common.ErrorCode;
+import com.maruhxn.boardserver.exception.ForbiddenException;
 import com.maruhxn.boardserver.domain.Member;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,11 +21,10 @@ public class IdentificationInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession(false);
         Member loginMember = (Member) session.getAttribute(LOGIN_MEMBER);
-        Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(
-                HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
         Long memberId = Long.valueOf(String.valueOf(pathVariables.get("memberId")));
         if (!Objects.equals(loginMember.getId(), memberId))
-            throw new GlobalException(ErrorCode.FORBIDDEN);
+            throw new ForbiddenException(ErrorCode.FORBIDDEN);
         return true;
     }
 }

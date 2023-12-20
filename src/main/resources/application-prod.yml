@@ -19,6 +19,7 @@ spring:
     url: jdbc:mysql://mysql_db:3306/spring-board?rewriteBatchedStatements=true
     username: root
     password: 602057
+
   servlet:
     multipart:
       max-file-size: 500MB
@@ -52,6 +53,9 @@ spring:
       add-mappings: false
   mvc:
     throw-exception-if-no-handler-found: true
+  sql:
+    init:
+      mode: always
 logging:
   level:
     root: info

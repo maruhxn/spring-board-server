@@ -1,25 +1,21 @@
 package com.maruhxn.boardserver.dto.response;
 
-import com.maruhxn.boardserver.common.exception.ErrorCode;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@ToString
-@EqualsAndHashCode
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ResponseDto {
-    private final String code;
-    private final String message;
+    private String code;
+    private String message;
+
+    public ResponseDto(String code, String message) {
+        this.code = code;
+        this.message = message;
+    }
 
     public static ResponseDto ok(String message) {
         return new ResponseDto("OK", message);
-    }
-
-    public static ResponseDto error(ErrorCode errorCode) {
-        return new ResponseDto(errorCode.name(), errorCode.getMessage());
-    }
-
-    public static ResponseDto error(ErrorCode errorCode, String message) {
-        return new ResponseDto(errorCode.name(), message);
     }
 }

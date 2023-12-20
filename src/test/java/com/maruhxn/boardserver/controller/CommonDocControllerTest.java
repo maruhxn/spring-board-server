@@ -1,6 +1,6 @@
 package com.maruhxn.boardserver.controller;
 
-import com.maruhxn.boardserver.common.exception.ErrorCode;
+import com.maruhxn.boardserver.common.ErrorCode;
 import com.maruhxn.boardserver.support.CommonDocController;
 import com.maruhxn.boardserver.support.CustomResponseFieldsSnippet;
 import com.maruhxn.boardserver.support.TestSupport;
@@ -59,7 +59,8 @@ class CommonDocControllerTest extends TestSupport {
                         restDocs.document(
                                 responseFields(
                                         fieldWithPath("code").description("Error Code"),
-                                        fieldWithPath("message").description("에러 메시지")
+                                        fieldWithPath("message").description("에러 메시지"),
+                                        fieldWithPath("errors").description("에러 정보 리스트")
                                 )
                         )
                 )

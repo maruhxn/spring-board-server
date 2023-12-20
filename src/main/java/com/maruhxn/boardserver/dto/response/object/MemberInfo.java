@@ -1,13 +1,23 @@
 package com.maruhxn.boardserver.dto.response.object;
 
+import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
-@Builder
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberInfo {
-    private final Long memberId;
-    private final String email;
-    private final String username;
-    private final String profileImage;
+    private Long memberId;
+    private String email;
+    private String username;
+    private String profileImage;
+
+    @Builder
+    public MemberInfo(Long memberId, String email, String username, String profileImage) {
+        this.memberId = memberId;
+        this.email = email;
+        this.username = username;
+        this.profileImage = profileImage;
+    }
 }
