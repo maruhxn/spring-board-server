@@ -13,8 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -39,8 +37,8 @@ public class AuthService {
             throw new BadRequestException(ErrorCode.PASSWORD_CONFIRM_FAIL);
         }
         // 이메일 & 유저명 중복 여부 확인
-        List<Member> findMembers = memberRepository.findByEmailOrUsername(registerRequest.getEmail(), registerRequest.getUsername());
-        if (!findMembers.isEmpty()) throw new AlreadyExistsResourceException(ErrorCode.EXISTING_USER);
+        Boolean isExists = memberRepository.existsAllByEmailOrUsername(registerRequest.getEmail(), registerRequest.getUsername());
+        if (isExists) throw new AlreadyExistsResourceException(ErrorCode.EXISTING_USER);
         // 유저 저장
         Member member = Member.builder()
                 .email(registerRequest.getEmail())
