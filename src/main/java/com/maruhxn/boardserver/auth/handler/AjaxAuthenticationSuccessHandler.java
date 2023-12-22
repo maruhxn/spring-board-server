@@ -9,17 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.context.SecurityContextRepository;
 
 import java.io.IOException;
 
 public class AjaxAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
-
-    @Autowired
-    private SecurityContextRepository securityContextRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -31,11 +25,6 @@ public class AjaxAuthenticationSuccessHandler implements AuthenticationSuccessHa
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
-
-        if (authentication != null) {
-            SecurityContext context = SecurityContextHolder.getContext();
-            securityContextRepository.saveContext(context, request, response);
-        }
 
         objectMapper.writeValue(response.getWriter(), responseDto);
     }
