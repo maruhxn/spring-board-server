@@ -12,10 +12,6 @@ import org.springframework.util.StringUtils;
 import java.io.Serializable;
 
 @Entity
-@Table(
-        indexes = {
-                @Index(name = "idx__email__username", columnList = "email, username")
-        }) // (email), (email, username) cover
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
