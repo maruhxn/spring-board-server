@@ -11,6 +11,9 @@ server:
     whitelabel:
       enabled: false
 spring:
+  sql:
+    init:
+      mode: never
   config:
     activate:
       on-profile: test
